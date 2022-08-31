@@ -1,0 +1,30 @@
+Type: Package
+Package: scMultiome
+Title: Collection of Public Single-Cell Multiome (scATAC + scRNAseq)
+    Datasets
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Aleksander", "Chlebowski", , "aleksander.chlebowski@contractors.roche.com", role = "aut"),
+    person("Xiaosai", "Yao", , "yaox19@gene.com", role = "cre")
+  )
+Description: Single cell multiome data, containing chromatin accessibility
+    (scATAC-seq) and gene expression (scRNA-seq) information analyzed with
+    the ArchR package and presented as MultiAssayExperiment objects.
+License: What license is it under?
+Depends: 
+    MultiAssayExperiment,
+    SingleCellExperiment,
+    ExperimentHub
+Imports: 
+    checkmate
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1
+biocViews: ExperimentHub, SingleCellData, ExpressionData,
+    Homo_sapiens_Data, CellCulture, Tissue, GEO

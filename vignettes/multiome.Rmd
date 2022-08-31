@@ -1,0 +1,83 @@
+---
+title: "Obtaining Multiome Data"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    number_section: true
+    self_contained: true
+    titlecaps: true
+vignette: >
+  %\VignetteIndexEntry{Obtaining Multiome Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# Introduction
+
+The multiome data herein comes from various sources. The general workflow is as follows:
+
+1. Raw data is inducted to projects in Genentech's FireDBy, a structured database of resources.
+2. FireDB resources are sent for analysis to Genentech's Sunrise genomic analysis portal.
+3. Sunrise runs the 10x Genomics Cell Ranger pipelines appropriate for particular datasets.
+4. Analysis results are added to the respective FireDB projects and stored on a Genentech storage server. At this stage scRNAseq data are also added to DataSetDB, which is an internal database.
+5. Analysis results are imported into an R session and downstream analysis is performed accordingly.
+
+A multiome typically consists of chromatin accessibility data (scATAC) and gene expression data (scRNAseq) data subsets. The scRNAseq data will be normalized before merging with the scATAC data. This is done with `gp.sa.solo::runSingleCellBasic2`, which yields a SingleCellExperiment, which is then intergated with scATAC data in the `ArchR` workflow.
+
+<!-- Depending on whether the multiome dataset is paired/multimodal (both assays were run on material extracted from the same set of samples and as such they contain the same cell barcodes) or unpaired (material extraction and barcoding were performed independently), the two data subsets are integrated either by matching -->
+
+
+<br><br><br>
+
+# Raw Data Analysis
+
+Raw data is first analyzed with the [10x Genomics Cell Ranger](https://www.10xgenomics.com/support) pipelines.
+
+Following that, gene expression analysis is run on the scRNAseq data obtained from DataSetDB with `gp.sa.solo::runSingleCellBasic2`. Refer to the [OSCA book](https://bioconductor.org/books/release/OSCA/), specifically [this chapter](http://bioconductor.org/books/3.15/OSCA.basic/index.html) for details.
+
+
+<br><br><br>
+
+# ArchR Multiome Workflow
+
+The general ArchR workflow rus outlined below.
+Refer to the [ArchR book](https://www.archrproject.com/bookdown/index.html) for details.
+
+1. Fragment files resulting from ATAC analysis are used to create arrow files. 
+2. An ArchR project is created. It contains the Gene Score Matrix and the Tile Matrix.
+3. Duplex cells are filtered out. This step is omitted in cell culture based experiments.
+4. Dimensionality reduction is run on the Tile Matrix using the Iterative LSI algorithm using `ArchR::addIterativeLSI`.
+5. scRNAseq data is retrieved from DatasetDB and analyzed with `gp.sa::runSingleCellBasic2`.
+6. scRNAseq data is added to the ArchR project, either with `ArchR::addGeneIntegrationMatrix` for unpaired datasets or with `ArchR::addGeneExpressionMatrix` for paired ones. A Gene Integration Matrix or a Gene Expression Matrix is added.
+7. Iterative LSI is run again on the Gene Expression/Integration Matrix.
+8. Reduced dimension representations of scATAC and scRNAseq spaces are combined with `ArchR::addCombinedDims`. This creates a joint reduced dimensions representation that is used downstream.
+9. Clustering is done with `ArchR::addClusters`.
+10. UMAP embedding is created with `ArchR::addUMAP`.
+11. Pseudo-bulk replicates are computed with `ArchR::addGroupCoverages`.
+12. Peaks are called with `ArchR::addReproduciblePeakSet`.
+13. Peak Matrix is added with `ArchR::addPeakMatrix`.
+14. Peak annotation is added with `ArchR::addMotifAnnotations`.
+15. Background peaks are obtained with `ArchR::addBgdPeaks`.
+16. ChromVAR deviations are computed with `ArchR::addDeviationsMatrix`. The Motif Matrix is added.
+
+
+<br><br><br>
+
+# Conversion to MAE
+
+ArchR projects were converted to `MultiAssayExperiment` objects using the function `maw.archr::create.mae.with.multiple.sces.from.archr`. Each Matrix in the project becomes an experiment in the resulting MAE.
+
+
+<br><br><br>
+
+# Storage And Access
+
+Subsequently, every matrix is saved in a separate `hdf5` file.
