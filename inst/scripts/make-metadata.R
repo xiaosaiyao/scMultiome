@@ -15,16 +15,16 @@ metadata.001 <- data.frame(
     Description = "Multiome data (scATAC and scRNAseq) for enzalutamide-treated LNCaP cells. Measured (unpaired) with Illumina NextSeq 500 (GPL18573). Results stored in GEO, acc.nos: GSE168667 and GSE168668.",
     BiocVersion = "3.16",
     Genome = "hg38",
-    SourceType = "tar.gz",
-    SourceUrl = "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE168667&format=file, https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE168668&format=file", # optional
+    SourceType = "tar.gz",# refers to raw data
+    SourceUrl = "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE168667&format=file, https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE168668&format=file", # refers to raw data; optional
     SourceVersion = "Sep 08 2021", # no commas!
     Species = "Homo sapiens",
     TaxonomyId = "9606",
-    Coordinate_1_based = NA, # ?
-    DataProvider = "Tampere University",
+    Coordinate_1_based = NA, # can stay NA, defaults to TRUE; TBD
+    DataProvider = "Tampere University", # refers to raw data
     Maintainer = "Xiaosai Yao <yaox19@gene.com>",
-    RDataClass = "MultiAssayExperiment",
-    DispatchClass = "H5File",
+    RDataClass = "MultiAssayExperiment", # class that is returned from hub
+    DispatchClass = "H5File", # format saved on disk
     # Location_Prefix = "", # SKIP if data stored in the Bioconductor AWS S3
     RDataPath = "", # TBD
     stringsAsFactors = FALSE

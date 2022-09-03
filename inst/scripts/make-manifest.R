@@ -10,9 +10,10 @@ manifest.001 <- data.frame(
     Species = "Homo sapiens",
     Type = "cell culture",
     Multiome = "unpaired",
-    DiskSize = "", # TBD
-    MemorySize = "", #TBD
+    DiskSize = "3.03 GB",
+    MemorySize = "8.5 GB",
     Accessor = "prostateENZ",
+    Version = "1",
     stringsAsFactors = FALSE
 )
 

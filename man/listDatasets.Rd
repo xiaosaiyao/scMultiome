@@ -13,7 +13,9 @@ with one datasest per row and the following columns:
 \item{Species: species name}
 \item{Type: sample type, e.g. cell culture, tissue}
 \item{Multiome: paired or unpaired}
-\item{Call: function call used to access the dataset directly}
+\item{DiskSize: size of the dataset in storage (also size of the download)}
+\item{MemorySize: size of the dataset in memory}
+\item{Accessor: function used to access the dataset directly}
 }
 }
 \description{

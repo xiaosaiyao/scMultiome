@@ -5,6 +5,14 @@
 #' LNCaP cells treated with 10µM enzalutamide for 48 hours,
 #' and LNCaP-derived enzalutamide-resistant RES-A and RES-B cells.
 #'
+#' @param experiments character vector of matrices to return; see \code{Format}
+#' @param metadata logical flag specifying whether to return data or metadata only
+#'
+#' @return
+#' \code{MultiAssayExperiment} made up of \code{SingleCellExperiment}s
+#' with assays stored as \code{DelayedMatrix} objects.
+#' If \code{metadata = TRUE}, an \code{ExperimentHub} object listing this data set's metadata.
+#'
 #' @format
 #' \code{MultiAssayExperiment} obtained from an \code{ArchR} project. Annotated with the Hg38 genome build.
 #' Contains the following experiments:
@@ -23,13 +31,20 @@
 #' Taavitsainen \emph{et al.}, \emph{Nature Communications} 2021 Sep 6;12(1):5307 \cr
 #' \href{https://pubmed.ncbi.nlm.nih.gov/34489465/}{doi: 10.1038/s41467-021-25624-1}
 #'
+#' @section Data storage and access:
+#' The \code{MultiAssayExperiments} is split into separate \code{SingleCellExperiment}
+#' objects and they in turn are split into components, all of which are stored in a
+#' single hdf5 file. Data and can be accessed with an accessor function of the same name.
+#' When called, the accessor extracts elements of the requested experiment(s)
+#' and rebuilds the MAE.
+#'
 #' @section Data preparation:
 #'
 #' scATAC data was downloaded from Gene Expression Omnibus
-#' (acc. no. \href{https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE168667&format=file}{GSE168667})
+#' (acc. no. \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE168667}{GSE168667})
 #' and analyzed with SingleCell ATAC - 10X pipeline v2.0.0 \cr
 #' scRNAseq data was downloaded from  Gene Expression Omnibus
-#' (acc.no. \href{https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE168668&format=file}{GSE168668})
+#' (acc.no. \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE168668}{GSE168668})
 #' and analyzed with SingleCell Gene Expression Analysis - 10X pipeline v6.0.1. \cr
 #'
 #' Downstream analysis was performed with the \code{ArchR} package:
@@ -206,11 +221,23 @@
 #'
 #'
 #' # save object
-#' saveRDS(MAE, "prostateENZ.RDS")
+#' saveMAE("data/prostateENZ.h5")
 #'
 #' ```
-# "prostateENZ"
-# # TODO: replace with "prostateENZ" once data is uploaded and metadata added to EH
-prostateENZ <- function() {
-    invisible(NULL)
+#'
+#' @export
+#'
+prostateENZ <- function(metadata = FALSE,
+                        experiments = c("TileMatrix500", "GeneScoreMatrix",
+                                        "GeneIntegrationMatrix", "PeakMatrix", "MotifMatrix")) {
+    checkmate::assertFlag(metadata)
+    experiments <- match.arg(experiments, several.ok = TRUE)
+
+    ans <- if (metadata) {
+        getMetadata()
+    } else {
+        loadMAE(experiments)
+    }
+
+    return(ans)
 }

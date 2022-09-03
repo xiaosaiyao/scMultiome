@@ -25,7 +25,7 @@ LNCaP cells cultured with or without enzalutamide.
 }
 
 \author{
-\strong{Maintainer}: Xiaosai Yao \email{yaox19@gene.com}
+\strong{Maintainer}: Xiaosai Yao \email{xyao19@gene.com}
 
 Authors:
 \itemize{

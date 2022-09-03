@@ -10,12 +10,16 @@
 #'   \item{Species: species name}
 #'   \item{Type: sample type, e.g. cell culture, tissue}
 #'   \item{Multiome: paired or unpaired}
-#'   \item{Call: function call used to access the dataset directly}
+#'   \item{DiskSize: size of the dataset in storage (also size of the download)}
+#'   \item{MemorySize: size of the dataset in memory}
+#'   \item{Accessor: function used to access the dataset directly}
 #' }
 #'
 #' @export
 #'
 listDatasets <- function () {
     path <- system.file("extdata", "manifest.csv", package = "scMultiome")
-    S4Vectors::DataFrame(utils::read.csv(path, stringsAsFactors = FALSE))
+    ans <- S4Vectors::DataFrame(utils::read.csv(path, stringsAsFactors = FALSE))
+
+    return(ans)
 }

@@ -16,21 +16,44 @@ Contains the following experiments:
 }
 }
 \usage{
-prostateENZ()
+prostateENZ(
+  metadata = FALSE,
+  experiments = c("TileMatrix500", "GeneScoreMatrix", "GeneIntegrationMatrix",
+    "PeakMatrix", "MotifMatrix")
+)
+}
+\arguments{
+\item{metadata}{logical flag specifying whether to return data or metadata only}
+
+\item{experiments}{character vector of matrices to return; see \code{Format}}
+}
+\value{
+\code{MultiAssayExperiment} made up of \code{SingleCellExperiment}s
+with assays stored as \code{DelayedMatrix} objects.
+If \code{metadata = TRUE}, an \code{ExperimentHub} object listing this data set's metadata.
 }
 \description{
 Single-cell ATAC sequencing of parental LNCaP cells (DMSO treated, the control),
 LNCaP cells treated with 10µM enzalutamide for 48 hours,
 and LNCaP-derived enzalutamide-resistant RES-A and RES-B cells.
 }
+\section{Data storage and access}{
+
+The \code{MultiAssayExperiments} is split into separate \code{SingleCellExperiment}
+objects and they in turn are split into components, all of which are stored in a
+single hdf5 file. Data and can be accessed with an accessor function of the same name.
+When called, the accessor extracts elements of the requested experiment(s)
+and rebuilds the MAE.
+}
+
 \section{Data preparation}{
 
 
 scATAC data was downloaded from Gene Expression Omnibus
-(acc. no. \href{https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE168667&format=file}{GSE168667})
+(acc. no. \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE168667}{GSE168667})
 and analyzed with SingleCell ATAC - 10X pipeline v2.0.0 \cr
 scRNAseq data was downloaded from  Gene Expression Omnibus
-(acc.no. \href{https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE168668&format=file}{GSE168668})
+(acc.no. \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE168668}{GSE168668})
 and analyzed with SingleCell Gene Expression Analysis - 10X pipeline v6.0.1. \cr
 
 Downstream analysis was performed with the \code{ArchR} package:
@@ -81,16 +104,6 @@ project <- addIterativeLSI(project, useMatrix = "TileMatrix", name = "iLSI_ATAC"
 # load scRNAseq data from DataSetDB
 scRNAseq <- DataSetDB::getDatasetAsSE("DS000013306")
 
-# add sample annotation
-sampleNames <- c("SRR13927739", "SRR13927740", "SRR13927741", "SRR13927742")
-sampleCells <- c("LNCaP", "LNCaP", "LNCaP RES-A", "LNCaP RES-B")
-sampleTreatment <- c("0.1\% DMSO 48h", "enzalutamide 48h", "enzalutamide", "enzalutamide")
-sampleEnzalutamide <- c("sensitive", "sensitive", "resistant", "resistant")
-names(sampleCells) <- names(sampleTreatment) <- names(sampleEnzalutamide) <- sampleNames
-scRNAseq$Cells <- sampleCells[scRNAseq$Sample]
-scRNAseq$Treatment <- sampleTreatment[scRNAseq$Sample]
-scRNAseq$Enzalutamide <- sampleEnzalutamide[scRNAseq$Sample]
-scRNAseq$sampleLabels <- sampleLabels[scRNAseq$Sample]
 
 # run scRNAseq pipeline
 GeneExpressionAnalysis <- gp.sa.solo::runSingleCellBasic2(scRNAseq, ncpu = 16L)
@@ -216,7 +229,7 @@ MAE <- c(MAE, ActivityMatrix = ActivityMatrix)
 
 
 # save object
-saveRDS(MAE, "prostateENZ.RDS")
+saveMAE("data/prostateENZ.h5")
 
 }\if{html}{\out{</div>}}
 }
