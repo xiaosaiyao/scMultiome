@@ -1,12 +1,11 @@
 
 # This script creates package metadata displayed in ExperimentHub.
+# It also creates the data set manifest used by the listDatasets function.
 # ExperimentHub DEMANDS that the metadata be in a data frame that is written to a csv file.
 # See https://bioconductor.org/packages/3.15/bioc/vignettes/HubPub/inst/doc/CreateAHubPackage.html#overview for details.
-# Describe your data set in a file called /inst/scripts/make-metadata-<DATASET_NAME>.R.
-# See ?ExperimentHubData::makeExperimentHubMetadata for field details.
-
-# This script also creates the data set manifest used by the listDatasets function.
-# See ?listDatasets for details.
+# Describe your data set in a file called /inst/scripts/make-metadata-<DATASET_NAME>.R
+#   by creating two 1-row data frames called metadata.<DATASET_NAME> and manifest.<DATASET_NAME>.
+# See ?ExperimentHubData::makeExperimentHubMetadata and ?listDatasets for field details.
 
 # When your file is ready, run this script.
 
@@ -19,7 +18,7 @@ lapply(files, source)
 
 
 # collate manifest
-manifest.all <- ls(envir = .GlobalEnv, pattern = "manifest\\.\\w+")
+manifest.all <- ls(envir = .GlobalEnv, pattern = "^manifest\\..+")
 manifest <- do.call(rbind, mget(manifest.all))
 
 # write manifest to file - DO NOT ALTER
@@ -29,7 +28,7 @@ utils::write.csv(manifest,
 
 
 # collate metadata
-metadata.all <- ls(envir = .GlobalEnv, pattern = "metadata\\.\\w+")
+metadata.all <- ls(envir = .GlobalEnv, pattern = "^metadata\\..+")
 metadata <- do.call(rbind, mget(metadata.all))
 
 # write metadata to file - DO NOT ALTER

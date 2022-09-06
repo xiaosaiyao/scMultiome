@@ -12,7 +12,7 @@ metadata.prostateENZ <- data.frame(
     TaxonomyId = "9606",
     Coordinate_1_based = NA, # can stay NA, defaults to TRUE; TBD
     DataProvider = "Tampere University", # refers to raw data
-    Maintainer = "Xiaosai Yao <yaox19@gene.com>",
+    Maintainer = desc::desc_get_maintainer(),
     RDataClass = "MultiAssayExperiment", # class that is returned from hub
     DispatchClass = "H5File", # format saved on disk
     # Location_Prefix = "", # SKIP if data stored in the Bioconductor AWS S3
