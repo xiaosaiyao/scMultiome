@@ -1,0 +1,175 @@
+---
+title: "Developer Notes"
+author: "Aleksander Chlebowski"
+date: 9 September 2022
+output:
+    BiocStyle::html_document:
+    toc: true
+number_section: true
+self_contained: true
+titlecaps: true
+---
+
+```{css, echo=FALSE}
+ol {
+  padding: 0.25em 1.5em;
+  margin: 0.5em 0em 0em 0em;
+}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+# Notes For Developers
+
+## Notes on History
+
+This is how the package was created:
+
+1. Initiate a package project with RStudio.
+
+2. Clean up unwanted files.
+```{r}
+unlink(list.files("R", full.names = TRUE))
+unlink(list.files("man", full.names = TRUE))
+unlink("NAMESPACE")
+```
+
+3. Add key files.
+```{r}
+dir.create("inst/scripts", recursive = TRUE)
+dir.create("inst/extdata", recursive = TRUE)
+file.create("./inst/scripts/make-data.R")
+file.create("./inst/scripts/make-metadata.R")
+```
+
+4. Modify DESCRIPTION file.
+```{r}
+# delete fields
+desc::desc_del(c("Author", "Maintainer"))
+# add authors with desc::desc_add_author
+# (always add one author and one role at a time)
+desc::desc_add_author("Xiaosai", "Yao", "xyao19@gene.com", "cre")
+desc::desc_add_author("Aleksander", "Chlebowski", "aleksander.chlebowski@contractors.roche.com", "aut")
+# edit fields
+desc::desc_set("Package", "scMultiome")
+desc::desc_set("Title", "Collection of Public Single-Cell Multiome (scATAC + scRNAseq) Datasets")
+desc::desc_set("Description", "Single cell multiome data, containing chromatin accessibility (scATAC-seq) and gene expression (scRNA-seq) information analyzed with the ArchR package and presented as MultiAssayExperiment objects.")
+# add biocViews field (required by Bioconductor)
+desc::desc_set("biocViews", "ExperimentHub, SingleCellData, ExpressionData, Homo_sapiens_Data, CellCulture, Tissue, GEO")
+# enable Rmarkdown support for help files
+# this allows inserting unevaluated code chunks with ```R and quoting Rmd files with {r child = <PATH>}
+desc::desc_set("Roxygen", "list(markdown = TRUE)")
+# add dependencies
+usethis::use_package("SummarizedExperiment", type = "Depends") # all experiments inherit from this
+usethis::use_package("SingleCellExperiment", type = "Depends") # all experiments inherit from this
+usethis::use_package("MultiAssayExperiment", type = "Depends") # class of final object
+usethis::use_package("dsdb.plus", type = "Depends")            # class of TileMatrix experiment
+usethis::use_package("ExperimentHub", type = "Depends")        # package is part of ExperimentHub
+usethis::use_package("rhdf5", type = "Imports")                # for operating on hdf5 files
+usethis::use_package("artificer.matrix", type = "Imports")     # for optimized writing of assays
+usethis::use_package("HDF5Array", type = "Imports")            # for reading assays on hdf5 files
+usethis::use_package("checkmate", type = "Imports")            # for argument checks in functions
+usethis::use_package("AzureStor", type = "Suggests")           # for uploading data to Bioconductor
+# set development version
+desc::desc_set_version("0.0.0.9000")
+# normalize file
+desc::desc_normalize()
+```
+
+5. Add package documentation.
+```{r}
+usethis::use_package_doc()
+```
+
+6. Build man files.
+```{r}
+devtools::document()
+```
+
+7. Create vignette.
+```{r}
+usethis::use_vignette(name = "multiome", title = "Obtaining Multiome Data")
+```
+
+
+
+<br><br><br>
+
+## Notes for the Future
+
+### Adding new data sets
+
+0. open the package in developer mode and run `devtools::load_all()`
+
+|      this is necessary in order for the scripts below to write to files properly
+
+
+1. describe the metadata for your data set in `inst/scripts/make-metadata-<DATASET_NAME>.R`
+
+|      see `inst/scripts/make-metadata.R` for more information
+|      see `inst/scripts/make-metadata-prostateENZ.R` for example
+
+
+2. run `source(system.file("scripts", "make-metadata.R", package = "scMultiome"))`
+3. run `ExperimentHubData::makeExperimentHubMetadata(dirname(system.file(package = "scMultiome")))`
+
+|      this validates package metadata
+|      ensure it passes without errors
+
+
+4. add your data set to the list in `R/scMultiome-package.R`
+5. describe the process of data preparation for your data set in `inst/scripts/make-data-<DATASET_NAME>.Rmd`
+
+|      make sure to disable code evaluation (see below)
+
+
+6. create an R file to document you dataset
+
+|      copy and adapt the accessor function from `R/prostateENZ.R`
+|      the default value of the `experiments` argument must reflect experiment names in your data set
+|      use `@inheritParams prostateENZ` and document arguments other than `experiments` and `metadata`
+|      use `@inheritSection prostateENZ Data storage and access`
+|      copy and adapt section `Data preparation` to link to the respective .Rmd file
+
+
+7. add yourself as package author with `desc::desc_add_author("<GIVEN_NAME>", "<FAMILY_NAME>", "<EMAIL>", role = "aut")`
+8. update package version with `desc::desc_bump_version("minor")`
+9. reorder the Depends field in the DESCRIPTION file so that ExperimentHub is the last package listed there
+10. run `devtools::document()`
+11. use `saveMAE` to add your data set to the `R/data` directory
+12. test that the accessor function for your dataset works
+13. run `inst/scripts/upload-data.R`
+
+<br>
+
+### Formatting Rmd files
+
+Use this output specification in Rmd files, including vignette(s):
+```
+output:
+  BiocStyle::html_document:
+  toc: true
+number_section: true
+self_contained: true
+titlecaps: true
+```
+
+<br>
+
+### Code evaluation in Rmd files
+
+Disable evaluation of all code chunks in an RMD file:
+```
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+Disable evaluation for a specific chunk (omit quote marks):
+````{verbatim}
+```{r, eval = FALSE}
+
+```
+````
+
+<br>
