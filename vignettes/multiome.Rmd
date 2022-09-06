@@ -1,7 +1,7 @@
 ---
 title: "Obtaining Multiome Data"
 output:
-  rmarkdown::html_vignette:
+  BiocStyle::html_document:
     toc: true
     number_section: true
     self_contained: true
@@ -26,7 +26,7 @@ A multiome typically consists of chromatin accessibility (scATAC) and gene expre
 
 The multiome data herein comes from various sources. The general workflow is as follows:
 
-1. Raw data is inducted to projects in Genentech's FireDBy, a structured database of resources.
+1. Raw data is inducted to projects in Genentech's FireDB, a structured database of resources.
 2. FireDB resources are sent for analysis to Genentech's Sunrise genomic analysis portal.
 3. Sunrise runs the 10x Genomics Cell Ranger pipelines appropriate for particular datasets.
 4. Analysis results are added to the respective FireDB projects and stored on a Genentech storage server. At this stage scRNAseq data are also added to DataSetDB, which is an internal database.

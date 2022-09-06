@@ -54,11 +54,12 @@ usethis::use_vignette(name = "multiome", title = "Analyzing Epiregulon Data")
 
 # # change output in vignette(s)
 # output:
-#     rmarkdown::html_vignette:
+#     BiocStyle::html_document:
 #     toc: true
 # number_section: true
 # self_contained: true
 # titlecaps: true
+
 
 
 
