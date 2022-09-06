@@ -7,11 +7,12 @@
 
 ### DESCRIBE FIRST DATASET
 manifest.001 <- data.frame(
+    Title = "LNCaP Cells",
     Species = "Homo sapiens",
     Type = "cell culture",
     Multiome = "unpaired",
-    DiskSize = "3.03 GB",
-    MemorySize = "8.5 GB",
+    DiskSize = "2.9 GB",
+    MemorySize = "0.6 - 8.5 GB",
     Accessor = "prostateENZ",
     Version = "1",
     stringsAsFactors = FALSE

@@ -11,7 +11,7 @@
 
 ### DESCRIBE FIRST DATASET
 metadata.001 <- data.frame(
-    Title = "prostateENZ",
+    Title = "LNCaP Cells",
     Description = "Multiome data (scATAC and scRNAseq) for enzalutamide-treated LNCaP cells. Measured (unpaired) with Illumina NextSeq 500 (GPL18573). Results stored in GEO, acc.nos: GSE168667 and GSE168668.",
     BiocVersion = "3.16",
     Genome = "hg38",
@@ -26,7 +26,7 @@ metadata.001 <- data.frame(
     RDataClass = "MultiAssayExperiment", # class that is returned from hub
     DispatchClass = "H5File", # format saved on disk
     # Location_Prefix = "", # SKIP if data stored in the Bioconductor AWS S3
-    RDataPath = "", # TBD
+    RDataPath = "/scMultiome/prostateENZ", # TBD
     stringsAsFactors = FALSE
 )
 
