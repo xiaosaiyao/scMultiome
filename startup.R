@@ -67,7 +67,7 @@ usethis::use_vignette(name = "multiome", title = "Analyzing Epiregulon Data")
 #   this is necessary in order for the scripts below to write to files properly
 # 1. add metadata for that object to inst/scripts/make-metadata.R; run the script
 #   (OR use HubPuB::hubMetadata and HubPuB::add_resource)
-# 2. run ExperimentHubData::addResources(file.path("/gstore/home", Sys.getenv("USER"), "scMultiome"))
+# 2. run ExperimentHubData::makeExperimentHubMetadata(file.path("/gstore/home", Sys.getenv("USER"), "scMultiome"))
 #    and ensure it passes without errors
 # 3. add the dataset to the manifest in inst/scripts/make-manifest.R; run the script
 # 4. create an R file to document you dataset; copy and adapt the accessor function from R/prostateENZ.R;
