@@ -15,7 +15,6 @@ Depends:
     SummarizedExperiment,
     SingleCellExperiment,
     MultiAssayExperiment,
-    dsassembly,
     dsdb.plus,
     ExperimentHub
 Imports: 
