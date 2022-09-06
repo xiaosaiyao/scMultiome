@@ -9,6 +9,6 @@
 # Output of the [process described in the] script should be files on disk ready to be pushed to data server.
 ###
 
-# making of objects is described in detail in respective help files
-# run listDatasets() or ?scMultiome to view a list of available datasets
-# see ?<DATASET_NAME> for details on particular datasets, e.g. ?prostateENZ
+# The creation of all datasets is described in detail in respective help files.
+# Run listDatasets() or ?scMultiome to view a list of available datasets.
+# See ?<DATASET_NAME> for details on particular datasets, e.g. ?prostateENZ.
