@@ -10,6 +10,7 @@ listDatasets()
 A \code{DataFrame} listing all available datasets,
 with one datasest per row and the following columns:
 \itemize{
+\item{Title: data set name}
 \item{Species: species name}
 \item{Type: sample type, e.g. cell culture, tissue}
 \item{Multiome: paired or unpaired}
