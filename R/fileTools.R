@@ -49,7 +49,7 @@ loadMAE <- function(experiments, verbose = FALSE) {
 
     # check for file
     if (verbose) message("\t locating file")
-    file <- system.file("data", sprintf("%s.h5", dataset), package = "scMultiome")
+    file <- file.path(system.file("data", package = "scMultiome"), sprintf("%s.h5", dataset))
     checkmate::assertFileExists(file, access = "r", extension = "h5")
 
     # list experiments in file
