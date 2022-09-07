@@ -10,8 +10,12 @@ saveMAE <- function(mae, file, experiments = NULL, verbose = TRUE, overwrite = F
     checkmate::assertFlag(overwrite)
 
     if (file.exists(file)) {
-        if (verbose) message("file ", file, " exists and will be overwritten")
-        unlink(file, force = TRUE)
+        if (overwrite) {
+            if (verbose) message("file ", file, " exists and will be overwritten")
+            unlink(file, force = TRUE)
+        } else {
+            stop("saveMAE: file ", file, " already exists")
+        }
     }
 
     if (is.null(experiments)) experiments <- names(mae)
