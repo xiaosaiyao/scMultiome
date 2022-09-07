@@ -2,7 +2,7 @@ Type: Package
 Package: scMultiome
 Title: Collection of Public Single-Cell Multiome (scATAC + scRNAseq)
     Datasets
-Version: 0.0.0.9005
+Version: 0.0.0.9006
 Authors@R: c(
     person("Xiaosai", "Yao", , "xyao19@gene.com", role = "cre"),
     person("Aleksander", "Chlebowski", , "aleksander.chlebowski@contractors.roche.com", role = "aut")
@@ -12,16 +12,16 @@ Description: Single cell multiome data, containing chromatin accessibility
     the ArchR package and presented as MultiAssayExperiment objects.
 License: Artistic-2.0
 Depends: 
-    SummarizedExperiment,
-    SingleCellExperiment,
     MultiAssayExperiment,
+    SingleCellExperiment,
+    SummarizedExperiment,
     dsdb.plus,
     AnnotationHub,
     ExperimentHub
 Imports: 
     AzureStor,
-    S4Vectors,
     HDF5Array,
+    S4Vectors,
     artificer.matrix,
     checkmate,
     rhdf5
