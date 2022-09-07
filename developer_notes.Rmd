@@ -133,6 +133,7 @@ usethis::use_vignette(name = "multiome", title = "Obtaining Multiome Data")
 |      copy and adapt the accessor function from `R/prostateENZ.R`
 |      the default value of the `experiments` argument must reflect experiment names in your data set
 |      use `@inheritParams prostateENZ` and document arguments other than `experiments` and `metadata`
+|      use `@inherit prostateENZ return`
 |      use `@inheritSection prostateENZ Data storage and access`
 |      copy and adapt section `Data preparation` to link to the respective .Rmd file
 
@@ -143,7 +144,7 @@ usethis::use_vignette(name = "multiome", title = "Obtaining Multiome Data")
 10. run `devtools::document()`
 11. use `saveMAE` to add your data set to the `R/data` directory
 12. use `testFile` to validate the accessor function for your dataset
-13. use `uploadFile` to place your dataset in the Bioconductor staging directory
+13. use `uploadFile` to place your data set in the Bioconductor staging directory
 
 <br>
 
