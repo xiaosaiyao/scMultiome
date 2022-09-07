@@ -1,4 +1,9 @@
 
+#' @import SummarizedExperiment
+#' @import SingleCellExperiment
+#' @import dsdb.plus
+#' @import MultiAssayExperiment
+
 saveMAE <- function(mae, file, experiments = NULL, verbose = TRUE, overwrite = FALSE) {
     # TODO: save colData once in root - but that will interfere with listing available experiments!
     checkmate::assertClass(mae, "MultiAssayExperiment")
@@ -64,7 +69,7 @@ loadMAE <- function(experiments, verbose = FALSE) {
 
     # build mae
     if (verbose) message("\t building MultiAssayExperiment")
-    mae <- MultiAssayExperiment(experiments = expList)
+    mae <- MultiAssayExperiment::MultiAssayExperiment(experiments = expList)
 
     return(mae)
 }
@@ -122,7 +127,6 @@ saveExp <- function(exp, expName, file, verbose) {
     if (!is.null(rownames)) {
         rhdf5::h5write(obj = rownames, file = file, name = sprintf("%s/metadata/rownames", expName))
     }
-
     # write reduced dimensions, if any
     if (length(reducedDims) > 0L) {
         if (verbose) message("\t writing reduced dimensions")
@@ -266,3 +270,4 @@ uploadFile <- function(file, sasToken, endpoint = "https://bioconductorhubs.blob
     print(AzureStor::list_storage_files(container))
 
     return(invisible(TRUE))
+}

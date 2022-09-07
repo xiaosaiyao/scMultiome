@@ -15,5 +15,9 @@
 #'
 #' }
 #'
+# Bioconductor requires that AnnotationHub and ExperimentHub be fully imported
+#' @import AnnotationHub
+#' @import ExperimentHub
+#'
 #' @keywords internal
 "_PACKAGE"

@@ -56,6 +56,7 @@ desc::desc_add_author("Aleksander", "Chlebowski", "aleksander.chlebowski@contrac
 desc::desc_set("Package", "scMultiome")
 desc::desc_set("Title", "Collection of Public Single-Cell Multiome (scATAC + scRNAseq) Datasets")
 desc::desc_set("Description", "Single cell multiome data, containing chromatin accessibility (scATAC-seq) and gene expression (scRNA-seq) information analyzed with the ArchR package and presented as MultiAssayExperiment objects.")
+desc::desc_set("License", "Artistic-2.0")
 # add biocViews field (required by Bioconductor)
 desc::desc_set("biocViews", "ExperimentHub, SingleCellData, ExpressionData, Homo_sapiens_Data, CellCulture, Tissue, GEO")
 # enable Rmarkdown support for help files
@@ -64,14 +65,16 @@ desc::desc_set("Roxygen", "list(markdown = TRUE)")
 # add dependencies
 usethis::use_package("SummarizedExperiment", type = "Depends") # all experiments inherit from this
 usethis::use_package("SingleCellExperiment", type = "Depends") # all experiments inherit from this
-usethis::use_package("MultiAssayExperiment", type = "Depends") # class of final object
 usethis::use_package("dsdb.plus", type = "Depends")            # class of TileMatrix experiment
-usethis::use_package("ExperimentHub", type = "Depends")        # package is part of ExperimentHub
+usethis::use_package("MultiAssayExperiment", type = "Depends") # class of final object
+usethis::use_package("AnnotationHub", type = "Depends")        # required by Bioconductor
+usethis::use_package("ExperimentHub", type = "Depends")        # required by Bioconductor
+usethis::use_package("S4Vectors", type = "Imports")            # for operating on DataFrames
 usethis::use_package("rhdf5", type = "Imports")                # for operating on hdf5 files
 usethis::use_package("artificer.matrix", type = "Imports")     # for optimized writing of assays
 usethis::use_package("HDF5Array", type = "Imports")            # for reading assays on hdf5 files
 usethis::use_package("checkmate", type = "Imports")            # for argument checks in functions
-usethis::use_package("AzureStor", type = "Suggests")           # for uploading data to Bioconductor
+usethis::use_package("AzureStor", type = "Imports")            # for uploading data to Bioconductor
 # set development version
 desc::desc_set_version("0.0.0.9000")
 # normalize file
@@ -139,8 +142,8 @@ usethis::use_vignette(name = "multiome", title = "Obtaining Multiome Data")
 9. reorder the Depends field in the DESCRIPTION file so that ExperimentHub is the last package listed there
 10. run `devtools::document()`
 11. use `saveMAE` to add your data set to the `R/data` directory
-12. test that the accessor function for your dataset works
-13. run `inst/scripts/upload-data.R`
+12. use `testFile` to validate the accessor function for your dataset
+13. use `uploadFile` to place your dataset in the Bioconductor staging directory
 
 <br>
 

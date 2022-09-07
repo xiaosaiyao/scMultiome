@@ -8,12 +8,17 @@
 #'
 #' @return An \code{ExperimentHub} object.
 #'
+#' @import AnnotationHub
+#' @import ExperimentHub
+#'
+#' @keywords internal
+#'
 getMetadata <- function() {
-    if (!isNamespaceLoaded("ExperimentHub")) attachNamespace("ExperimentHub") # TODO - test if this can be dropped
+    # if (!isNamespaceLoaded("ExperimentHub")) attachNamespace("ExperimentHub") # TODO - test if this can be dropped
 
     # determine dataset
     dataset <- determineDataset()
+    # query database for the dataset
     ans <- AnnotationHub::query(ExperimentHub::ExperimentHub(), c("scMultiome", dataset))
     return(ans)
 }
-

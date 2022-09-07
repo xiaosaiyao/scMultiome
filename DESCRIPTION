@@ -10,20 +10,22 @@ Authors@R: c(
 Description: Single cell multiome data, containing chromatin accessibility
     (scATAC-seq) and gene expression (scRNA-seq) information analyzed with
     the ArchR package and presented as MultiAssayExperiment objects.
-License: What license is it under?
+License: Artistic-2.0
 Depends: 
     SummarizedExperiment,
     SingleCellExperiment,
     MultiAssayExperiment,
     dsdb.plus,
+    AnnotationHub,
     ExperimentHub
 Imports: 
+    AzureStor,
+    S4Vectors,
     HDF5Array,
     artificer.matrix,
     checkmate,
     rhdf5
 Suggests: 
-    AzureStor,
     knitr,
     rmarkdown
 VignetteBuilder: 
