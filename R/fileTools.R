@@ -1,7 +1,6 @@
 
 #' @import SummarizedExperiment
 #' @import SingleCellExperiment
-#' @import dsdb.plus
 #' @import MultiAssayExperiment
 
 saveMAE <- function(mae, file, experiments = NULL, verbose = TRUE, overwrite = FALSE) {
@@ -54,7 +53,7 @@ loadMAE <- function(experiments, verbose = FALSE) {
 
     # check for file
     if (verbose) message("\t locating file")
-    file <- file.path(system.file("data", package = "scMultiome"), sprintf("%s.h5", dataset))
+    file <- file.path(system.file("extdata", package = "scMultiome"), sprintf("%s.h5", dataset))
     checkmate::assertFileExists(file, access = "r", extension = "h5")
 
     # list experiments in file
@@ -106,12 +105,15 @@ saveExp <- function(exp, expName, file, verbose) {
     if (verbose) message("\t writing class")
     rhdf5::h5write(obj = class(exp), file = file, name = sprintf("%s/class", expName))
 
+    # write package that defines object class
+    if (verbose) message("\t writing parent package")
+    rhdf5::h5write(obj = attr(class(exp), "package"), file = file, name = sprintf("%s/package", expName))
+
     # write assays
     if (verbose) message("\t writing assays")
     for (ass in names(assays)) {
         if (verbose) message("\t\t ", ass)
-        artificer.matrix::writeSparseMatrix(assays[[ass]], file = file,
-                                            name = sprintf("%s/assays/%s", expName, ass))
+        artificer.matrix::writeSparseMatrix(assays[[ass]], file = file, name = sprintf("%s/assays/%s", expName, ass))
     }
 
     # write metadata
@@ -159,7 +161,12 @@ loadExp <- function(file, expName, verbose) {
                                       fileContents[fileContents[["group"]] == sprintf("/%s", expName), "name"])
 
     # load everything in group specified by experiment
+
+    # load class
     expClass <- rhdf5::h5read(file, sprintf("%s/class", expName))
+
+    # load parent package of class
+    expClassPkg <- rhdf5::h5read(file, sprintf("%s/package", expName))
 
     # load assays
     if (verbose) message("\t loading assays")
@@ -208,10 +215,28 @@ loadExp <- function(file, expName, verbose) {
     if (reducedDims.present) {
         SingleCellExperiment::reducedDims(ans, withDimnames = FALSE) <- reducedDims
     }
-    if (expClass == "SingleCellAccessibilityExperiment") {
-        if (verbose) message("\t converting to ", expClass)
-        tileSize <- as.integer(sub("([A-Za-z]+)(\\d+)", "\\2", "TileMatrix500"))
-        ans <- dsdb.plus::SingleCellAccessibilityExperiment(ans, tile.size = tileSize)
+
+    # attempt to restore class of experiment if different to SingleCellExperiment
+    # only if required package is available
+    if (expClass != "SingleCellExperiment") {
+        if (requireNamespace(expClassPkg, quietly = TRUE)) {
+            if (verbose) message("\t converting to ", expClass)
+            ans <- switch(expClass,
+                          # class-specific conversions
+
+                          "SingleCellAccessibilityExperiment" = {
+                              tileSize <- as.integer(sub("([A-Za-z]+)(\\d+)", "\\2", "TileMatrix500"))
+                              dsdb.plus::SingleCellAccessibilityExperiment(ans, tile.size = tileSize)
+                          },
+
+                          # generic conversion (default)
+                          methods::as(ans, expClass))
+        } else {
+            if (verbose) {
+                message("\t cannot convert to class ", expClass, " as package ", expClassPkg, " is unavailable")
+                message("\t ... returning as SingleCellExperiment")
+            }
+        }
     }
 
     return(ans)

@@ -65,7 +65,6 @@ desc::desc_set("Roxygen", "list(markdown = TRUE)")
 # add dependencies
 usethis::use_package("SummarizedExperiment", type = "Depends") # all experiments inherit from this
 usethis::use_package("SingleCellExperiment", type = "Depends") # all experiments inherit from this
-usethis::use_package("dsdb.plus", type = "Depends")            # class of TileMatrix experiment
 usethis::use_package("MultiAssayExperiment", type = "Depends") # class of final object
 usethis::use_package("AnnotationHub", type = "Depends")        # required by Bioconductor
 usethis::use_package("ExperimentHub", type = "Depends")        # required by Bioconductor
@@ -75,6 +74,7 @@ usethis::use_package("artificer.matrix", type = "Imports")     # for optimized w
 usethis::use_package("HDF5Array", type = "Imports")            # for reading assays on hdf5 files
 usethis::use_package("checkmate", type = "Imports")            # for argument checks in functions
 usethis::use_package("AzureStor", type = "Imports")            # for uploading data to Bioconductor
+usethis::use_package("dsdb.plus", type = "Suggests")           # class of TileMatrix experiment
 # set development version
 desc::desc_set_version("0.0.0.9000")
 # normalize file
@@ -175,5 +175,14 @@ Disable evaluation for a specific chunk (omit quote marks):
 
 ```
 ````
+
+<br>
+
+### Suggested package
+
+Package `dsdb.plus` defines the `SingleCellAccessibilityExperiment`, which is used to store the Tile Matrix of `ArchR` projects. Since this package may not be available to all users, its use here is optional: depending on whether the package is installed or not, the Tile Matrix experimetn will be rendered as a `SingleCellAccessibilityExperiment` or a normal `SingleCellExperiment`.
+
+Having dependencies not installed may be seen as a problem by `R CMD CHECK`. You may have to set `force_suggests = FALSE` when running `devtools::check()`.
+
 
 <br>
