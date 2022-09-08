@@ -113,7 +113,7 @@ saveExp <- function(exp, expName, file, verbose) {
     if (verbose) message("\t writing assays")
     for (ass in names(assays)) {
         if (verbose) message("\t\t ", ass)
-        artificer.matrix::writeSparseMatrix(assays[[ass]], file = file, name = sprintf("%s/assays/%s", expName, ass))
+        writeSparseMatrix(assays[[ass]], file = file, name = sprintf("%s/assays/%s", expName, ass))
     }
 
     # write metadata

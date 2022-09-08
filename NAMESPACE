@@ -3,6 +3,7 @@
 export(listDatasets)
 export(padZeros)
 export(prostateENZ)
+export(writeSparseMatrix)
 import(AnnotationHub)
 import(ExperimentHub)
 import(MultiAssayExperiment)
