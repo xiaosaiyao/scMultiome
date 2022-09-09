@@ -1,8 +1,65 @@
 
-#' @import SummarizedExperiment
-#' @import SingleCellExperiment
+#' save and load data sets
+#'
+#' Functions to disassemble and save, and load and reassemble MultiAssayExperiment data sets.
+#'
+#' These are internal functions that will never be called directly, with the exception of
+#' \code{saveMAE}, which will be used by developers to add more data sets.
+#'
+#' \code{saveMAE} is used to save a \code{MultiAssayExperiment} to a hdf5 file.
+#' It creates the \code{file} and passes individual \code{experiments} to \code{saveExp}.
+#'
+#' \code{saveExp} is called by \code{saveMAE} to disassemble experiment \code{exp}
+#' and save its elements in \code{file}. A group hierarchy is created with
+#' the top level group called \code{expName}, e.g. "GeneScoreMatrix",
+#' and lower level groups to store specific elements:
+#' \itemize{
+#'   \item{\code{experiment} class is saved in group "class"}
+#'   \item{the name of the package where the class is defined is saved in group "pacakge"}
+#'   \item{assays are saved as sparse matrices in group "assays", using \code{writeSparseMatrix}}
+#'   \item{\code{colData} and \code{colnames} are saved in subgroup "properties"}
+#'   \item{if \code{experiment} has rownames, the are saved in "properties"}
+#'   \item{\code{rowData} is saved in "properties", unless it is an empty \code{DataFrame}}
+#'   \item{if \code{experiment} has a \code{reducedDim} component, they too are saved in "properties"}
+#' }
+#' \code{DataFrames} (e.g. \code{colData}, \code{rowData}, embeddings)
+#' are converted to \code{data.frames} and saved as compound type.
+#'
+#' \code{loadMAE} is called by accessor functions to retrieve data. It locates the hdf5 file
+#' in which the data set is stored and uses \code{loadExp} to extract the specified \code{experiments}.
+#'
+#' \code{loadExp} first checks which property elements are stored for the experiment in question,
+#' loads all elements of the experiment and builds a \code{SingleCellExperiment} object.
+#' If the original class of the experiment is different, an attempt is made to convert to that class.
+#'
+#' @name fileOperations
+#'
+#' @param mae object of class \code{MultiAssayExperiment}
+#' @param file path to a hdf5 file
+#' @param experiments character string specifying which experiments to save/load
+#' @param verbose logical flag specifying verbosity of operation
+#' @param overwrite logical flag specifying whether to allow overwriting the hdf5 file
+#' @param exp an experiment object that inherits from class \code{SummarizedExperiment},
+#'            usually a \code{SingleCellExperiment}
+#' @param expName name of the experiment, i.e. name of the \code{ArchR} Matrix
+#'
+#' @return
+#' \code{saveExp} returns \code{TRUE} invisibly if the save was successful.
+#' \code{saveMAE} returns a named list of \code{TRUE} values.
+#' \code{loadExp} returns a \code{SingleCellExperiment} or an object of a subclass.
+#' \code{loadMAE} returns a \code{MultiAssayExperiment}.
+#'
+#' @seealso
+#' Vignette "rhdf5 - HDF5 interface for R" (\code{vignette} or \code{browseVignettes})
+#' for details of hdf5 file construction.\cr
+#' \code{writeSparseMatrix} for details of saving sparse matrices.
+#'
+#'
+#'
 #' @import MultiAssayExperiment
-
+#'
+#' @rdname fileOperations
+#'
 saveMAE <- function(mae, file, experiments = NULL, verbose = TRUE, overwrite = FALSE) {
     # TODO: save colData once in root - but that will interfere with listing available experiments!
     checkmate::assertClass(mae, "MultiAssayExperiment")
@@ -42,6 +99,12 @@ saveMAE <- function(mae, file, experiments = NULL, verbose = TRUE, overwrite = F
 
 
 
+#' @import MultiAssayExperiment
+#'
+#' @rdname fileOperations
+#'
+#' @keywords internal
+#'
 loadMAE <- function(experiments, verbose = FALSE) {
     checkmate::assertCharacter(experiments)
     checkmate::assertFlag(verbose)
@@ -57,7 +120,6 @@ loadMAE <- function(experiments, verbose = FALSE) {
     checkmate::assertFileExists(file, access = "r", extension = "h5")
 
     # list experiments in file
-    if (verbose) message("\t checking experiments")
     fileContents <- rhdf5::h5ls(file)
     expStored <- fileContents[fileContents[["group"]] == "/", "name"]
     lapply(experiments, checkmate::assertChoice, choices = expStored)
@@ -75,6 +137,13 @@ loadMAE <- function(experiments, verbose = FALSE) {
 
 
 
+#' @import SummarizedExperiment
+#' @import SingleCellExperiment
+#'
+#' @rdname fileOperations
+#'
+#' @keywords internal
+#'
 saveExp <- function(exp, expName, file, verbose) {
     checkmate::assertClass(exp, "SummarizedExperiment")
     checkmate::assertString(expName)
@@ -95,7 +164,7 @@ saveExp <- function(exp, expName, file, verbose) {
     if (verbose) message("\t creating groups")
     rhdf5::h5createGroup(file, expName)
     rhdf5::h5createGroup(file, sprintf("%s/assays", expName))
-    rhdf5::h5createGroup(file, sprintf("%s/metadata", expName))
+    rhdf5::h5createGroup(file, sprintf("%s/properties", expName))
     # reducedDims group is only created if there any reducedDims objects
     if (length(reducedDims) > 0L) {
         rhdf5::h5createGroup(file, sprintf("%s/reducedDims", expName))
@@ -103,39 +172,62 @@ saveExp <- function(exp, expName, file, verbose) {
 
     # write object class
     if (verbose) message("\t writing class")
-    rhdf5::h5write(obj = class(exp), file = file, name = sprintf("%s/class", expName))
+    rhdf5::h5write(
+        obj = class(exp),
+        file = file,
+        name = sprintf("%s/class", expName))
 
     # write package that defines object class
     if (verbose) message("\t writing parent package")
-    rhdf5::h5write(obj = attr(class(exp), "package"), file = file, name = sprintf("%s/package", expName))
+    rhdf5::h5write(
+        obj = attr(class(exp), "package"),
+        file = file,
+        name = sprintf("%s/package", expName))
 
     # write assays
     if (verbose) message("\t writing assays")
     for (ass in names(assays)) {
-        if (verbose) message("\t\t ", ass)
-        writeSparseMatrix(assays[[ass]], file = file, name = sprintf("%s/assays/%s", expName, ass))
+        if (verbose) message("\t\t ... ", ass)
+        writeSparseMatrix(
+            x = assays[[ass]],
+            file = file,
+            name = sprintf("%s/assays/%s", expName, ass))
     }
 
-    # write metadata
-    if (verbose) message("\t writing metadata")
-    rhdf5::h5write(obj = as.data.frame(colData), file = file, name = sprintf("%s/metadata/colData", expName))
+    # write properties
+    if (verbose) message("\t writing properties")
+    rhdf5::h5write(
+        obj = as.data.frame(colData),
+        file = file,
+        name = sprintf("%s/properties/colData", expName))
     # rowData is only saved if it has columns
     # column-less rowData will be built from rownames
     if (ncol(rowData) != 0L) {
-        rhdf5::h5write(obj = as.data.frame(rowData), file = file, name = sprintf("%s/metadata/rowData", expName))
+        rhdf5::h5write(
+            obj = as.data.frame(rowData),
+            file = file,
+            name = sprintf("%s/properties/rowData", expName))
     }
-    rhdf5::h5write(obj = colnames, file = file, name = sprintf("%s/metadata/colnames", expName))
+    rhdf5::h5write(
+        obj = colnames,
+        file = file,
+        name = sprintf("%s/properties/colnames", expName))
     # rownames are only saved if there are any
     if (!is.null(rownames)) {
-        rhdf5::h5write(obj = rownames, file = file, name = sprintf("%s/metadata/rownames", expName))
+        rhdf5::h5write(
+            obj = rownames,
+            file = file,
+            name = sprintf("%s/properties/rownames", expName))
     }
     # write reduced dimensions, if any
     if (length(reducedDims) > 0L) {
         if (verbose) message("\t writing reduced dimensions")
         for (red in names(reducedDims)) {
-            if (verbose) message("\t\t ", red)
-            rhdf5::h5write(obj = reducedDims[[red]], file = file,
-                           name = sprintf("%s/reducedDims/%s", expName, red))
+            if (verbose) message("\t\t ... ", red)
+            rhdf5::h5write(
+                obj = reducedDims[[red]],
+                file = file,
+                name = sprintf("%s/reducedDims/%s", expName, red))
         }
     }
 
@@ -144,6 +236,12 @@ saveExp <- function(exp, expName, file, verbose) {
 
 
 
+#' @import SingleCellExperiment
+#'
+#' @rdname fileOperations
+#'
+#' @keywords internal
+#'
 loadExp <- function(file, expName, verbose) {
     checkmate::assertFileExists(file, access = "r", extension = "h5")
     checkmate::assertString(expName)
@@ -154,9 +252,9 @@ loadExp <- function(file, expName, verbose) {
     # list file contents
     fileContents <- rhdf5::h5ls(file)
     rownames.present <- is.element("rownames",
-                                   fileContents[fileContents[["group"]] == sprintf("/%s/metadata", expName), "name"])
+                                   fileContents[fileContents[["group"]] == sprintf("/%s/properties", expName), "name"])
     rowData.present <- is.element("rowData",
-                                  fileContents[fileContents[["group"]] == sprintf("/%s/metadata", expName), "name"])
+                                  fileContents[fileContents[["group"]] == sprintf("/%s/properties", expName), "name"])
     reducedDims.present <- is.element("reducedDims",
                                       fileContents[fileContents[["group"]] == sprintf("/%s", expName), "name"])
 
@@ -171,23 +269,23 @@ loadExp <- function(file, expName, verbose) {
     # load assays
     if (verbose) message("\t loading assays")
     assaysStored <- fileContents[fileContents[["group"]] == sprintf("/%s/assays", expName), "name"]
-    assays <- lapply(assaysStored, function(x) {
-        if (verbose) message("\t\t ", x)
-        HDF5Array::H5SparseMatrix(filepath = file, group = sprintf("/%s/assays/%s", expName, x))
+    assays <- lapply(assaysStored, function(ass) {
+        if (verbose) message("\t\t ... ", ass)
+        HDF5Array::H5SparseMatrix(filepath = file, group = sprintf("/%s/assays/%s", expName, ass))
     })
     names(assays) <- assaysStored
 
-    # load metadata
-    if (verbose) message("\t loading metadata")
-    colnames <- rhdf5::h5read(file, sprintf("%s/metadata/colnames", expName))
-    colData <- rhdf5::h5read(file, sprintf("%s/metadata/colData", expName))
+    # load properties
+    if (verbose) message("\t loading properties")
+    colnames <- rhdf5::h5read(file, sprintf("%s/properties/colnames", expName))
+    colData <- rhdf5::h5read(file, sprintf("%s/properties/colData", expName))
     # load rownames if saved
     if (rownames.present) {
-        rownames <- rhdf5::h5read(file, sprintf("%s/metadata/rownames", expName))
+        rownames <- rhdf5::h5read(file, sprintf("%s/properties/rownames", expName))
     }
     # load rowData if saved saved, otherwise construct column-less data frame from rownames
     rowData <- if (rowData.present) {
-        rhdf5::h5read(file, sprintf("%s/metadata/rowData", expName))
+        rhdf5::h5read(file, sprintf("%s/properties/rowData", expName))
     } else {
         data.frame(row.names = rownames)
     }
@@ -196,18 +294,19 @@ loadExp <- function(file, expName, verbose) {
     if (reducedDims.present) {
         if (verbose) message("\t loading reduced dimensions")
         reducedDimsStored <- fileContents[fileContents[["group"]] == sprintf("/%s/reducedDims", expName), "name"]
-        reducedDims <- lapply(reducedDimsStored, function(x) {
-            if (verbose) message("\t\t ", x)
-            rhdf5::h5read(file = file, name = sprintf("%s/reducedDims/%s", expName, x))
+        reducedDims <- lapply(reducedDimsStored, function(red) {
+            if (verbose) message("\t\t ... ", red)
+            rhdf5::h5read(file = file, name = sprintf("%s/reducedDims/%s", expName, red))
         })
         names(reducedDims) <- reducedDimsStored
     }
 
     # rebuild experiment
     if (verbose) message("\t rebuilding experiment")
-    ans <- SingleCellExperiment::SingleCellExperiment(assays = assays,
-                                                      rowData = rowData,
-                                                      colData = colData)
+    ans <- SingleCellExperiment::SingleCellExperiment(
+        assays = assays,
+        rowData = rowData,
+        colData = colData)
     colnames(ans) <- colnames
     if (rownames.present) {
         rownames(ans) <- rownames
@@ -244,6 +343,8 @@ loadExp <- function(file, expName, verbose) {
 
 
 
+#' @keywords internal
+#'
 testFile <- function(file) {
     checkmate::assertFileExists(file, access = "r", extension = "h5")
 
@@ -271,10 +372,12 @@ testFile <- function(file) {
 
 
 
+#' @keywords internal
+#'
 uploadFile <- function(file, sasToken, endpoint = "https://bioconductorhubs.blob.core.windows.net") {
     # checkmate::assertFileExists(file, access = "r", extension = "h5")
     checkmate::assertString(sasToken)
-    checkmate::assertString(endpoint, pattern = "https://\\w+\\.\\w+\\.\\w+\\.\\w+\\.[a-z]{3}")
+    checkmate::assertString(endpoint)
 
     message("establishing connection")
     # create endpoint object
@@ -288,7 +391,10 @@ uploadFile <- function(file, sasToken, endpoint = "https://bioconductorhubs.blob
 
     message("commencing upload")
     # upload file
-    AzureStor::storage_upload(container, src = normalizePath(file), dest = file.path("scMultiome", basename(file)))
+    AzureStor::storage_upload(
+        container,
+        src = normalizePath(file),
+        dest = file.path("scMultiome", basename(file)))
 
     message("upload complete")
     # list files
