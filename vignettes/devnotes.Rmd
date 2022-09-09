@@ -1,13 +1,15 @@
 ---
 title: "Developer Notes"
-author: "Aleksander Chlebowski"
-date: 9 September 2022
 output:
     BiocStyle::html_document:
     toc: true
 number_section: true
 self_contained: true
 titlecaps: true
+vignette: >
+  %\VignetteIndexEntry{Developer Notes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{css, echo=FALSE}
