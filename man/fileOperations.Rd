@@ -55,11 +55,16 @@ and lower level groups to store specific elements:
 \itemize{
 \item{\code{experiment} class is saved in group "class"}
 \item{the name of the package where the class is defined is saved in group "pacakge"}
-\item{assays are saved as sparse matrices in group "assays", using \code{writeSparseMatrix}}
+\item{assays are saved as sparse matrices in subgroup "assays", using \code{writeSparseMatrix}}
 \item{\code{colData} and \code{colnames} are saved in subgroup "properties"}
-\item{if \code{experiment} has rownames, the are saved in "properties"}
+\item{if \code{experiment} has \code{rownames}, the are saved in "properties"}
 \item{\code{rowData} is saved in "properties", unless it is an empty \code{DataFrame}}
-\item{if \code{experiment} has a \code{reducedDim} component, they too are saved in "properties"}
+\item{if \code{experiment} has a \code{rowRanges} component,
+it is converted to a data frame and saved in "properties"}
+\item{if \code{experiment} has a \code{metadata} component,
+it is deparsed to a string and saved in "properties"}
+\item{if \code{experiment} has a \code{reducedDims} component,
+they are saved in subgroup "reducedDims"}
 }
 \code{DataFrames} (e.g. \code{colData}, \code{rowData}, embeddings)
 are converted to \code{data.frames} and saved as compound type.

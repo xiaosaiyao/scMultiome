@@ -16,11 +16,16 @@
 #' \itemize{
 #'   \item{\code{experiment} class is saved in group "class"}
 #'   \item{the name of the package where the class is defined is saved in group "pacakge"}
-#'   \item{assays are saved as sparse matrices in group "assays", using \code{writeSparseMatrix}}
+#'   \item{assays are saved as sparse matrices in subgroup "assays", using \code{writeSparseMatrix}}
 #'   \item{\code{colData} and \code{colnames} are saved in subgroup "properties"}
-#'   \item{if \code{experiment} has rownames, the are saved in "properties"}
+#'   \item{if \code{experiment} has \code{rownames}, the are saved in "properties"}
 #'   \item{\code{rowData} is saved in "properties", unless it is an empty \code{DataFrame}}
-#'   \item{if \code{experiment} has a \code{reducedDim} component, they too are saved in "properties"}
+#'   \item{if \code{experiment} has a \code{rowRanges} component,
+#'         it is converted to a data frame and saved in "properties"}
+#'   \item{if \code{experiment} has a \code{metadata} component,
+#'         it is deparsed to a string and saved in "properties"}
+#'   \item{if \code{experiment} has a \code{reducedDims} component,
+#'         they are saved in subgroup "reducedDims"}
 #' }
 #' \code{DataFrames} (e.g. \code{colData}, \code{rowData}, embeddings)
 #' are converted to \code{data.frames} and saved as compound type.
@@ -89,7 +94,7 @@ saveMAE <- function(mae, file, experiments = NULL, verbose = TRUE, overwrite = F
     ans <- lapply(experiments, function(x) {
         if(verbose) message("saving experiment ", x)
         ans <- saveExp(mae[[x]], x, file, verbose)
-        if (verbose) message("\t ... done")
+        if (verbose) message(" ... done", "\n")
         return(ans)
     })
     names(ans) <- experiments
@@ -129,7 +134,7 @@ loadMAE <- function(experiments, verbose = FALSE) {
     expList <- sapply(experiments, loadExp, file = file, verbose = verbose, simplify = FALSE)
 
     # build mae
-    if (verbose) message("\t building MultiAssayExperiment")
+    if (verbose) message("building MultiAssayExperiment")
     mae <- MultiAssayExperiment::MultiAssayExperiment(experiments = expList)
 
     return(mae)
@@ -156,19 +161,14 @@ saveExp <- function(exp, expName, file, verbose) {
     rowData <- SummarizedExperiment::rowData(exp)
     colnames <- colnames(exp)
     rownames <- rownames(exp)
+    rowRanges <- SummarizedExperiment::rowRanges(exp)
+    metadata <- S4Vectors::metadata(exp)
     reducedDims <- SingleCellExperiment::reducedDims(exp)
 
     # PART TWO: save experiment elements
 
-    # create groups for this experiment within file
-    if (verbose) message("\t creating groups")
+    # create master group for this experiment
     rhdf5::h5createGroup(file, expName)
-    rhdf5::h5createGroup(file, sprintf("%s/assays", expName))
-    rhdf5::h5createGroup(file, sprintf("%s/properties", expName))
-    # reducedDims group is only created if there any reducedDims objects
-    if (length(reducedDims) > 0L) {
-        rhdf5::h5createGroup(file, sprintf("%s/reducedDims", expName))
-    }
 
     # write object class
     if (verbose) message("\t writing class")
@@ -186,8 +186,9 @@ saveExp <- function(exp, expName, file, verbose) {
 
     # write assays
     if (verbose) message("\t writing assays")
+    rhdf5::h5createGroup(file, sprintf("%s/assays", expName))
     for (ass in names(assays)) {
-        if (verbose) message("\t\t ... ", ass)
+        if (verbose) message("\t ... ", ass)
         writeSparseMatrix(
             x = assays[[ass]],
             file = file,
@@ -196,6 +197,7 @@ saveExp <- function(exp, expName, file, verbose) {
 
     # write properties
     if (verbose) message("\t writing properties")
+    rhdf5::h5createGroup(file, sprintf("%s/properties", expName))
     rhdf5::h5write(
         obj = as.data.frame(colData),
         file = file,
@@ -219,11 +221,31 @@ saveExp <- function(exp, expName, file, verbose) {
             file = file,
             name = sprintf("%s/properties/rownames", expName))
     }
+    # write rowRanges, if a GRanges object
+    if (inherits(rowRanges, "GRanges")) {
+        if (verbose) message("\t writing row ranges")
+        rhdf5::h5write(
+            obj = storeGR(rowRanges),
+            file = file,
+            name = sprintf("%s/properties/rowRanges", expName)
+        )
+    }
+    # write metadata, if any
+    if (!is.null(metadata)) {
+        if (verbose) message("\t writing metadata")
+        rhdf5::h5write(
+            obj = deparse(metadata),
+            file = file,
+            name = sprintf("%s/properties/metadata", expName)
+        )
+    }
+
     # write reduced dimensions, if any
     if (length(reducedDims) > 0L) {
         if (verbose) message("\t writing reduced dimensions")
+        rhdf5::h5createGroup(file, sprintf("%s/reducedDims", expName))
         for (red in names(reducedDims)) {
-            if (verbose) message("\t\t ... ", red)
+            if (verbose) message("\t ... ", red)
             rhdf5::h5write(
                 obj = reducedDims[[red]],
                 file = file,
@@ -255,6 +277,10 @@ loadExp <- function(file, expName, verbose) {
                                    fileContents[fileContents[["group"]] == sprintf("/%s/properties", expName), "name"])
     rowData.present <- is.element("rowData",
                                   fileContents[fileContents[["group"]] == sprintf("/%s/properties", expName), "name"])
+    rowRanges.present <- is.element("rowRanges",
+                                    fileContents[fileContents[["group"]] == sprintf("/%s/properties", expName), "name"])
+    metadata.present <- is.element("metadata",
+                                   fileContents[fileContents[["group"]] == sprintf("/%s/properties", expName), "name"])
     reducedDims.present <- is.element("reducedDims",
                                       fileContents[fileContents[["group"]] == sprintf("/%s", expName), "name"])
 
@@ -270,7 +296,7 @@ loadExp <- function(file, expName, verbose) {
     if (verbose) message("\t loading assays")
     assaysStored <- fileContents[fileContents[["group"]] == sprintf("/%s/assays", expName), "name"]
     assays <- lapply(assaysStored, function(ass) {
-        if (verbose) message("\t\t ... ", ass)
+        if (verbose) message("\t ... ", ass)
         HDF5Array::H5SparseMatrix(filepath = file, group = sprintf("/%s/assays/%s", expName, ass))
     })
     names(assays) <- assaysStored
@@ -289,13 +315,25 @@ loadExp <- function(file, expName, verbose) {
     } else {
         data.frame(row.names = rownames)
     }
+    # load row ranges if saved
+    if (rowRanges.present) {
+        if (verbose) message("\t loading row ranges")
+        rowRanges <- rhdf5::h5read(file = file, name = sprintf("%s/properties/rowRanges", expName))
+        rowRanges <- restoreGR(rowRanges)
+    }
+    # load metadata if saved
+    if (metadata.present) {
+        if (verbose) message("\t loading metadata")
+        metadata <- rhdf5::h5read(file = file, name = sprintf("%s/properties/metadata", expName))
+        metadata <- eval(parse(text = metadata))
+    }
 
     # load reduced dimensions if saved
     if (reducedDims.present) {
         if (verbose) message("\t loading reduced dimensions")
         reducedDimsStored <- fileContents[fileContents[["group"]] == sprintf("/%s/reducedDims", expName), "name"]
         reducedDims <- lapply(reducedDimsStored, function(red) {
-            if (verbose) message("\t\t ... ", red)
+            if (verbose) message("\t ... ", red)
             rhdf5::h5read(file = file, name = sprintf("%s/reducedDims/%s", expName, red))
         })
         names(reducedDims) <- reducedDimsStored
@@ -311,9 +349,16 @@ loadExp <- function(file, expName, verbose) {
     if (rownames.present) {
         rownames(ans) <- rownames
     }
+    if (rowRanges.present) {
+        SummarizedExperiment::rowRanges(ans) <- rowRanges
+    }
+    if (metadata.present) {
+        S4Vectors::metadata(ans) <- metadata
+    }
     if (reducedDims.present) {
         SingleCellExperiment::reducedDims(ans, withDimnames = FALSE) <- reducedDims
     }
+
 
     # attempt to restore class of experiment if different to SingleCellExperiment
     # only if required package is available

@@ -68,14 +68,15 @@ usethis::use_package("SingleCellExperiment", type = "Depends") # all experiments
 usethis::use_package("MultiAssayExperiment", type = "Depends") # class of final object
 usethis::use_package("AnnotationHub", type = "Depends")        # required by Bioconductor
 usethis::use_package("ExperimentHub", type = "Depends")        # required by Bioconductor
-usethis::use_package("methods", type = "Imports")              # for testing and changing object classes
-usethis::use_package("S4Vectors", type = "Imports")            # for operating on DataFrames
-usethis::use_package("rhdf5", type = "Imports")                # for operating on hdf5 files
-usethis::use_package("HDF5Array", type = "Imports")            # for reading assays from hdf5 files
-usethis::use_package("DelayedArray", type = "Imports")         # loaded assays inherit from this
-usethis::use_package("checkmate", type = "Imports")            # for argument checks in functions
-usethis::use_package("AzureStor", type = "Imports")            # for uploading data to Bioconductor
-usethis::use_package("dsdb.plus", type = "Suggests")           # class of TileMatrix experiment
+usethis::use_package("methods")                                # for testing and changing object classes
+usethis::use_package("S4Vectors")                              # for operating on DataFrames
+usethis::use_package("GenomicRanges")                          # for manipulating GRanges
+usethis::use_package("rhdf5")                                  # for operating on hdf5 files
+usethis::use_package("HDF5Array")                              # for reading assays from hdf5 files
+usethis::use_package("DelayedArray")                           # loaded assays inherit from this
+usethis::use_package("checkmate")                              # for argument checks in functions
+usethis::use_package("AzureStor")                              # for uploading data to Bioconductor
+usethis::use_package("dsdb.plus")                              # class of TileMatrix experiment
 # set development version
 desc::desc_set_version("0.0.0.9000")
 # normalize file
@@ -146,6 +147,7 @@ usethis::use_vignette(name = "multiome", title = "Obtaining Multiome Data")
 11. use `saveMAE` to add your data set to the `R/data` directory
 12. use `testFile` to validate the accessor function for your dataset
 13. use `uploadFile` to place your data set in the Bioconductor staging directory
+14. see [the vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/HubPub/inst/doc/CreateAHubPackage.html#additional-resources-to-existing-hub-package) for current Bioconductor requirements
 
 <br>
 
