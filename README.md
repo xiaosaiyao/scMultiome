@@ -7,9 +7,10 @@ Collection of public single cell multiome data sets.
 ### Data
 
 The data sets are `ArchR` projects converted to `MultiAssayExperiment` objects and saved in hdf5 files.
-Experiments (parts of the MAE) are `SingleCellExperiment` objects diassembled into parts, so you can choose which experiments to load. Assays are saved as sparse arrays to save storage.
+The nature of the hdf5 format allows the MAEs to be split into individual experiments and store them in one file, so you can choose freely which ones to load. 
+Experiments, usually `SingleCellExperiment` objects, are disassembled into parts, which are saved in the hdf5 hierarchy. Assays are saved as sparse arrays to save storage.
 
-Loading the data yields SCEs, in which assays are of class `DelayedMatrix` to save memory.
+Upon loading, selected SCEs are reassembled from parts and returned as experiments within an MAE object, in which assays are of class `DelayedMatrix` to save memory.
 
 _NOTE: These data sets can be quite large. See `listDatasets()` to avoid surprises._
 
