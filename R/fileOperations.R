@@ -121,6 +121,7 @@ loadMAE <- function(experiments, verbose = FALSE) {
 
     # check for file
     if (verbose) message("\t locating file")
+    # TODO: this temporarily looks for files in the package dir rather than in BC bucket
     file <- file.path(system.file("extdata", package = "scMultiome"), sprintf("%s.h5", dataset))
     checkmate::assertFileExists(file, access = "r", extension = "h5")
 
@@ -384,66 +385,4 @@ loadExp <- function(file, expName, verbose) {
     }
 
     return(ans)
-}
-
-
-
-#' @keywords internal
-#'
-testFile <- function(file) {
-    checkmate::assertFileExists(file, access = "r", extension = "h5")
-
-    # list file contents
-    fc <- rhdf5::h5ls(file)
-    # list experiments (groups in root)
-    experiments <- fc[fc$group == "/", "name"]
-
-    # define accessor function
-    fooDef <- function() {
-        cat("testing accessor function:\t", deparse(match.call()[[1]]), "\n")
-        cat("loading all experiments:\t", paste(experiments, collapse = ", "), "\n")
-        ans <- loadMAE(experiments, verbose = TRUE)
-        return(ans)
-    }
-    # obtain function name
-    fooName <- tools::file_path_sans_ext(basename(file))
-
-    # assign accessor with proper name
-    assign(fooName, fooDef)
-
-    # call accessor
-    eval(call(fooName))
-}
-
-
-
-#' @keywords internal
-#'
-uploadFile <- function(file, sasToken, endpoint = "https://bioconductorhubs.blob.core.windows.net") {
-    # checkmate::assertFileExists(file, access = "r", extension = "h5")
-    checkmate::assertString(sasToken)
-    checkmate::assertString(endpoint)
-
-    message("establishing connection")
-    # create endpoint object
-    ep <- AzureStor::storage_endpoint(endpoint, sas = sasToken)
-    # create container
-    container <- AzureStor::storage_container(ep, "staginghub")
-
-    message("files present in staging directory")
-    # list files
-    print(AzureStor::list_storage_files(container))
-
-    message("commencing upload")
-    # upload file
-    AzureStor::storage_upload(
-        container,
-        src = normalizePath(file),
-        dest = file.path("scMultiome", basename(file)))
-
-    message("upload complete")
-    # list files
-    print(AzureStor::list_storage_files(container))
-
-    return(invisible(TRUE))
 }
