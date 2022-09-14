@@ -147,7 +147,7 @@ ii) run `ExperimentHubData::makeExperimentHubMetadata(dirname(system.file(packag
 
 4. add your data set
 i) use `saveMAE` to add your data set to the `R/data` directory
-ii) use `testFile("<PATH_TO_FILE>")` to validate the accessor function for your data set
+ii) use `testFile("<PATH_TO_FILE>")` to validate that your data set can be reconstructed
 
 
 5. edit DESCRIPTION file
@@ -160,6 +160,7 @@ ii) use `testFile("<PATH_TO_FILE>")` to validate the accessor function for your 
 6. upload your data set
 i) email `hubs@bioconductor.org` to notify them that want to update `scMultiome` and request a new SAS token for the Bioconductor data bucket
 ii) having obtained the token, use `uploadFile` to place your data set in the Bioconductor staging directory
+iii) notify Bioconductor that the upload is ready; include a link to the package repo so they can update metadata in ExperimentHub
 
 <br>
 

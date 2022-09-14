@@ -48,11 +48,5 @@ prostateENZ <- function(metadata = FALSE,
     checkmate::assertFlag(metadata)
     experiments <- match.arg(experiments, several.ok = TRUE)
 
-    ans <- if (metadata) {
-        getMetadata()
-    } else {
-        loadMAE(experiments)
-    }
-
-    return(ans)
+    retrieve(metadata, experiments, verbose = FALSE)
 }

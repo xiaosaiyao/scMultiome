@@ -42,7 +42,7 @@
 #' @param mae object of class \code{MultiAssayExperiment}
 #' @param file path to a hdf5 file
 #' @param experiments character string specifying which experiments to save/load
-#' @param verbose logical flag specifying verbosity of operation
+#' @param verbose logical flag specifying operation verbosity
 #' @param overwrite logical flag specifying whether to allow overwriting the hdf5 file
 #' @param exp an experiment object that inherits from class \code{SummarizedExperiment},
 #'            usually a \code{SingleCellExperiment}
@@ -110,20 +110,18 @@ saveMAE <- function(mae, file, experiments = NULL, verbose = TRUE, overwrite = F
 #'
 #' @keywords internal
 #'
-loadMAE <- function(experiments, verbose = FALSE) {
+loadMAE <- function(file, experiments, verbose = FALSE) {
+    checkmate::assertFileExists(file, access = "r", extension = "h5")
     checkmate::assertCharacter(experiments)
     checkmate::assertFlag(verbose)
 
-    # determine dataset
-    dataset <- determineDataset()
-
-    if (verbose) message("loading dataset ", dataset)
-
-    # check for file
-    if (verbose) message("\t locating file")
-    # TODO: this temporarily looks for files in the package dir rather than in BC bucket
-    file <- file.path(system.file("extdata", package = "scMultiome"), sprintf("%s.h5", dataset))
-    checkmate::assertFileExists(file, access = "r", extension = "h5")
+    if (verbose) {
+        dataset <- dynGet("dataset",
+                          ifnotfound = paste("stored in file",
+                                             dynGet("file",
+                                                    ifnotfound = stop("resource missing"))))
+        message("loading dataset ", dataset)
+    }
 
     # list experiments in file
     fileContents <- rhdf5::h5ls(file)
@@ -131,7 +129,7 @@ loadMAE <- function(experiments, verbose = FALSE) {
     lapply(experiments, checkmate::assertChoice, choices = expStored)
 
     # load files
-    if (verbose) message("\t loading experiments")
+    if (verbose) message("loading experiments")
     expList <- sapply(experiments, loadExp, file = file, verbose = verbose, simplify = FALSE)
 
     # build mae
