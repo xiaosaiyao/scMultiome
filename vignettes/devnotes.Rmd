@@ -113,26 +113,13 @@ usethis::use_vignette(name = "multiome", title = "Obtaining Multiome Data")
 |      this is necessary in order for the scripts below to write to files properly
 
 
-1. describe the metadata for your data set in `inst/scripts/make-metadata-<DATASET_NAME>.R`
+1. document your data set
+i) add your data set to the list in `R/scMultiome-package.R`
+ii) describe the process of data preparation for your data set in `inst/scripts/make-data-<DATASET_NAME>.Rmd`
 
-|      see `inst/scripts/make-metadata.R` for more information
-|      see `inst/scripts/make-metadata-prostateENZ.R` for example
+|     make sure to disable code evaluation (see below)
 
-
-2. run `source(system.file("scripts", "make-metadata.R", package = "scMultiome"))`
-3. run `ExperimentHubData::makeExperimentHubMetadata(dirname(system.file(package = "scMultiome")))`
-
-|      this validates package metadata
-|      ensure it passes without errors
-
-
-4. add your data set to the list in `R/scMultiome-package.R`
-5. describe the process of data preparation for your data set in `inst/scripts/make-data-<DATASET_NAME>.Rmd`
-
-|      make sure to disable code evaluation (see below)
-
-
-6. create an R file to document you dataset
+iii) create a `<DATASET_NAME>.R` file to build a help page for your data set
 
 |      copy and adapt the accessor function from `R/prostateENZ.R`
 |      the default value of the `experiments` argument must reflect experiment names in your data set
@@ -141,15 +128,42 @@ usethis::use_vignette(name = "multiome", title = "Obtaining Multiome Data")
 |      use `@inheritSection prostateENZ Data storage and access`
 |      copy and adapt section `Data preparation` to link to the respective .Rmd file
 
+iv) run `devtools::document()`
 
-7. add yourself as package author with `desc::desc_add_author("<GIVEN_NAME>", "<FAMILY_NAME>", "<EMAIL>", role = "aut")`
-8. update package version with `desc::desc_bump_version("minor")`
-9. reorder the Depends field in the DESCRIPTION file so that ExperimentHub is the last package listed there
-10. run `devtools::document()`
-11. use `saveMAE` to add your data set to the `R/data` directory
-12. use `testFile` to validate the accessor function for your dataset
-13. use `uploadFile` to place your data set in the Bioconductor staging directory
-14. see [the vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/HubPub/inst/doc/CreateAHubPackage.html#additional-resources-to-existing-hub-package) for current Bioconductor requirements
+
+2. add metadata for your data set in `inst/scripts/make-metadata-<DATASET_NAME>.R`
+
+|      see `inst/scripts/make-metadata.R` for more information
+|      see `inst/scripts/make-metadata-prostateENZ.R` for example
+
+
+3. build and validate metadata
+i) run `source(system.file("scripts", "make-metadata.R", package = "scMultiome"))`
+ii) run `ExperimentHubData::makeExperimentHubMetadata(dirname(system.file(package = "scMultiome")))`
+
+|      this validates package metadata
+|      ensure it passes without errors
+
+
+4. add your data set
+i) use `saveMAE` to add your data set to the `R/data` directory
+ii) use `testFile("<PATH_TO_FILE>")` to validate the accessor function for your data set
+
+
+5. edit DESCRIPTION file
+
+|      add yourself as package author with `desc::desc_add_author("<GIVEN_NAME>", "<FAMILY_NAME>", "<EMAIL>", role = "aut")`
+|      update package version with `desc::desc_bump_version("minor")`
+|      reorder the Depends field in the DESCRIPTION file so that ExperimentHub is the last package listed there
+
+
+6. upload your data set
+i) email `hubs@bioconductor.org` to notify them that want to update `scMultiome` and request a new SAS token for the Bioconductor data bucket
+ii) having obtained the token, use `uploadFile` to place your data set in the Bioconductor staging directory
+
+<br>
+
+Consult [this vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/HubPub/inst/doc/CreateAHubPackage.html#additional-resources-to-existing-hub-package) for current Bioconductor requirements.
 
 <br>
 

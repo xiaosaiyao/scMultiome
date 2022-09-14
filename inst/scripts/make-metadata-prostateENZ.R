@@ -14,9 +14,9 @@ metadata.prostateENZ <- data.frame(
     DataProvider = "Tampere University", # refers to raw data
     Maintainer = desc::desc_get_maintainer(),
     RDataClass = "MultiAssayExperiment", # class that is returned from hub
-    DispatchClass = "H5File", # format saved on disk
+    DispatchClass = "FilePath", # format saved on disk; FilePath returns location that our accessor functions will use
     # Location_Prefix = "", # SKIP if data stored in the Bioconductor AWS S3
-    RDataPath = "/scMultiome/prostateENZ", # TBD
+    RDataPath = "scMultiome/prostateENZ", # TBD
     stringsAsFactors = FALSE
 )
 

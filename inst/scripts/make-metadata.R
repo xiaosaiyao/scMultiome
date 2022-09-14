@@ -32,6 +32,18 @@ metadata.all <- ls(envir = .GlobalEnv, pattern = "^metadata\\..+")
 metadata <- do.call(rbind, mget(metadata.all))
 
 # write metadata to file - DO NOT ALTER
-utils::write.csv(metadata,
-                 file.path(system.file("extdata", package = "scMultiome"), "metadata.csv"),
-                 row.names = FALSE)
+fileLoc <- system.file("extdata", package = "scMultiome")
+fileName <- "metadata.csv"
+## add current package version to previous metadata file
+if (file.exists(file.path(fileLoc, fileName))) {
+    oldVersion <- paste0("_v", paste(strsplit(as.character(desc::desc_get("Version")), "\\.")[[1]][1:3], collapse = ""))
+    oldFileName <- paste0("metadata", oldVersion, ".csv")
+    file.rename(file.path(fileLoc, "metadata.csv"), file.path(fileLoc, oldFileName))
+}
+## wirte new metadata
+utils::write.csv(metadata, file.path(fileLoc, fileName), row.names = FALSE)
+
+
+# clean up to prevent corruption on re-run
+rm(list = ls(pattern = "^manifest\\..+"))
+rm(list = ls(pattern = "^metadata\\..+"))
