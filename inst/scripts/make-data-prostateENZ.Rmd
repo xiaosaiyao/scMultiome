@@ -1,7 +1,7 @@
 ---
 title: "LNCaP Cells Data Set"
 author: "Aleksander Chlebowski"
-date: 6 Spetember 2022
+date: 6 September 2022
 output:
   BiocStyle::html_document:
     titlecaps: false

@@ -1,5 +1,5 @@
 #'
-#' LNCap Cells
+#' LNCaP Cells Treated with Enzalutamide
 #'
 #' Single-cell ATAC sequencing of parental LNCaP cells (DMSO treated, the control),
 #' LNCaP cells treated with 10µM enzalutamide for 48 hours,
@@ -33,7 +33,7 @@
 #' @section Data storage and access:
 #' The \code{MultiAssayExperiments} is split into separate \code{SingleCellExperiment}
 #' objects and they in turn are split into components, all of which are stored in a
-#' single hdf5 file. Data and can be accessed with an accessor function, which extracts
+#' single hdf5 file. Data and can be accessed with a special function that extracts
 #' elements of the requested experiment(s), reassembles them, and builds an MAE.
 #'
 #' @section Data preparation:
@@ -42,11 +42,15 @@
 #'
 #' @export
 #'
-prostateENZ <- function(metadata = FALSE,
-                        experiments = c("TileMatrix500", "GeneScoreMatrix",
-                                        "GeneIntegrationMatrix", "PeakMatrix", "MotifMatrix")) {
-    checkmate::assertFlag(metadata)
-    experiments <- match.arg(experiments, several.ok = TRUE)
+prostateENZ <-
+    function(metadata = FALSE,
+             experiments = c("TileMatrix500",
+                             "GeneScoreMatrix",
+                             "GeneIntegrationMatrix",
+                             "PeakMatrix",
+                             "MotifMatrix")) {
+        checkmate::assertFlag(metadata)
+        experiments <- match.arg(experiments, several.ok = TRUE)
 
-    retrieve(metadata, experiments, verbose = FALSE)
-}
+        retrieve(metadata, experiments, verbose = FALSE)
+    }

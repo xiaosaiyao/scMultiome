@@ -1,6 +1,7 @@
 
 # This script creates package metadata displayed in ExperimentHub.
 # It also creates the data set manifest used by the listDatasets function.
+# It also creates the data set list that will appear in the package help page.
 # ExperimentHub DEMANDS that the metadata be in a data frame that is written to a csv file.
 # See https://bioconductor.org/packages/3.15/bioc/vignettes/HubPub/inst/doc/CreateAHubPackage.html#overview for details.
 # Describe your data set in a file called /inst/scripts/make-metadata-<DATASET_NAME>.R
@@ -40,7 +41,7 @@ if (file.exists(file.path(fileLoc, fileName))) {
     oldFileName <- paste0("metadata", oldVersion, ".csv")
     file.rename(file.path(fileLoc, "metadata.csv"), file.path(fileLoc, oldFileName))
 }
-## wirte new metadata
+## write new metadata
 utils::write.csv(metadata, file.path(fileLoc, fileName), row.names = FALSE)
 
 

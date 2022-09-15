@@ -2,7 +2,7 @@
 % Please edit documentation in R/prostateENZ.R
 \name{prostateENZ}
 \alias{prostateENZ}
-\title{LNCap Cells}
+\title{LNCaP Cells Treated with Enzalutamide}
 \format{
 \code{MultiAssayExperiment} obtained from an \code{ArchR} project. Annotated with the Hg38 genome build.
 Contains the following experiments:
@@ -40,7 +40,7 @@ and LNCaP-derived enzalutamide-resistant RES-A and RES-B cells.
 
 The \code{MultiAssayExperiments} is split into separate \code{SingleCellExperiment}
 objects and they in turn are split into components, all of which are stored in a
-single hdf5 file. Data and can be accessed with an accessor function, which extracts
+single hdf5 file. Data and can be accessed with a special function that extracts
 elements of the requested experiment(s), reassembles them, and builds an MAE.
 }
 
