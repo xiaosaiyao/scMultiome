@@ -44,6 +44,13 @@ if (file.exists(file.path(fileLoc, fileName))) {
 utils::write.csv(metadata, file.path(fileLoc, fileName), row.names = FALSE)
 
 
+
+# create data set list for package man page
+makeDataSetList(metadata)
+
+
+
 # clean up to prevent corruption on re-run
-rm(list = ls(pattern = "^manifest\\..+"))
-rm(list = ls(pattern = "^metadata\\..+"))
+rm(list = ls(pattern = "^manifest.?"))
+rm(list = ls(pattern = "^metadata.?"))
+rm(files, fileLoc, fileName, oldFileName, oldVersion)

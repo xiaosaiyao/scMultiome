@@ -8,12 +8,8 @@
 #' See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?prostateENZ}.
 #'
 #' @section Datasets:
-#' \itemize{
-#'   \item{\strong{prostateENZ}:
-#'   LNCaP cells cultured with or without enzalutamide.
-#'   }
-#'
-#' }
+#' ```{r child = system.file("scripts", "datasetList.Rmd", package = "scMultiome")}
+#' ```
 #'
 # Bioconductor requires that AnnotationHub and ExperimentHub be fully imported
 #' @import AnnotationHub

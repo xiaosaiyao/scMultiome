@@ -20,10 +20,7 @@ See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?pros
 \section{Datasets}{
 
 \itemize{
-\item{\strong{prostateENZ}:
-LNCaP cells cultured with or without enzalutamide.
-}
-
+\item \strong{prostateENZ}: LNCaP Cells
 }
 }
 
@@ -33,6 +30,7 @@ LNCaP cells cultured with or without enzalutamide.
 Authors:
 \itemize{
   \item Aleksander Chlebowski \email{aleksander.chlebowski@contractors.roche.com}
+  \item Aaron Lun \email{lun.aaron@gene.com}
 }
 
 }
