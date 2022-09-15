@@ -10,7 +10,7 @@
 \usage{
 saveMAE(mae, file, experiments = NULL, verbose = TRUE, overwrite = FALSE)
 
-loadMAE(experiments, verbose = FALSE)
+loadMAE(file, experiments, verbose = FALSE)
 
 saveExp(exp, expName, file, verbose)
 
@@ -23,7 +23,7 @@ loadExp(file, expName, verbose)
 
 \item{experiments}{character string specifying which experiments to save/load}
 
-\item{verbose}{logical flag specifying verbosity of operation}
+\item{verbose}{logical flag specifying operation verbosity}
 
 \item{overwrite}{logical flag specifying whether to allow overwriting the hdf5 file}
 

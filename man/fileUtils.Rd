@@ -17,7 +17,7 @@ uploadFile(
 \arguments{
 \item{file}{path to hdf5 file containing a data set}
 
-\item{sasToken}{acess token to \code{endpoint}}
+\item{sasToken}{access token to \code{endpoint}}
 
 \item{endpoint}{Bioconductor's data bucket endpoint url}
 }
@@ -29,8 +29,8 @@ uploadFile(
 Helper functions for new data sets.
 }
 \details{
-\code{testFile} can be used to test whether a newly saved data set loads correctly.
-It creates an accessor function specific to the file and call it retrieving all available experiments.
+\code{testFile} can be used to test whether a data set loads correctly from a local file.
+It calls \code{loadMAE} and extracts all experiment verbosely.
 
 \code{uploadFile} will load a single file to the Bioconductor staging directory.
 

@@ -3,8 +3,8 @@
 #'
 #' Helper functions for new data sets.
 #'
-#' \code{testFile} can be used to test whether a newly saved data set loads correctly.
-#' It creates an accessor function specific to the file and call it retrieving all available experiments.
+#' \code{testFile} can be used to test whether a data set loads correctly from a local file.
+#' It calls \code{loadMAE} and extracts all experiment verbosely.
 #'
 #' \code{uploadFile} will load a single file to the Bioconductor staging directory.
 #'
@@ -13,7 +13,7 @@
 #' @name fileUtils
 #'
 #' @param file path to hdf5 file containing a data set
-#' @param sasToken acess token to \code{endpoint}
+#' @param sasToken access token to \code{endpoint}
 #' @param endpoint Bioconductor's data bucket endpoint url
 #'
 #' @return
@@ -32,21 +32,10 @@ testFile <- function(file) {
     # list experiments (groups in root)
     experiments <- fc[fc$group == "/", "name"]
 
-    # define accessor function
-    fooDef <- function() {
-        cat("testing accessor function:\t", deparse(match.call()[[1]]), "\n")
-        cat("loading all experiments:\t", paste(experiments, collapse = ", "), "\n")
-        ans <- loadMAE(experiments, verbose = TRUE)
-        return(ans)
-    }
-    # obtain function name
-    fooName <- tools::file_path_sans_ext(basename(file))
-
-    # assign accessor with proper name
-    assign(fooName, fooDef)
-
-    # call accessor
-    eval(call(fooName))
+    cat("testing loading MAE from file:\t", file, "\n")
+    cat("loading all experiments:\t", paste(experiments, collapse = ", "), "\n")
+    ans <- loadMAE(file, experiments, verbose = TRUE)
+    return(ans)
 }
 
 

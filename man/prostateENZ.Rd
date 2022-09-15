@@ -226,7 +226,7 @@ MAE <- c(MAE, ActivityMatrix = ActivityMatrix)
 
 
 # save object
-saveMAE("data/prostateENZ.h5")
+saveMAE("inst/extdata/prostateENZ.h5")
 
 }\if{html}{\out{</div>}}
 }
