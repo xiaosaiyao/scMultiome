@@ -2,10 +2,11 @@ Type: Package
 Package: scMultiome
 Title: Collection of Public Single-Cell Multiome (scATAC + scRNAseq)
     Datasets
-Version: 0.0.0.9016
+Version: 0.0.0.9017
 Authors@R: c(
     person("Xiaosai", "Yao", , "xyao19@gene.com", role = "cre"),
-    person("Aleksander", "Chlebowski", , "aleksander.chlebowski@contractors.roche.com", role = "aut")
+    person("Aleksander", "Chlebowski", , "aleksander.chlebowski@contractors.roche.com", role = "aut"),
+    person("Aaron", "Lun", , "lun.aaron@gene.com", role = "aut")
   )
 Description: Single cell multiome data, containing chromatin accessibility
     (scATAC-seq) and gene expression (scRNA-seq) information analyzed with
