@@ -4,7 +4,8 @@
 
 Collection of public single cell multiome data sets.
 
-### Data
+
+## Data
 
 The data sets are `ArchR` projects converted to `MultiAssayExperiment` objects and saved in hdf5 files.
 The nature of the hdf5 format allows the MAEs to be split into individual experiments and store them in one file, so you can choose freely which ones to load. 
@@ -15,7 +16,7 @@ Upon loading, selected SCEs are reassembled from parts and returned as experimen
 _NOTE: These data sets can be quite large. See `listDatasets()` to avoid surprises._
 
 
-### Installation:
+## Installation:
 ```
 if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 
@@ -23,7 +24,12 @@ BiocManager::install("scMultiome")
 ```
 
 
-### Package structure:
+## Package Contents
+
+To list currently available data sets, use `listDatasets()` or see package help with `?scMultiome`.
+
+
+## Package structure:
 
 ```
 .
@@ -40,6 +46,8 @@ BiocManager::install("scMultiome")
 └── scMultiome.Rproj                RStudio project file           
 ```
     
-### Contributing
 
-To add your public data sets to the package, please contact the package mainainer.
+## Contributing
+
+To add your public data sets to the package, review the vignette _Adding Data Sets_ and contact the package maintainer.
+
