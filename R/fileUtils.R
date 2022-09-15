@@ -49,6 +49,10 @@ uploadFile <- function(file, sasToken, endpoint = "https://bioconductorhubs.blob
     checkmate::assertString(sasToken)
     checkmate::assertString(endpoint)
 
+    if (!requireNamespace("AzureStor")) {
+        stop("uploading files requires package AzureStor, which is not insatlled")
+    }
+
     message("establishing connection")
     # create endpoint object
     ep <- AzureStor::storage_endpoint(endpoint, sas = sasToken)

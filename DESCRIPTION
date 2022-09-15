@@ -2,7 +2,7 @@ Type: Package
 Package: scMultiome
 Title: Collection of Public Single-Cell Multiome (scATAC + scRNAseq)
     Datasets
-Version: 0.0.0.9022
+Version: 0.0.0.9023
 Authors@R: c(
     person("Xiaosai", "Yao", , "xyao19@gene.com", role = "cre"),
     person("Aleksander", "Chlebowski", , "aleksander.chlebowski@contractors.roche.com", role = "aut"),
@@ -19,7 +19,6 @@ Depends:
     AnnotationHub,
     ExperimentHub
 Imports: 
-    AzureStor,
     HDF5Array,
     S4Vectors,
     checkmate,
@@ -28,6 +27,7 @@ Imports:
     methods,
     GenomicRanges
 Suggests: 
+    AzureStor,
     dsdb.plus,
     knitr,
     rmarkdown,
