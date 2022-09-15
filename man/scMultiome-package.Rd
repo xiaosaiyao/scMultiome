@@ -20,7 +20,7 @@ See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?pros
 \section{Datasets}{
 
 \itemize{
-\item \strong{prostateENZ}: LNCaP Cells
+\item \strong{prostateENZ}: LNCaP Cells Treated with Enzalutamide
 }
 }
 

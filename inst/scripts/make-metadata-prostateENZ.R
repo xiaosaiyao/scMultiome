@@ -1,7 +1,7 @@
 
 # ExperimentHub metadata
 metadata.prostateENZ <- data.frame(
-    Title = "LNCaP Cells",
+    Title = "LNCaP Cells Treated with Enzalutamide",
     Description = "Multiome data (scATAC and scRNAseq) for enzalutamide-treated LNCaP cells. Measured (unpaired) with Illumina NextSeq 500 (GPL18573). Results stored in GEO, acc.nos: GSE168667 and GSE168668.",
     BiocVersion = "3.16",
     Genome = "hg38",
@@ -16,7 +16,7 @@ metadata.prostateENZ <- data.frame(
     RDataClass = "MultiAssayExperiment", # class that is returned from hub
     DispatchClass = "FilePath", # format saved on disk; FilePath only returns file location
     # Location_Prefix = "", # SKIP if data stored in the Bioconductor AWS S3
-    RDataPath = "scMultiome/prostateENZ", # TBD
+    RDataPath = "scMultiome/prostateENZ",
     stringsAsFactors = FALSE
 )
 
