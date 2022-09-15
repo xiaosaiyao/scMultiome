@@ -83,3 +83,7 @@ ArchR projects were converted to `MultiAssayExperiment` objects using the functi
 # Storage And Access
 
 The ArchR MAE is stored in a hdf5 file. In order to reduce storage space, assays are extracted from Matrices and saved with `artificer.matrix::writeSparseMatrix`. This requires that metadata is stored separately from the assays (but still in the same file). The data is accessed by functions that extract requested assays and their respective metadata, reconstruct the SCE(s) and return an MAE.
+
+
+
+<br><br><br>

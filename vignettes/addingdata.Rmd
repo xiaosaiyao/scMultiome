@@ -1,0 +1,117 @@
+---
+title: "Adding Data Sets"
+output:
+  BiocStyle::html_document:
+  toc: true
+number_section: true
+self_contained: true
+titlecaps: true
+vignette: >
+  %\VignetteIndexEntry{Adding Data Sets}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+# Introduction
+
+This package is a data repository for single cell multiome data within `ExperimentHub`. It also provides a framework to add more multiome data with minimal effort but the process cannot be fully automated. This vignette will guide you.
+
+
+
+<br><br><br>
+
+# Developer Mode
+
+The main purpose of the package is serving data. Adding data is a different process that involves updating the package and as such it must be done in "developer mode". The developer mode allows access to tools that a normal used will never require.
+
+To work in developer mode, you must first clone the package repository with `git`. Create a branch from `master` and work on that.
+
+Start an R session in the package directory (e.g. by opening the RStudio project in RStudio) and run `devtools::load_all()`. This is necessary for the R engine to temporarily identify your working directory as the package installation directory, and to expose the internal functions that you will be using.
+
+
+
+<br><br><br>
+
+# Documenting Your Data Set
+
+Every data set needs a help page to describe the source data, references, and whatever else you deem necessary.
+Since every data set is accessed by its own accessor function, the `R` file that defines the function is the natural place to place the data set documentation. The package framework is constructed such that accessor functions are extremely simple and you can basically copy the original one (`prostateENZ`) and most of its documentation.
+
+The process of obtaining the data set should also be described.
+
+First, run `makeMakeData("<DATASET_NAME>")`. This will create an Rmarkdown file called `inst/scripts/make-data-<DATASET_NAME>.Rmd`. Use it to describe how your data set was obtained. This doesn't have to be a working script, just a report. Note that code evaluation has been disabled so that the lengthy ArchR analysis does not run again.
+
+Second, run `makeR("<DATASET_NAME>")`. This will create an R file called `<DATASET_NAME>.R`, which will provide access and help for your data set. This file will quote the Rmd file created above. This way the R file itself is more concise and easier to edit. Adjust the file accordingly:
+
+1. Give the file the same Title was used in the `make-metadata-<>.R` file (see below).
+2. Add a Description section.
+3. Document any arguments other than `experiments` and `metadata`.
+4. Describe the format of your MultiAssayExperiment.
+5. Cite appropriate references.
+6. Make sure the default value of the `experiments` argument reflects the experiment names in your data set.
+
+Once the files are ready, run `devtools::document()` to build the documentation, and `?scMultiome` and `?<DATASET_NAME>` to review it.
+
+
+
+<br><br><br>
+
+# Creating Metadata
+
+Run `makeMakeMetadata("<DATASET_NAME>")` to create a script to store your data set's metadata. It will be called `inst/scripts/make-metadata-<DATASET_NAME>.R`. Metadata must be a 1-row data frame with specific columns and values must be character strings. See `inst/scripts/make-metadata.R` for more information and `inst/scripts/make-metadata-prostateENZ.R` for an example.
+
+The file also stores metadata that will be returned by `listDatasets`. Likewise, this must be a 1-row data frame and values must be character strings.
+
+Once your `make-metadata` file is ready, build the metadata by running `source(system.file("scripts", "make-metadata.R", package = "scMultiome"))`. This must run without errors
+
+Subsequently, validate the correctness of the metadata by running `ExperimentHubData::makeExperimentHubMetadata(dirname(system.file(package = "scMultiome")))`. This call must also run without errors. It will return an `ExperimentHub` object you can use to view the metadata in the form that the end users will see it.
+
+
+
+<br><br><br>
+
+# Adding Your Data Set
+
+Use `saveMAE` to add your data set to the `R/data` directory. You can use `testFile` to validate that your data set can be reconstructed.
+
+
+
+<br><br><br>
+
+# Updating Package Files
+
+Edit the DESCRIPTION file to update package metadata:
+
+1. Add yourself as package author with `desc::desc_add_author("<GIVEN_NAME>", "<FAMILY_NAME>", "<EMAIL>", role = "aut")`
+2. Update package version with `desc::desc_bump_version("minor")`.
+
+Push your changes to git and create a merge request. Once the request is approved, merge to the `master` branch and only then move on to the next stage.
+
+
+
+<br><br><br>
+
+# Uploading Your Data Set
+
+The final step of the process is to place the data set in Bioconductor's data bucket. This can only be done with Bioconductor's knowledge and blessing.
+
+Email `hubs@bioconductor.org` to notify them that want to update `scMultiome` and request a new SAS token for the Bioconductor bucket. Having obtained the token, use `uploadFile` to place your data set in the Bioconductor staging directory
+Notify Bioconductor that the upload is ready. Pass them a link to the package repo so they can update metadata in `ExperimentHub.`
+
+<br>
+
+Consult [this vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/HubPub/inst/doc/CreateAHubPackage.html#additional-resources-to-existing-hub-package) for current Bioconductor requirements.
+
+<br>
+
+
+
+# Congratulations
+
+
+
+<br><br><br>

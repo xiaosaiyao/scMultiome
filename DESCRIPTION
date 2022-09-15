@@ -2,7 +2,7 @@ Type: Package
 Package: scMultiome
 Title: Collection of Public Single-Cell Multiome (scATAC + scRNAseq)
     Datasets
-Version: 0.0.0.9023
+Version: 0.0.0.9024
 Authors@R: c(
     person("Xiaosai", "Yao", , "xyao19@gene.com", role = "cre"),
     person("Aleksander", "Chlebowski", , "aleksander.chlebowski@contractors.roche.com", role = "aut"),
