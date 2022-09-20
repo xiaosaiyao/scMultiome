@@ -1,0 +1,15 @@
+---
+title: "Your Data Set Title"
+author: "Your Name"
+date: 2022-09-20
+output:
+  BiocStyle::html_document:
+    titlecaps: false
+    toc_float: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+Data were retrieved from (internal) `genomitory` data base.

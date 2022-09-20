@@ -20,6 +20,9 @@ See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?pros
 \section{Datasets}{
 
 \itemize{
+\item \strong{moitfs}: TF Motif Info Hg19
+\item \strong{moitfs}: TF Motif Info Hg38
+\item \strong{moitfs}: TF Motif Info Mm10
 \item \strong{prostateENZ}: LNCaP Cells Treated with Enzalutamide
 }
 }
