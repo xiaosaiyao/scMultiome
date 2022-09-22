@@ -4,9 +4,11 @@
 \alias{retrieve}
 \title{retrieve data set or its metadata}
 \usage{
-retrieve(metadata, experiments, verbose = FALSE)
+retrieve(dataset, metadata, experiments, verbose = FALSE)
 }
 \arguments{
+\item{dataset}{character string specifying the data set name}
+
 \item{metadata}{logical flag specifying whether to return the resource or only its metadata}
 
 \item{experiments}{character string specifying which experiments to extract}
@@ -23,6 +25,5 @@ Retrieve and return the data or metadata for the currently queried dataset.
 \details{
 This is a generic accessor function that is used by user-level accessor functions
 to access datasets or their metadata.
-Dataset name is derived from the name of the accessor function that called this one.
 }
 \keyword{internal}

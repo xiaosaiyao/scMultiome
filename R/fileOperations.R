@@ -80,7 +80,7 @@ saveMAE <- function(mae, file, experiments = NULL, verbose = TRUE, overwrite = F
             if (verbose) message("file ", file, " exists and will be overwritten")
             unlink(file, force = TRUE)
         } else {
-            stop("saveMAE: file ", file, " already exists")
+            stop("file ", file, " already exists")
         }
     }
 
@@ -149,7 +149,7 @@ loadMAE <- function(file, experiments, verbose = FALSE) {
 #' @keywords internal
 #'
 saveExp <- function(exp, expName, file, verbose) {
-    checkmate::assertClass(exp, "SummarizedExperiment")
+    checkmate::assertClass(exp, "SingleCellExperiment")
     checkmate::assertString(expName)
     checkmate::assertFileExists(file, access = "w", extension = "h5")
 
@@ -308,7 +308,7 @@ loadExp <- function(file, expName, verbose) {
     if (rownames.present) {
         rownames <- rhdf5::h5read(file, sprintf("%s/properties/rownames", expName))
     }
-    # load rowData if saved saved, otherwise construct column-less data frame from rownames
+    # load rowData if saved, otherwise construct column-less data frame from rownames
     rowData <- if (rowData.present) {
         rhdf5::h5read(file, sprintf("%s/properties/rowData", expName))
     } else {
@@ -364,19 +364,11 @@ loadExp <- function(file, expName, verbose) {
     if (expClass != "SingleCellExperiment") {
         if (requireNamespace(expClassPkg, quietly = TRUE)) {
             if (verbose) message("\t converting to ", expClass)
-            ans <- switch(expClass,
-                          # class-specific conversions
-
-                          "SingleCellAccessibilityExperiment" = {
-                              tileSize <- as.integer(sub("([A-Za-z]+)(\\d+)", "\\2", "TileMatrix500"))
-                              dsdb.plus::SingleCellAccessibilityExperiment(ans, tile.size = tileSize)
-                          },
-
-                          # generic conversion (default)
-                          methods::as(ans, expClass))
+            ans <- convertSCE(ans, expClass)
         } else {
             if (verbose) {
-                message("\t cannot convert to class ", expClass, " as package ", expClassPkg, " is unavailable")
+                message("\t cannot convert to class ", expClass,
+                        " as package ", expClassPkg, " is unavailable")
                 message("\t ... returning as SingleCellExperiment")
             }
         }

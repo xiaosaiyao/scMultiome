@@ -4,10 +4,11 @@
 \alias{prostateENZ}
 \title{LNCaP Cells Treated with Enzalutamide}
 \format{
-\code{MultiAssayExperiment} obtained from an \code{ArchR} project. Annotated with the Hg38 genome build.
+\code{MultiAssayExperiment} obtained from an \code{ArchR} project.
+Annotated with the Hg38 genome build.
 Contains the following experiments:
 \itemize{
-\item{\strong{TileMatrix500}: SingleCellAccessibilityExperiment with 6062095 rows and 15522 columns}
+\item{\strong{TileMatrix500}: SingleCellExperiment with 6062095 rows and 15522 columns}
 \item{\strong{GeneScoreMatrix}: SingleCellExperiment with 24919 rows and 15522 columns}
 \item{\strong{GeneIntegrationMatrix}: SingleCellExperiment with 23525 rows and 15522 columns}
 \item{\strong{PeakMatrix}: SingleCellExperiment with 80210 rows and 15522 columns}
@@ -49,12 +50,13 @@ elements of the requested experiment(s), reassembles them, and builds an MAE.
 
 scATAC data was downloaded from Gene Expression Omnibus
 (acc. no. \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE168667}{GSE168667})
-and analyzed with SingleCell ATAC - 10X pipeline v2.0.0 \cr
+and analyzed with SingleCell ATAC - 10X pipeline v2.0.0. \cr
 scRNAseq data was downloaded from  Gene Expression Omnibus
 (acc.no. \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE168668}{GSE168668})
 and analyzed with SingleCell Gene Expression Analysis - 10X pipeline v6.0.1. \cr
 
 Downstream analysis was performed with the \code{ArchR} package:
+\subsection{1. Initiate \code{ArchR} project}{
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{# attach ArchR package
 library(ArchR)
@@ -90,31 +92,29 @@ project$Cells <- sampleCells[project$Sample]
 project$Treatment <- sampleTreatment[project$Sample]
 project$Enzalutamide <- sampleEnzalutamide[project$Sample]
 project$sampleLabels <- sampleLabels[project$Sample]
+}\if{html}{\out{</div>}}
+}
 
+\subsection{2. Prepare RNA-seq data}{
 
-# reduce dimensionality by iterative LSI
-project <- addIterativeLSI(project, useMatrix = "TileMatrix", name = "iLSI_ATAC")
-
-
-
-
-# load scRNAseq data from DataSetDB
-scRNAseq <- DataSetDB::getDatasetAsSE("DS000013306")
-
-
-# run scRNAseq pipeline
-GeneExpressionAnalysis <- gp.sa.solo::runSingleCellBasic2(scRNAseq, ncpu = 16L)
-
-# isolate the analyzed data
-SCE <- GeneExpressionAnalysis$sce
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# gene expression data is analyzed with `scran.chan` package
+# the result is a SingleCellExperiment object
+SCE <- <scran.chan ANALYSIS>
+    
 # adjust for integration
 rownames(SCE) <- rowData(SCE)$Symbol
-assay(SCE, "counts") \%<>\% as("dgCMatrix")
+assay(SCE, "counts") <- as(assay(SCE, "counts"), "dgCMatrix")
 # drop duplicates
 SCE <- SCE[!duplicated(rowData(SCE)$Symbol), ]
+}\if{html}{\out{</div>}}
+}
 
+\subsection{3. Commence \code{ArchR} analysis}{
 
-# integrate
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# reduce dimensionality by iterative LSI
+project <- addIterativeLSI(project, useMatrix = "TileMatrix", name = "iLSI_ATAC")
+
+# integrate ATAC and RNAseq
 ## prepare grouping for constrained integration
 groupMapping <- SimpleList(
     sens_NT = SimpleList(
@@ -134,7 +134,6 @@ groupMapping <- SimpleList(
         RNA = grep("SRR13927742", colnames(SCE), value = TRUE)
     )
 )
-
 ## execute
 project <- addGeneIntegrationMatrix(project, useMatrix = "GeneScoreMatrix",
                                     matrixName = "GeneIntegrationMatrix",
@@ -182,53 +181,31 @@ getAvailableMatrices(project)
 
 # save ArchR project
 saveArchRProject(project)
+}\if{html}{\out{</div>}}
+}
 
+\subsection{4. Save results}{
 
-
-# convert project to MultiAssayExperiment
-MAE <- maw.archr::create.mae.with.multiple.sces.from.archr(outDir, tile.sizes = 500)
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# convert project to MultiAssayExperiment object
+MAE <- maw.archr::create.mae.with.multiple.sces.from.archr(outDir)
 
 # inspect object
 MAE
 
-# add per-cell transcription factor activity to the MAE
-
-## compute TF activity
-regulonActivity <- <EPIREGULON_WORKFLOW>
-
-## convert to gdCMatrix
-regulonActivity <- as(regulonActivity, "gdCMatrix")
-
-## wrap in SingleCellExperiment
-ActivityMatrix <- SingleCellExperiment(assays = list(activity = regulonActivity))
-
-## add colData (cell information)
-colData(ActivityMatrix) <- getCellColData(project)
-
-## add row data (feature/gene information)- from gene expression matrix
-### extract gene expression information
-GeneIntegrationMatrix <- getMatrixFromProject(project, "GeneIntegrationMatrix")
-### change rownames to gene symbols
-rownames(GeneIntegrationMatrix) <- rowData(GeneIntegrationMatrix)[["name"]]
-### copy relevant gene data
-rowData(ActivityMatrix) <- rowData(GeneIntegrationMatrix)[rownames(ActivityMatrix), ]
-### add proper numeric indices to genes
-rowData(ActivityMatrix)[["idx"]] <-
-as.integer(factor(rowData(ActivityMatrix)[["name"]], levels = unique(rowData(ActivityMatrix)[["name"]])))
-
-## add embeddings
-reducedDim(ActivityMatrix, "iLSI_ATAC") <- getReducedDims(project, "iLSI_ATAC")[colnames(ActivityMatrix), ]
-reducedDim(ActivityMatrix, "UMAP_ATAC") <- getEmbedding(project, "UMAP_ATAC")[colnames(ActivityMatrix), ]
-reducedDim(ActivityMatrix, "UMAP_Combined") <- getEmbedding(project, "UMAP_Combined")[colnames(ActivityMatrix), ]
-
-## append as experiment
-MAE <- c(MAE, ActivityMatrix = ActivityMatrix)
-
+# remove unpublished class
+ind <- which(names(MAE) == "TileMatrix500")
+MAElim <- MultiAssayExperiment::MultiAssayExperiment(
+    experiments = c(
+    TileMatrix500 = as(experiments(MAE)[[ind]], "SingleCellExperiment"),
+    as.list(experiments(MAE)[-ind])
+))
 
 # save object
 saveMAE("inst/extdata/prostateENZ.h5")
-
 }\if{html}{\out{</div>}}
+
+\cr
+}
 }
 
 \references{
