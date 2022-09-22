@@ -1,7 +1,5 @@
 ---
 title: "Data Set List"
-author: "Aleksander Chlebowski"
-date: 6 Spetember 2022
 output:
   BiocStyle::html_document:
     titlecaps: false

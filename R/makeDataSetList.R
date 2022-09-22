@@ -1,7 +1,7 @@
 
 #' create data set list
 #'
-#' Autoamtically creates the dta set list of the package.
+#' Automatically creates the data set list of the package.
 #'
 #' This is an internal helper function for developers and will not be called directly.
 #' It creates the file inst/scripts/datasetList.Rmd, which is incorporated
@@ -43,8 +43,6 @@ header <- function() {
     c(
         "---",
         "title: \"Data Set List\"",
-        "author: \"Aleksander Chlebowski\"",
-        "date: 6 Spetember 2022",
         "output:",
         "  BiocStyle::html_document:",
         "    titlecaps: false",

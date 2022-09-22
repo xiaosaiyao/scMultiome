@@ -76,7 +76,6 @@ usethis::use_package("HDF5Array")                              # for reading ass
 usethis::use_package("DelayedArray")                           # loaded assays inherit from this
 usethis::use_package("checkmate")                              # for argument checks in functions
 usethis::use_package("AzureStor", type = "Suggests")           # for uploading data to Bioconductor
-usethis::use_package("dsdb.plus", type = "Suggests")           # class of TileMatrix experiment
 usethis::use_package("rstudioapi", type = "Suggests")          # for template functions
 # set development version
 desc::desc_set_version("0.0.0.9000")
@@ -137,10 +136,8 @@ Disable evaluation for a specific chunk (omit quote marks):
 
 ## Suggested packages
 
-Package `dsdb.plus` defines the `SingleCellAccessibilityExperiment`, which is used to store the Tile Matrix of `ArchR` projects. Since this package may not be available to all users, its use here is optional: depending on whether the package is installed or not, the Tile Matrix experiment will be rendered as a `SingleCellAccessibilityExperiment` or a normal `SingleCellExperiment`.
+Using dependencies listed as "Suggests" should be gated by `if (requireNamespace("<PACKAGE_NAME>", quitely = TRUE))` statements.
 
 Having dependencies not installed may be seen as a problem by `R CMD CHECK`. You may have to set `force_suggests = FALSE` when running `devtools::check()`.
-
-Using dependencies listed as "Suggests" should be gated by `if (requireNamespace("<PACKAGE_NAME>", quitely = TRUE))` statements.
 
 <br>

@@ -13,7 +13,7 @@ makeDataSetList(metadata)
 Invisible TRUE.
 }
 \description{
-Autoamtically creates the dta set list of the package.
+Automatically creates the data set list of the package.
 }
 \details{
 This is an internal helper function for developers and will not be called directly.

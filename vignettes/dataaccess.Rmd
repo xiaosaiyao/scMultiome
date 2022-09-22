@@ -1,0 +1,48 @@
+---
+title: "Accessing Data Sets"
+output:
+  BiocStyle::html_document:
+    toc: true
+    number_section: true
+    self_contained: true
+    titlecaps: true
+vignette: >
+  %\VignetteIndexEntry{Accessing Data Sets}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include = FALSE}
+library(scMultiome)
+```
+
+# Available Data Sets
+
+Use the `listDatasets` function to view currently available data sets and the names of their accessor functions. Help pages fot particular accessors contain more information on their data sets.
+```{r, eval = FALSE}
+library(scMultiome)
+listDatasets()
+```
+```{r, echo = FALSE, results = 'asis'}
+lds <- listDatasets()
+knitr::kable(lds, caption = "Available Data Sets")
+```
+
+Access a data set by calling its accessor function:
+```{r}
+prostateENZ()
+```
+
+
+See the help files for accessor functions for possible extra options, e.g. `?prostateENZ`.
+
+
+
+<br><br><br>
