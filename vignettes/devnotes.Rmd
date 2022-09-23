@@ -68,14 +68,18 @@ usethis::use_package("SingleCellExperiment", type = "Depends") # all experiments
 usethis::use_package("MultiAssayExperiment", type = "Depends") # class of final object
 usethis::use_package("AnnotationHub", type = "Depends")        # required by Bioconductor
 usethis::use_package("ExperimentHub", type = "Depends")        # required by Bioconductor
-usethis::use_package("methods")                                # for testing and changing object classes
+usethis::use_package("checkmate")                              # for argument checks in functions
 usethis::use_package("S4Vectors")                              # for operating on DataFrames
 usethis::use_package("GenomicRanges")                          # for manipulating GRanges
 usethis::use_package("rhdf5")                                  # for operating on hdf5 files
+usethis::use_package("methods")                                # for testing and changing object classes
 usethis::use_package("HDF5Array")                              # for reading assays from hdf5 files
 usethis::use_package("DelayedArray")                           # loaded assays inherit from this
-usethis::use_package("checkmate")                              # for argument checks in functions
+usethis::use_package("chihaya")                                # for writing matrices
 usethis::use_package("AzureStor", type = "Suggests")           # for uploading data to Bioconductor
+usethis::use_package("BiocGenerics", type = "Suggests")        # for unit tests
+usethis::use_package("IRanges", type = "Suggests")             # for unit tests
+usethis::use_package("Matrix", type = "Suggests")              # for unit tests
 usethis::use_package("rstudioapi", type = "Suggests")          # for template functions
 # set development version
 desc::desc_set_version("0.0.0.9000")
@@ -139,5 +143,11 @@ Disable evaluation for a specific chunk (omit quote marks):
 Using dependencies listed as "Suggests" should be gated by `if (requireNamespace("<PACKAGE_NAME>", quitely = TRUE))` statements.
 
 Having dependencies not installed may be seen as a problem by `R CMD CHECK`. You may have to set `force_suggests = FALSE` when running `devtools::check()`.
+
+<br>
+
+## Vignettes
+
+If a vignette contains code that accesses a data set that has not been placed in `ExperimentHub` yet, it will throw an error dirung `R CMD CHECK`. Add a `eval = FALSE` when checking the package.
 
 <br>
