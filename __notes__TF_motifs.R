@@ -1,7 +1,7 @@
 
 # how to save TF binding information into a h5 file compatible with this package
 
-### 1. every peak collection is a GRangeList object
+### 1. every peak collection is a GRangesList object
 ###    create a list of collections
 
 # create vector of available genomes
