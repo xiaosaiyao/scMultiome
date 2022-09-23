@@ -14,10 +14,11 @@
 #' If \code{metadata = TRUE}, an \code{ExperimentHub} object listing this data set's metadata.
 #'
 #' @format
-#' \code{MultiAssayExperiment} obtained from an \code{ArchR} project. Annotated with the Hg38 genome build.
+#' \code{MultiAssayExperiment} obtained from an \code{ArchR} project.
+#' Annotated with the Hg38 genome build.
 #' Contains the following experiments:
 #' \itemize{
-#'   \item{\strong{TileMatrix500}: SingleCellAccessibilityExperiment with 6062095 rows and 15522 columns}
+#'   \item{\strong{TileMatrix500}: SingleCellExperiment with 6062095 rows and 15522 columns}
 #'   \item{\strong{GeneScoreMatrix}: SingleCellExperiment with 24919 rows and 15522 columns}
 #'   \item{\strong{GeneIntegrationMatrix}: SingleCellExperiment with 23525 rows and 15522 columns}
 #'   \item{\strong{PeakMatrix}: SingleCellExperiment with 80210 rows and 15522 columns}
@@ -52,5 +53,5 @@ prostateENZ <-
         checkmate::assertFlag(metadata)
         experiments <- match.arg(experiments, several.ok = TRUE)
 
-        retrieve(metadata, experiments, verbose = FALSE)
+        retrieve("prostateENZ", metadata, experiments, verbose = FALSE)
     }

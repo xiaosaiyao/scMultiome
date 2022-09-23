@@ -2,7 +2,7 @@ Type: Package
 Package: scMultiome
 Title: Collection of Public Single-Cell Multiome (scATAC + scRNAseq)
     Datasets
-Version: 0.0.0.9024
+Version: 0.0.0.9025
 Authors@R: c(
     person("Xiaosai", "Yao", , "xyao19@gene.com", role = "cre"),
     person("Aleksander", "Chlebowski", , "aleksander.chlebowski@contractors.roche.com", role = "aut"),
@@ -25,13 +25,17 @@ Imports:
     rhdf5,
     DelayedArray,
     methods,
-    GenomicRanges
+    GenomicRanges,
+    chihaya
 Suggests: 
     AzureStor,
-    dsdb.plus,
+    BiocGenerics,
+    IRanges,
     knitr,
+    Matrix,
     rmarkdown,
-    rstudioapi
+    rstudioapi,
+    testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
@@ -40,3 +44,4 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 biocViews: ExperimentHub, SingleCellData, ExpressionData,
     Homo_sapiens_Data, CellCulture, Tissue, GEO
+Config/testthat/edition: 3
