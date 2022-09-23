@@ -345,9 +345,6 @@ loadExp <- function(file, expName, verbose) {
         rowData = rowData,
         colData = colData)
     colnames(ans) <- colnames
-    if (rownames.present) {
-        rownames(ans) <- rownames
-    }
     if (rowRanges.present) {
         SummarizedExperiment::rowRanges(ans) <- rowRanges
     }
@@ -357,7 +354,9 @@ loadExp <- function(file, expName, verbose) {
     if (reducedDims.present) {
         SingleCellExperiment::reducedDims(ans, withDimnames = FALSE) <- reducedDims
     }
-
+    if (rownames.present) {
+        rownames(ans) <- rownames
+    }
 
     # attempt to restore class of experiment if different to SingleCellExperiment
     # only if required package is available
