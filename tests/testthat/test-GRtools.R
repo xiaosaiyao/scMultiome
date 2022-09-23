@@ -4,10 +4,11 @@
 # as factor levels will be arranged alphabetically.
 
 gr0 <- GenomicRanges::GRanges(
-    Rle(c("chr1", "chr1", "chr2", "chr3"), c(1, 3, 2, 4)),
-    IRanges(1:10, width = 10:1)
-)
-strand(gr0) <- Rle(strand(c("-", "+", "*", "+", "-")), c(1, 2, 2, 3, 2))
+    "seqnames" = S4Vectors::Rle(c("chr1", "chr1", "chr2", "chr3"), c(1, 3, 2, 4)),
+    "ranges" = IRanges::IRanges(1:10, width = 10:1, names = head(letters, 10)),
+    "strand" = S4Vectors::Rle(BiocGenerics::strand(c("-", "+", "*", "+", "-")), c(1, 2, 2, 3, 2)),
+    "score" = 1:10,
+    "GC" = seq(1, 0, length = 10))
 
 
 # prepare for storage

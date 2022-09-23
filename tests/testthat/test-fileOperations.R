@@ -6,14 +6,14 @@ library(MultiAssayExperiment)
 f <- function() {
     ncells <- 10
     nfeats <- 20
-    u <- matrix(rpois(nfeats * ncells, 5), ncol = ncells)
+    u <- matrix(stats::rpois(nfeats * ncells, 5), ncol = ncells)
     v <- log2(u + 1)
 
     u <- methods::as(u, "dgCMatrix")
     v <- methods::as(v, "dgCMatrix")
 
-    pca <- matrix(runif(ncells * 5), ncells)
-    tsne <- matrix(rnorm(ncells * 2), ncells)
+    pca <- matrix(stats::runif(ncells * 5), ncells)
+    tsne <- matrix(stats::rnorm(ncells * 2), ncells)
 
     ans <- SingleCellExperiment(
         assays = list(counts = u, logcounts = v),
@@ -21,31 +21,31 @@ f <- function() {
     rownames(ans) <- paste("feat", 1:nfeats, sep = "_")
     colnames(ans) <- paste("cell", 1:ncells, sep = "_")
 
-    colData(ans) <- DataFrame(
-        Cell = colnames(ans),
-        one = sample(letters, ncells),
-        two = rnorm(ncells),
+    colData(ans) <- S4Vectors::DataFrame(
+        "Cell" = colnames(ans),
+        "one" = sample(letters, ncells),
+        "two" = rnorm(ncells),
         row.names = colnames(ans)
     )
     return(ans)
 }
 
 sce1 <- f()
-rowData(sce1) <- DataFrame(
-    Feat = rownames(sce1),
-    idx = 1:length(rownames(sce1)),
+rowData(sce1) <- S4Vectors::DataFrame(
+    "Feat" = rownames(sce1),
+    "idx" = 1:length(rownames(sce1)),
     row.names = rownames(sce1)
 )
 
 sce2 <- f()
 rowRanges(sce2) <- GenomicRanges::GRanges(
     data.frame(
-        seqnames = paste("chr", 1:length(rownames(sce2))),
-        start = 1:length(rownames(sce2)),
-        end = 1:length(rownames(sce2)) * 5,
-        width = 1:length(rownames(sce2)) * 5,
-        strand = rep_len(c("+", "-"), length(rownames(sce2))),
-        row.name = rownames(sce2)
+        "seqnames" = paste("chr", 1:length(rownames(sce2))),
+        "start" = 1:length(rownames(sce2)),
+        "end" = 1:length(rownames(sce2)) * 5,
+        "width" = 1:length(rownames(sce2)) * 5,
+        "strand" = rep_len(c("+", "-"), length(rownames(sce2))),
+        row.names = rownames(sce2)
     )
 )
 
@@ -53,7 +53,7 @@ rowRanges(sce2) <- GenomicRanges::GRanges(
 mae <- MultiAssayExperiment(experiments = list("EXP1" = sce1, "EXP2" = sce2))
 
 
-fileName <- sprintf("%s.h5", tempfile())
+fileName <- tempfile(fileext = ".h5")
 
 # saving
 suppressMessages({
@@ -78,10 +78,10 @@ test_that("loading mae", {
     expect_identical(length(experiments(ansLoad)), 2L)
 })
 test_that("assay idenitty pre- and post", {
-    expect_identical(assay(mae[[1]], 1), as(assay(ansLoad[[1]], 1), "dgCMatrix"))
-    expect_identical(assay(mae[[1]], 2), as(assay(ansLoad[[1]], 2), "dgCMatrix"))
-    expect_identical(assay(mae[[2]], 1), as(assay(ansLoad[[2]], 1), "dgCMatrix"))
-    expect_identical(assay(mae[[2]], 2), as(assay(ansLoad[[2]], 2), "dgCMatrix"))
+    expect_identical(assay(mae[[1]], 1), methods::as(assay(ansLoad[[1]], 1), "dgCMatrix"))
+    expect_identical(assay(mae[[1]], 2), methods::as(assay(ansLoad[[1]], 2), "dgCMatrix"))
+    expect_identical(assay(mae[[2]], 1), methods::as(assay(ansLoad[[2]], 1), "dgCMatrix"))
+    expect_identical(assay(mae[[2]], 2), methods::as(assay(ansLoad[[2]], 2), "dgCMatrix"))
 })
 
 

@@ -29,7 +29,10 @@ Imports:
     chihaya
 Suggests: 
     AzureStor,
+    BiocGenerics,
+    IRanges,
     knitr,
+    Matrix,
     rmarkdown,
     rstudioapi,
     testthat (>= 3.0.0)
