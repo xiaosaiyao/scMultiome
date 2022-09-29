@@ -6,7 +6,8 @@ Version: 0.0.0.9025
 Authors@R: c(
     person("Xiaosai", "Yao", , "xyao19@gene.com", role = "cre"),
     person("Aleksander", "Chlebowski", , "aleksander.chlebowski@contractors.roche.com", role = "aut"),
-    person("Aaron", "Lun", , "lun.aaron@gene.com", role = "aut")
+    person("Aaron", "Lun", , "lun.aaron@gene.com", role = "aut"),
+    person("Shiqi", "Xie", , "xie.shiqi@gene.com", role = "ctb")
   )
 Description: Single cell multiome data, containing chromatin accessibility
     (scATAC-seq) and gene expression (scRNA-seq) information analyzed with
