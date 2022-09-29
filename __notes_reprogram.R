@@ -28,8 +28,16 @@ expList[["GeneExpressionMatrix"]] <- GEM
 mae <- MultiAssayExperiment(experiments = expList)
 
 # save and test MAE
-saveMAE(reprogram, "inst/extdata/reprogram_Xie.h5")
+saveMAE(mae, "inst/extdata/reprogram_Xie.h5")
 hm <- testFile("inst/extdata/reprogram_Xie.h5")
+
+
+
+
+
+
+
+
 
 
 # materialize whole object in memory to measure size
