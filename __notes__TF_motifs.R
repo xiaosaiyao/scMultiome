@@ -31,7 +31,7 @@ for (g in names(motifInfo)) {
         # isolate GRanges object
         gr <- motifInfo[[g]][[i]]
         # convet to data frame and save to file (as compound type)
-        rhdf5::h5write(storeGR(df), file = fileName, name = sprintf("%s/%s", g, i))
+        rhdf5::h5write(storeGR(gr), file = fileName, name = sprintf("%s/%s", g, i))
     }
 }
 
