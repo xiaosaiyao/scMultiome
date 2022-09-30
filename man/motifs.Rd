@@ -34,3 +34,7 @@ The function will return the one specified in the call.
 Data were retrieved from (internal) \code{genomitory} data base.
 }
 
+\examples{
+motifs("mm10")
+
+}

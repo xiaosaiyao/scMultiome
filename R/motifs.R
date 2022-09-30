@@ -21,6 +21,9 @@
 #' ```{r child = system.file("scripts", "make-data-motifs.Rmd", package = "scMultiome")}
 #' ```
 #'
+#' @examples
+#' motifs("mm10")
+#'
 #' @export
 #'
 #'
@@ -28,7 +31,7 @@ motifs <-
     function(metadata = FALSE,
              genome = c("hg38", "hg19", "mm10")) {
         checkmate::assertFlag(metadata)
-        experiments <- match.arg(genome, several.ok = FALSE)
+        genome <- match.arg(genome, several.ok = FALSE)
 
 
         eh <- AnnotationHub::query(ExperimentHub::ExperimentHub(), c("scMultiome", "motifs"))
