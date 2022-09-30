@@ -1,5 +1,5 @@
-"Title","Species","Type","Multiome","DiskSize","MemorySize","Accessor","Version"
+"Title","Species","Type","Multiome","DiskSize","MemorySize","Call","Version"
 "TF Motifs Hg19","Homo sapiens","cell line","n/a","600 MB","230 MB","motifs","2022-09-20"
 "TF Motifs Hg38","Homo sapiens","cell line","n/a","600 MB","250 MB","motifs","2022-09-20"
 "TF Motifs Mm10","Mus musculus","cell line","n/a","600 MB","60 MB","motifs","2022-09-20"
-"LNCaP Cells","Homo sapiens","cell culture","unpaired","2.9 GB","0.6 - 8.5 GB","prostateENZ","2022-09-06"
+"LNCaP Cells","Homo sapiens","cell culture","unpaired","2.9 GB","0.6 - 8.5 GB","prostateENZ_Taavitsainen()","2022-09-06"

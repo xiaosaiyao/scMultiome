@@ -36,12 +36,12 @@ knitr::kable(lds, caption = "Available Data Sets")
 ```
 
 Access a data set by calling its accessor function:
-```{r}
-prostateENZ()
+```{r eval = FALSE}
+prostateENZ_Taavitsainen()
 ```
 
 
-See the help files for accessor functions for possible extra options, e.g. `?prostateENZ`.
+See the help files for accessor functions for possible extra options, e.g. `?prostateENZ_Taavitsainen`.
 
 
 

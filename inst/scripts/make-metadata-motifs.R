@@ -62,7 +62,7 @@ manifest.moitfs.hg38 <- data.frame(
     Multiome = "n/a",
     DiskSize = "600 MB",
     MemorySize = "250 MB",
-    Accessor = "motifs",
+    Call = "motifs",
     Version = "2022-09-20"
 )
 manifest.moitfs.hg.19 <- data.frame(
@@ -72,7 +72,7 @@ manifest.moitfs.hg.19 <- data.frame(
     Multiome = "n/a",
     DiskSize = "600 MB",
     MemorySize = "230 MB",
-    Accessor = "motifs",
+    Call = "motifs",
     Version = "2022-09-20"
 )
 manifest.moitfs.mm10 <- data.frame(
@@ -82,6 +82,6 @@ manifest.moitfs.mm10 <- data.frame(
     Multiome = "n/a",
     DiskSize = "600 MB",
     MemorySize = "60 MB",
-    Accessor = "motifs",
+    Call = "motifs",
     Version = "2022-09-20"
 )

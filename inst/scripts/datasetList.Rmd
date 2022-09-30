@@ -13,5 +13,5 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 + **moitfs**: TF Motif Info Hg19
 + **moitfs**: TF Motif Info Hg38
 + **moitfs**: TF Motif Info Mm10
-+ **prostateENZ**: LNCaP Cells Treated with Enzalutamide
++ **prostateENZ_Taavitsainen**: LNCaP Cells Treated with Enzalutamide
 

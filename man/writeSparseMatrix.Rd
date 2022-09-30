@@ -69,20 +69,18 @@ This function has been kindly contributed by Aaron Lun.
 }
 
 \examples{
-\dontrun{
 library(Matrix)
 x <- rsparsematrix(100, 20, 0.5)
 tmp <- tempfile(fileext = ".h5")
-writeSparseMatrix(x, tmp, "csc_matrix")
-writeSparseMatrix(x, tmp, "csr_matrix", column = FALSE)
-writeSparseMatrix(x, tmp, "tenx_matrix", tenx = TRUE)
+scMultiome:::writeSparseMatrix(x, tmp, "csc_matrix")
+scMultiome:::writeSparseMatrix(x, tmp, "csr_matrix", column = FALSE)
+scMultiome:::writeSparseMatrix(x, tmp, "tenx_matrix", tenx = TRUE)
 
 rhdf5::h5ls(tmp)
 library(HDF5Array)
 H5SparseMatrix(tmp, "csc_matrix")
 H5SparseMatrix(tmp, "csr_matrix")
 H5SparseMatrix(tmp, "tenx_matrix")
-}
 
 }
 \author{

@@ -2,7 +2,7 @@ Type: Package
 Package: scMultiome
 Title: Collection of Public Single-Cell Multiome (scATAC + scRNAseq)
     Datasets
-Version: 0.0.0.9025
+Version: 0.0.0.9026
 Authors@R: c(
     person("Xiaosai", "Yao", , "xyao19@gene.com", role = "cre"),
     person("Aleksander", "Chlebowski", , "aleksander.chlebowski@contractors.roche.com", role = "aut"),
@@ -14,35 +14,38 @@ Description: Single cell multiome data, containing chromatin accessibility
     the ArchR package and presented as MultiAssayExperiment objects.
 License: Artistic-2.0
 Depends: 
+    AnnotationHub,
+    ExperimentHub,
     MultiAssayExperiment,
     SingleCellExperiment,
-    SummarizedExperiment,
-    AnnotationHub,
-    ExperimentHub
+    SummarizedExperiment
 Imports: 
+    AzureStor,
+    DelayedArray,
+    GenomicRanges,
     HDF5Array,
     S4Vectors,
     checkmate,
-    rhdf5,
-    DelayedArray,
+    chihaya,
     methods,
-    GenomicRanges,
-    chihaya
+    rhdf5
 Suggests: 
-    AzureStor,
     BiocGenerics,
     IRanges,
-    knitr,
     Matrix,
+    knitr,
     rmarkdown,
     rstudioapi,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    devtools,
+    Seurat
 VignetteBuilder: 
     knitr
+Remotes: 
+    github::LTLA/chihaya-R.git
+Config/testthat/edition: 3
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
-biocViews: ExperimentHub, SingleCellData, ExpressionData,
+biocViews: PackageTypeData, ExperimentHub, SingleCellData, ExpressionData,
     Homo_sapiens_Data, CellCulture, Tissue, GEO
-Config/testthat/edition: 3

@@ -20,10 +20,10 @@ If \code{metadata = FALSE}, a \code{MultiAssayExperiment},
 otherwise an \code{ExperimentHub} object.
 }
 \description{
-Retrieve and return the data or metadata for the currently queried dataset.
+Retrieve and return the data or metadata for the currently queried data set.
 }
 \details{
 This is a generic accessor function that is used by user-level accessor functions
-to access datasets or their metadata.
+to access data sets or their metadata.
 }
 \keyword{internal}
