@@ -11,15 +11,17 @@
 #' \code{.extractMatrixDimnames} returns a list of two character vectors or \code{NULL}, containing the dimnames.
 #'
 #' @details
-#' For \code{.extractDimnames}, \code{path} is expected to be a HDF5 file with row and column names in \code{samp_data/features} and \code{samp_data/samples}, respectively.
+#' For \code{.extractDimnames}, \code{path} is expected to be a HDF5 file
+#' with row and column names in \code{samp_data/features} and \code{samp_data/samples}, respectively.
 #'
 #' @author Aaron Lun
 #'
 #' @section Note:
 #' This function has been kindly contributed by Aaron Lun.
 #'
-#' @export
 #' @name createRawMatrixSeed
+#'
+#' @keywords internal
 #'
 .createRawMatrixSeed <- function(info, path, names = TRUE) {
     if ("dense_matrix" %in% names(info)) {
@@ -37,6 +39,8 @@
     }
 }
 
+#' @keywords internal
+#'
 .matrix_namer <- function(seed, path, names) {
     if (names) {
         dnames <- .extractMatrixDimnames(path)
@@ -49,8 +53,9 @@
     seed
 }
 
-#' @export
 #' @rdname createRawMatrixSeed
+#'
+#' @keywords internal
 #'
 .extractMatrixDimnames <- function(path) {
     info <- rhdf5::h5ls(path)

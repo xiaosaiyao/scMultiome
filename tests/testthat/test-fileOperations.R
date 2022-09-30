@@ -1,4 +1,6 @@
 
+library(S4Vectors)
+library(GenomicRanges)
 library(SummarizedExperiment)
 library(SingleCellExperiment)
 library(MultiAssayExperiment)
@@ -18,10 +20,10 @@ f <- function() {
     ans <- SingleCellExperiment(
         assays = list(counts = u, logcounts = v),
         reducedDims = SimpleList(PCA = pca, tSNE = tsne))
-    rownames(ans) <- paste("feat", 1:nfeats, sep = "_")
-    colnames(ans) <- paste("cell", 1:ncells, sep = "_")
+    rownames(ans) <- paste("feat", seq_len(nfeats), sep = "_")
+    colnames(ans) <- paste("cell", seq_len(ncells), sep = "_")
 
-    colData(ans) <- S4Vectors::DataFrame(
+    colData(ans) <- DataFrame(
         "Cell" = colnames(ans),
         "one" = sample(letters, ncells),
         "two" = rnorm(ncells),
@@ -31,19 +33,19 @@ f <- function() {
 }
 
 sce1 <- f()
-rowData(sce1) <- S4Vectors::DataFrame(
+rowData(sce1) <- DataFrame(
     "Feat" = rownames(sce1),
-    "idx" = 1:length(rownames(sce1)),
+    "idx" = seq_along(rownames(sce1)),
     row.names = rownames(sce1)
 )
 
 sce2 <- f()
-rowRanges(sce2) <- GenomicRanges::GRanges(
+rowRanges(sce2) <- GRanges(
     data.frame(
-        "seqnames" = paste("chr", 1:length(rownames(sce2))),
-        "start" = 1:length(rownames(sce2)),
-        "end" = 1:length(rownames(sce2)) * 5,
-        "width" = 1:length(rownames(sce2)) * 5,
+        "seqnames" = paste("chr", seq_along(rownames(sce2))),
+        "start" = seq_along(rownames(sce2)),
+        "end" = seq_along(rownames(sce2)) * 5,
+        "width" = seq_along(rownames(sce2)) * 5,
         "strand" = rep_len(c("+", "-"), length(rownames(sce2))),
         row.names = rownames(sce2)
     )
@@ -54,6 +56,8 @@ mae <- MultiAssayExperiment(experiments = list("EXP1" = sce1, "EXP2" = sce2))
 
 
 fileName <- tempfile(fileext = ".h5")
+fileName2 <- tempfile(fileext = ".csv")
+write.csv(head(iris), fileName2)
 
 # saving
 suppressMessages({
@@ -97,6 +101,10 @@ test_that("loading mae with wrapper", {
 
 
 # failures
+test_that("bad arguments", {
+    expect_error(loadMAE(fileName2))
+})
+
 test_that("missing arguments", {
     expect_error(saveMAE(mae))
     expect_error(saveMAE(file = fileName))
@@ -107,12 +115,9 @@ test_that("conflicts", {
     expect_error(saveMAE(mae, fileName, overwrite = FALSE))
 })
 
-test_that("bad arguments", {
-    expect_error(saveMAE(mae, file = tools::file_path_sans_ext(fileName)))
-})
-
 unlink(fileName, force = TRUE)
+unlink(fileName2, force = TRUE)
 
-test_that("bad arguments, continued", {
+test_that("missing arguments, continued", {
     expect_error(loadMAE(fileName))
 })

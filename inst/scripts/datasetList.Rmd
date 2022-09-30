@@ -10,5 +10,5 @@ output:
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
-+ **prostateENZ**: LNCaP Cells Treated with Enzalutamide
++ **prostateENZ_Taavitsainen**: LNCaP Cells Treated with Enzalutamide
 

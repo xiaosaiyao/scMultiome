@@ -3,8 +3,8 @@
 #'
 #' Functions to disassemble and save, and load and reassemble MultiAssayExperiment data sets.
 #'
-#' These are internal functions that will never be called directly, with the exception of
-#' \code{saveMAE}, which will be used by developers to add more data sets.
+#' These are utilities for developers to add new data sets to the package.
+#' Most of them will usually be called internally.
 #'
 #' \code{saveMAE} is used to save a \code{MultiAssayExperiment} to a hdf5 file.
 #' It creates the \code{file} and passes individual \code{experiments} to \code{saveExp}.
@@ -37,6 +37,11 @@
 #' loads all elements of the experiment and builds a \code{SingleCellExperiment} object.
 #' If the original class of the experiment is different, an attempt is made to convert to that class.
 #'
+#' \code{testFile} can be used to test whether a data set loads correctly from a local file.
+#' It calls \code{loadMAE} and extracts all experiment verbosely.
+#'
+#' \code{uploadFile} will upload a single file to Bioconductor's staging directory.
+#'
 #' @name fileOperations
 #'
 #' @param mae object of class \code{MultiAssayExperiment}
@@ -47,23 +52,47 @@
 #' @param exp an experiment object that inherits from class \code{SummarizedExperiment},
 #'            usually a \code{SingleCellExperiment}
 #' @param expName name of the experiment, i.e. name of the \code{ArchR} Matrix
+#' @param sasToken access token to \code{endpoint}
+#' @param endpoint Bioconductor's data bucket endpoint url
 #'
 #' @return
 #' \code{saveExp} returns \code{TRUE} invisibly if the save was successful.
 #' \code{saveMAE} returns a named list of \code{TRUE} values.
 #' \code{loadExp} returns a \code{SingleCellExperiment} or an object of a subclass.
 #' \code{loadMAE} returns a \code{MultiAssayExperiment}.
+#' \code{testFile} returns the \code{MultiAssayExperiment} stored in \code{file} in its entirety.
+#' \code{uploadFile} returns TRUE invisibly.
 #'
 #' @seealso
 #' Vignette "rhdf5 - HDF5 interface for R" (\code{vignette} or \code{browseVignettes})
 #' for details of hdf5 file construction.\cr
 #' \code{writeSparseMatrix} for details of saving sparse matrices.
 #'
+#' @examples
 #'
+#' # create dummy MultiAssayExperiment
+#' mae <- scMultiome:::dummyMAE(experiments = c("EXP1", "EXP2"))
 #'
+#' fileName <- tempfile(fileext = ".h5")
+#' saveMAE(mae, fileName)                        # save MAE
+#' loadMAE(fileName, c("EXP1", "EXP2"), TRUE)    # load MAE (called internally)
+#' loadMAE(fileName, "EXP1", TRUE)               # load one experiment from MAE (called internally)
+#'
+#' # cerate dummy SingleCellExperiment
+#' sce <- scMultiome:::dummySCE()
+#'
+#' saveExp(sce, "EXP3", fileName, TRUE)          # save one experiment (called internally)
+#' loadExp(fileName, "EXP1", TRUE)               # load one experiment (called internally)
+#'
+#' testFile(fileName)                            # load whole MAE
+
+
+
 #' @import MultiAssayExperiment
 #'
 #' @rdname fileOperations
+#'
+#' @export
 #'
 saveMAE <- function(mae, file, experiments = NULL, verbose = TRUE, overwrite = FALSE) {
     # TODO: save colData once in root - but that will interfere with listing available experiments!
@@ -71,7 +100,6 @@ saveMAE <- function(mae, file, experiments = NULL, verbose = TRUE, overwrite = F
     checkmate::assertCharacter(experiments, null.ok = TRUE)
     checkmate::assertChoice(experiments, names(mae), null.ok = TRUE)
     checkmate::assertDirectoryExists(dirname(file), access = "w")
-    if (tools::file_ext(file) != "h5") stop("\"file\" must be a .h5 file")
     checkmate::assertFlag(verbose)
     checkmate::assertFlag(overwrite)
 
@@ -108,10 +136,11 @@ saveMAE <- function(mae, file, experiments = NULL, verbose = TRUE, overwrite = F
 #'
 #' @rdname fileOperations
 #'
-#' @keywords internal
+#' @export
 #'
 loadMAE <- function(file, experiments, verbose = FALSE) {
-    checkmate::assertFileExists(file, access = "r", extension = "h5")
+    checkmate::assertFileExists(file, access = "r")
+    assertHDF5(file)
     checkmate::assertCharacter(experiments)
     checkmate::assertFlag(verbose)
 
@@ -146,12 +175,28 @@ loadMAE <- function(file, experiments, verbose = FALSE) {
 #'
 #' @rdname fileOperations
 #'
-#' @keywords internal
+#' @export
 #'
 saveExp <- function(exp, expName, file, verbose) {
-    checkmate::assertClass(exp, "SingleCellExperiment")
     checkmate::assertString(expName)
-    checkmate::assertFileExists(file, access = "w", extension = "h5")
+    checkmate::assertFileExists(file, access = "w")
+    assertHDF5(file)
+
+    if (class(exp) != "SingleCellExperiment") {
+        pkg <- attr(class(exp), "package")
+        if (requireNamespace(pkg, quietly = TRUE)) {
+            if (verbose) message("\t converting to SingleCellExperiment")
+            exp <- convergeSCE(exp, class(exp))
+        } else {
+            if (verbose) {
+                stop("\t cannot convert to SingleCellExperiment ",
+                        " as package ", pkg, " is unavailable", "\n",
+                     "\t ... consider converting manually")
+            }
+        }
+    }
+
+
 
     # PART ONE: disassemble experiment
     if (verbose) message("\t dissassembling experiment")
@@ -261,10 +306,11 @@ saveExp <- function(exp, expName, file, verbose) {
 #'
 #' @rdname fileOperations
 #'
-#' @keywords internal
+#' @export
 #'
 loadExp <- function(file, expName, verbose) {
-    checkmate::assertFileExists(file, access = "r", extension = "h5")
+    checkmate::assertFileExists(file, access = "r")
+    assertHDF5(file)
     checkmate::assertString(expName)
     checkmate::assertFlag(verbose)
 
@@ -374,4 +420,65 @@ loadExp <- function(file, expName, verbose) {
     }
 
     return(ans)
+}
+
+
+
+#' @rdname fileOperations
+#'
+#' @export
+#'
+testFile <- function(file) {
+    checkmate::assertFileExists(file, access = "r")
+    assertHDF5(file)
+
+    # list file contents
+    fc <- rhdf5::h5ls(file)
+    # list experiments (groups in root)
+    experiments <- fc[fc$group == "/", "name"]
+
+    message("TESTING loading MAE from file:\t", file)
+    message("LOADING ALL EXPERIMENTS:\t", paste(experiments, collapse = ", "), "\n")
+    ans <- loadMAE(file, experiments, verbose = TRUE)
+    return(ans)
+}
+
+
+
+#' @rdname fileOperations
+#'
+#' @export
+#'
+uploadFile <- function(file, sasToken, endpoint = "https://bioconductorhubs.blob.core.windows.net") {
+    checkmate::assertFileExists(file, access = "r")
+    assertHDF5(file)
+    checkmate::assertString(sasToken)
+    checkmate::assertString(endpoint)
+
+    if (!requireNamespace("AzureStor")) {
+        stop("uploading files requires package AzureStor, which is not insatlled")
+    }
+
+    message("establishing connection")
+    # create endpoint object
+    ep <- AzureStor::storage_endpoint(endpoint, sas = sasToken)
+    # create container
+    container <- AzureStor::storage_container(ep, "staginghub")
+
+    message("files present in staging directory")
+    # list files
+    print(AzureStor::list_storage_files(container))
+
+    message("commencing upload")
+    # upload file
+    AzureStor::storage_upload(
+        container,
+        src = normalizePath(file),
+        dest = file.path("scMultiome", basename(file)))
+
+    message("upload complete")
+    # list files
+    print(AzureStor::list_storage_files(container))
+
+    return(invisible(TRUE))
 }

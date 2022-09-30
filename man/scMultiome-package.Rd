@@ -15,12 +15,12 @@ with the \code{ArchR} package in order to obtain epiregulons.
 
 The creation of all datasets is described in detail in respective help files.
 Run \code{listDatasets()} to view a list of available data sets or see \code{Datasets} below.
-See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?prostateENZ}.
+See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?prostateENZ_Taavitsainen}.
 }
 \section{Datasets}{
 
 \itemize{
-\item \strong{prostateENZ}: LNCaP Cells Treated with Enzalutamide
+\item \strong{prostateENZ_Taavitsainen}: LNCaP Cells Treated with Enzalutamide
 }
 }
 

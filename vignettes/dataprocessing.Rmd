@@ -45,19 +45,19 @@ Following that, gene expression data is run through a [scran.chan](https://githu
 The general ArchR workflow is outlined below.
 Refer to the [ArchR book](https://www.archrproject.com/bookdown/index.html) for details.
 
-1. Fragment files resulting from Cell Ranger ATAC analysis are used to create arrow files.
-2. An ArchR project is created. The _Tile Matrix_ and _Gene Score Matrix_ are created.
+1. Fragment files resulting from Cell Ranger ATAC analysis are used to create arrow files. The _Tile Matrix_ and _Gene Score Matrix_ are created.
+2. An ArchR project is created. Project-wide Tile and Gene Score Matrices are now available.
 3. Duplex cells are filtered out. This step is omitted in cell culture based experiments.
 4. Dimensionality reduction is run on the Tile Matrix using the Iterative LSI algorithm using `ArchR::addIterativeLSI`.
 5. scRNAseq data is added to the ArchR project with `ArchR::addGeneExpressionMatrix` for paired datasets or with `ArchR::addGeneIntegrationMatrix` for unpaired ones. The _Gene Expression Matrix_ or the _Gene Integration Matrix_ is added.
 6. Iterative LSI is run again on the _Gene Expression/Integration Matrix_.
 7. Reduced dimension representations of scATAC and scRNAseq spaces are combined with `ArchR::addCombinedDims`. This creates a joint reduced dimensions representation that is used downstream.
-8. Clustering is done with `ArchR::addClusters`.
-9. UMAP and/or TSNE embeddings are created with `ArchR::addUMAP` and `ArchR::addTSNE`.
-10. Pseudo-bulk replicates are computed with `ArchR::addGroupCoverages`. (This requires `MACS2`.)
-11. Peaks are called with `ArchR::addReproduciblePeakSet`. (This requires `chromVARmotifs`.)
+8. Clustering is done with `ArchR::addClusters` on the iLSI representation of a space of the user's choosing: the scATAC space, the scRNAseq space, or the combined space..
+9. UMAP and/or TSNE embeddings are created with `ArchR::addUMAP` and `ArchR::addTSNE`. Likewise, the user chooses the iLSI space to create embeddings from.
+10. Pseudo-bulk replicates are computed with `ArchR::addGroupCoverages`.
+11. Peaks are called with `ArchR::addReproduciblePeakSet`. (This requires `MACS2`.)
 12. _Peak Matrix_ is added with `ArchR::addPeakMatrix`.
-13. Peak annotation is added with `ArchR::addMotifAnnotations`.
+13. Peak annotation is added with `ArchR::addMotifAnnotations`. (This requires `chromVARmotifs`.)
 14. Background peaks are obtained with `ArchR::addBgdPeaks`.
 15. ChromVAR deviations are computed with `ArchR::addDeviationsMatrix`. The _Motif Matrix_ is added.
 

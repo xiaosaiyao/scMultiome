@@ -26,7 +26,8 @@
 Utilities for loading a matrix saved by \code{stageObject}.
 }
 \details{
-For \code{.extractDimnames}, \code{path} is expected to be a HDF5 file with row and column names in \code{samp_data/features} and \code{samp_data/samples}, respectively.
+For \code{.extractDimnames}, \code{path} is expected to be a HDF5 file
+with row and column names in \code{samp_data/features} and \code{samp_data/samples}, respectively.
 }
 \section{Note}{
 
@@ -36,3 +37,4 @@ This function has been kindly contributed by Aaron Lun.
 \author{
 Aaron Lun
 }
+\keyword{internal}

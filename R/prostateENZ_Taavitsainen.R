@@ -38,12 +38,15 @@
 #' elements of the requested experiment(s), reassembles them, and builds an MAE.
 #'
 #' @section Data preparation:
-#' ```{r child = system.file("scripts", "make-data-prostateENZ.Rmd", package = "scMultiome")}
+#' ```{r child = system.file("scripts", "make-data-prostateENZ_Taavitsainen.Rmd", package = "scMultiome")}
 #' ```
+#'
+#' @examples
+#' prostateENZ_Taavitsainen()
 #'
 #' @export
 #'
-prostateENZ <-
+prostateENZ_Taavitsainen <-
     function(metadata = FALSE,
              experiments = c("TileMatrix500",
                              "GeneScoreMatrix",
@@ -53,5 +56,5 @@ prostateENZ <-
         checkmate::assertFlag(metadata)
         experiments <- match.arg(experiments, several.ok = TRUE)
 
-        retrieve("prostateENZ", metadata, experiments, verbose = FALSE)
+        retrieve("prostateENZ_Taavitsainen", metadata, experiments, verbose = FALSE)
     }
