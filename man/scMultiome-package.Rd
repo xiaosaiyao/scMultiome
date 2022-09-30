@@ -36,5 +36,10 @@ Authors:
   \item Aaron Lun \email{lun.aaron@gene.com}
 }
 
+Other contributors:
+\itemize{
+  \item Shiqi Xie \email{xie.shiqi@gene.com} [contributor]
+}
+
 }
 \keyword{internal}
