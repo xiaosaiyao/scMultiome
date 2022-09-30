@@ -1,6 +1,6 @@
 
 # ExperimentHub metadata
-metadata.prostateENZ <- data.frame(
+metadata.prostateENZ_Taavitsainen <- data.frame(
     Title = "LNCaP Cells Treated with Enzalutamide",
     Description = "Multiome data (scATAC and scRNAseq) for enzalutamide-treated LNCaP cells. Measured (unpaired) with Illumina NextSeq 500 (GPL18573). Results stored in GEO, acc.nos: GSE168667 and GSE168668.",
     BiocVersion = "3.16",
@@ -15,17 +15,17 @@ metadata.prostateENZ <- data.frame(
     Maintainer = desc::desc_get_maintainer(),
     RDataClass = "MultiAssayExperiment",
     DispatchClass = "FilePath",
-    RDataPath = "scMultiome/prostateENZ"
+    RDataPath = "scMultiome/prostateENZ_Taavitsainen"
 )
 
 # dataset manifest metadata
-manifest.prostateENZ <- data.frame(
+manifest.prostateENZ_Taavitsainen <- data.frame(
     Title = "LNCaP Cells",
     Species = "Homo sapiens",
     Type = "cell culture",
     Multiome = "unpaired",
     DiskSize = "2.9 GB",
     MemorySize = "0.6 - 8.5 GB",
-    Accessor = "prostateENZ",
+    Call = "prostateENZ_Taavitsainen()",
     Version = "2022-09-06"
 )

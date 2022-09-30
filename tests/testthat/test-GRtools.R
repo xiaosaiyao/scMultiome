@@ -19,7 +19,7 @@ GR0 <- restoreGR(gr0df)
 
 test_that("conversion of GR to data.frame", {
     expect_s3_class(gr0df, "data.frame")
-    expect_false(any(sapply(gr0df, is.factor)))
+    expect_false(any(vapply(gr0df, is.factor, logical(1L))))
 })
 
 test_that("reconversion of data.frame to GR", {

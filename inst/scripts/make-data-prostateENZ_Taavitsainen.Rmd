@@ -164,7 +164,7 @@ MAElim <- MultiAssayExperiment::MultiAssayExperiment(
 ))
 
 # save object
-saveMAE("inst/extdata/prostateENZ.h5")
+saveMAE("inst/extdata/prostateENZ_Taavitsainen.h5")
 ```
 
 \cr

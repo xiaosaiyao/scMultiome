@@ -1,10 +1,10 @@
 
 #' retrieve data set or its metadata
 #'
-#' Retrieve and return the data or metadata for the currently queried dataset.
+#' Retrieve and return the data or metadata for the currently queried data set.
 #'
 #' This is a generic accessor function that is used by user-level accessor functions
-#' to access datasets or their metadata.
+#' to access data sets or their metadata.
 #'
 #' @param dataset character string specifying the data set name
 #' @param metadata logical flag specifying whether to return the resource or only its metadata

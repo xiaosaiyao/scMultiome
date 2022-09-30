@@ -1,11 +1,11 @@
 
-#' list all available datasets
+#' list all available data sets
 #'
-#' Summary information for all datasets available in the package.
+#' Summary information for all data sets available in the package.
 #'
 #' @return
-#' A \code{DataFrame} listing all available datasets,
-#' with one datasest per row and the following columns:
+#' A \code{DataFrame} listing all available data sets,
+#' with one data set per row and the following columns:
 #' \itemize{
 #'   \item{Title: data set name}
 #'   \item{Species: species name}
@@ -13,8 +13,12 @@
 #'   \item{Multiome: paired or unpaired}
 #'   \item{DiskSize: size of the dataset in storage (also size of the download)}
 #'   \item{MemorySize: size of the dataset in memory}
-#'   \item{Accessor: function used to access the dataset directly}
+#'   \item{Call: function used to access the dataset directly}
+#'   \item{Version: data set version number or upload date}
 #' }
+#'
+#' @examples
+#' listDatasets()
 #'
 #' @export
 #'

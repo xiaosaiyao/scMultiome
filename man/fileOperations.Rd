@@ -6,6 +6,8 @@
 \alias{loadMAE}
 \alias{saveExp}
 \alias{loadExp}
+\alias{testFile}
+\alias{uploadFile}
 \title{save and load data sets}
 \usage{
 saveMAE(mae, file, experiments = NULL, verbose = TRUE, overwrite = FALSE)
@@ -15,6 +17,14 @@ loadMAE(file, experiments, verbose = FALSE)
 saveExp(exp, expName, file, verbose)
 
 loadExp(file, expName, verbose)
+
+testFile(file)
+
+uploadFile(
+  file,
+  sasToken,
+  endpoint = "https://bioconductorhubs.blob.core.windows.net"
+)
 }
 \arguments{
 \item{mae}{object of class \code{MultiAssayExperiment}}
@@ -31,19 +41,25 @@ loadExp(file, expName, verbose)
 usually a \code{SingleCellExperiment}}
 
 \item{expName}{name of the experiment, i.e. name of the \code{ArchR} Matrix}
+
+\item{sasToken}{access token to \code{endpoint}}
+
+\item{endpoint}{Bioconductor's data bucket endpoint url}
 }
 \value{
 \code{saveExp} returns \code{TRUE} invisibly if the save was successful.
 \code{saveMAE} returns a named list of \code{TRUE} values.
 \code{loadExp} returns a \code{SingleCellExperiment} or an object of a subclass.
 \code{loadMAE} returns a \code{MultiAssayExperiment}.
+\code{testFile} returns the \code{MultiAssayExperiment} stored in \code{file} in its entirety.
+\code{uploadFile} returns TRUE invisibly.
 }
 \description{
 Functions to disassemble and save, and load and reassemble MultiAssayExperiment data sets.
 }
 \details{
-These are internal functions that will never be called directly, with the exception of
-\code{saveMAE}, which will be used by developers to add more data sets.
+These are utilities for developers to add new data sets to the package.
+Most of them will usually be called internally.
 
 \code{saveMAE} is used to save a \code{MultiAssayExperiment} to a hdf5 file.
 It creates the \code{file} and passes individual \code{experiments} to \code{saveExp}.
@@ -75,10 +91,32 @@ in which the data set is stored and uses \code{loadExp} to extract the specified
 \code{loadExp} first checks which property elements are stored for the experiment in question,
 loads all elements of the experiment and builds a \code{SingleCellExperiment} object.
 If the original class of the experiment is different, an attempt is made to convert to that class.
+
+\code{testFile} can be used to test whether a data set loads correctly from a local file.
+It calls \code{loadMAE} and extracts all experiment verbosely.
+
+\code{uploadFile} will upload a single file to Bioconductor's staging directory.
+}
+\examples{
+
+# create dummy MultiAssayExperiment
+mae <- scMultiome:::dummyMAE(experiments = c("EXP1", "EXP2"))
+
+fileName <- tempfile(fileext = ".h5")
+saveMAE(mae, fileName)                        # save MAE
+loadMAE(fileName, c("EXP1", "EXP2"), TRUE)    # load MAE (called internally)
+loadMAE(fileName, "EXP1", TRUE)               # load one experiment from MAE (called internally)
+
+# cerate dummy SingleCellExperiment
+sce <- scMultiome:::dummySCE()
+
+saveExp(sce, "EXP3", fileName, TRUE)          # save one experiment (called internally)
+loadExp(fileName, "EXP1", TRUE)               # load one experiment (called internally)
+
+testFile(fileName)                            # load whole MAE
 }
 \seealso{
 Vignette "rhdf5 - HDF5 interface for R" (\code{vignette} or \code{browseVignettes})
 for details of hdf5 file construction.\cr
 \code{writeSparseMatrix} for details of saving sparse matrices.
 }
-\keyword{internal}
