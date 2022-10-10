@@ -60,7 +60,7 @@ HM <- MultiAssayExperiment(experiments = exps)
 
 object.size(hm) / 1024 / 1024
 object.size(HM) / 1024 / 1024
-file.size("inst/extdata/reprogram_Xie.h5") / 1024 / 1024
+file.size("inst/extdata/reprogramSeq_Xie.h5") / 1024 / 1024
 
 ### DATA IS SAVED AND RELOAD WAS TESTED ###
 
@@ -84,6 +84,6 @@ file.size("inst/extdata/reprogram_Xie.h5") / 1024 / 1024
 # on disk: 421 MB
 
 # object.size(HM) / 1024 / 1024
-# file.size("inst/extdata/reprogram_Xie.h5") / 1024 / 1024
+# file.size("inst/extdata/reprogramSeq_Xie.h5") / 1024 / 1024
 
 

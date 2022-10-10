@@ -172,19 +172,23 @@ Run `makeMakeMetadata("<DATASET_NAME>")` to create a script to store your data s
 
 The file also stores metadata that will be returned by `listDatasets`. Likewise, this must be a 1-row data frame and values must be character strings.
 
-Once your `make-metadata` file is ready, build the metadata by running the `inst/extdata/make-metadata.R` script. This must run without errors.
 
-Subsequently, validate the correctness of the metadata by the running `makeExperimentHubMetadata` function. This call must also run without errors. It will return an `ExperimentHub` object that will display your metadata in the form that the end users will see it.
-
-```{r making1, eval = FALSE}
+```{r making metadata, eval = FALSE}
 makeMakeMetadata("example_Author")
 ```
 
+Once your `make-metadata` file is ready, build the metadata by running the `inst/extdata/make-metadata.R` script. This must run without errors. If successful,
+all the datasets will be captured in `inst/extdata/manifest.csv` and `inst/extdata/metadata.csv`
 
 ```{r validation, eval = FALSE}
 # this will add your metadata
 source(system.file("scripts", "make-metadata.R", package = "scMultiome"))
+```
 
+Subsequently, validate the correctness of the metadata by the running `makeExperimentHubMetadata` function. This call must also run without errors. It will return an `ExperimentHub` object that will display your metadata in the form that the end users will see it.
+
+
+```{r validation, eval = FALSE}
 # this will validate your metadata (not shown)
 ExperimentHubData::makeExperimentHubMetadata(dirname(system.file(package = "scMultiome")))
 ```
@@ -203,6 +207,10 @@ The process of obtaining the data set should also be described.
 
 First, run `makeMakeData("<DATASET_NAME>")`. This will create an Rmarkdown file called `inst/scripts/make-data-<DATASET_NAME>.Rmd`. Use it to describe how your data set was obtained. This doesn't have to be a working script, just a report. Pseudocode is acceptable. Note that code evaluation has been disabled so that you can copy your actual code and the lengthy ArchR analysis does not run again.
 
+```{r making, eval = FALSE}
+makeMakeData("example_Author")
+```
+
 Second, run `makeR("<DATASET_NAME>")`. This will create an R file called `<DATASET_NAME>.R`, which will provide access and help for your data set. This file will quote the accompanying Rmd file created above. This way the R file itself is more concise and easier to edit. Adjust the file accordingly:
 
 1. Give the file the same Title was used in the `make-metadata-<>.R` file.
@@ -213,13 +221,12 @@ Second, run `makeR("<DATASET_NAME>")`. This will create an R file called `<DATAS
 6. Make sure the default value of the `experiments` argument reflects the experiment names in your data set.
 7. If you want to restore custom classes to your experiments, add converting functions here. They do not require documentation or exporting.
 
-Once the files are ready, build the documentation, and `?scMultiome` and `?<DATASET_NAME>` to review it.
 
 ```{r making2, eval = FALSE}
-makeMakeData("example_Author")
-makeMaker("example_Author")
+makeR("example_Author")
 ```
 
+Once the files are ready, build the documentation, and `?scMultiome` and `?<DATASET_NAME>` to review it.
 ```{r documentation, eval = FALSE}
 # build documentation
 devtools::document()
@@ -228,7 +235,7 @@ devtools::document()
 ?scMultiome
 
 # view your data set man page
-help("example_Author")
+#help("example_Author")
 ```
 
 

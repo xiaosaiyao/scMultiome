@@ -4,7 +4,7 @@ Title: Collection of Public Single-Cell Multiome (scATAC + scRNAseq)
     Datasets
 Version: 0.0.0.9026
 Authors@R: c(
-    person("Xiaosai", "Yao", , "xyao19@gene.com", role = "cre"),
+    person("Xiaosai", "Yao", , "yao.xiaosai@gene.com", role = "cre"),
     person("Aleksander", "Chlebowski", , "aleksander.chlebowski@contractors.roche.com", role = "aut"),
     person("Aaron", "Lun", , "lun.aaron@gene.com", role = "aut"),
     person("Shiqi", "Xie", , "xie.shiqi@gene.com", role = "ctb")
@@ -38,7 +38,8 @@ Suggests:
     rstudioapi,
     testthat (>= 3.0.0),
     devtools,
-    Seurat
+    Seurat,
+    BiocStyle
 VignetteBuilder: 
     knitr
 Remotes: 

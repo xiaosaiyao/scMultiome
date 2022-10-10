@@ -8,17 +8,18 @@ devtools::load_all()
 
 # create vector of available genomes
 genomes <- c("hg38", "hg19", "mm10")
+
 # add names
 genomes <- stats::setNames(genomes, genomes)
 
 # retrieve TF motif info data for the genomes
-motifInfo <- lapply(genomes, epiregulon::getTFMotifInfo)
+motifInfo <- lapply(genomes, getTFMotifInfo)
 
 
 ### 2. save that list into a h5 file
 
 # specify file to save to
-fileName <- "inst/extdata/motifs.h5"
+fileName <- "inst/extdata/tfBinding_chipatlas_encode.h5"
 
 # create file
 rhdf5::h5createFile(fileName)

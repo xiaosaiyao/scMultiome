@@ -10,8 +10,9 @@ output:
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
-+ **moitfs**: TF Motif Info Hg19
-+ **moitfs**: TF Motif Info Hg38
-+ **moitfs**: TF Motif Info Mm10
 + **prostateENZ_Taavitsainen**: LNCaP Cells Treated with Enzalutamide
++ **reprogramSeq_Xie**: Reprogram-seq of LNCaP cells
++ **tfbinding**: TF Binding Info Hg19
++ **tfbinding**: TF Binding Info Hg38
++ **tfbinding**: TF Binding Info Mm10
 

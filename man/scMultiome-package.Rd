@@ -20,15 +20,16 @@ See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?pros
 \section{Datasets}{
 
 \itemize{
-\item \strong{moitfs}: TF Motif Info Hg19
-\item \strong{moitfs}: TF Motif Info Hg38
-\item \strong{moitfs}: TF Motif Info Mm10
 \item \strong{prostateENZ_Taavitsainen}: LNCaP Cells Treated with Enzalutamide
+\item \strong{reprogramSeq_Xie}: Reprogram-seq of LNCaP cells
+\item \strong{tfbinding}: TF Binding Info Hg19
+\item \strong{tfbinding}: TF Binding Info Hg38
+\item \strong{tfbinding}: TF Binding Info Mm10
 }
 }
 
 \author{
-\strong{Maintainer}: Xiaosai Yao \email{xyao19@gene.com}
+\strong{Maintainer}: Xiaosai Yao \email{yao.xiaosai@gene.com}
 
 Authors:
 \itemize{
