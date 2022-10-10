@@ -21,16 +21,25 @@ See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?pros
 
 \itemize{
 \item \strong{prostateENZ_Taavitsainen}: LNCaP Cells Treated with Enzalutamide
+\item \strong{reprogramSeq_Xie}: Reprogram-seq of LNCaP cells
+\item \strong{tfbinding}: TF Binding Info Hg19
+\item \strong{tfbinding}: TF Binding Info Hg38
+\item \strong{tfbinding}: TF Binding Info Mm10
 }
 }
 
 \author{
-\strong{Maintainer}: Xiaosai Yao \email{xyao19@gene.com}
+\strong{Maintainer}: Xiaosai Yao \email{yao.xiaosai@gene.com}
 
 Authors:
 \itemize{
   \item Aleksander Chlebowski \email{aleksander.chlebowski@contractors.roche.com}
   \item Aaron Lun \email{lun.aaron@gene.com}
+}
+
+Other contributors:
+\itemize{
+  \item Shiqi Xie \email{xie.shiqi@gene.com} [contributor]
 }
 
 }

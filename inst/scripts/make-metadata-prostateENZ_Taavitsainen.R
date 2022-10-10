@@ -22,7 +22,7 @@ metadata.prostateENZ_Taavitsainen <- data.frame(
 manifest.prostateENZ_Taavitsainen <- data.frame(
     Title = "LNCaP Cells",
     Species = "Homo sapiens",
-    Type = "cell culture",
+    Type = "Cell lines",
     Multiome = "unpaired",
     DiskSize = "2.9 GB",
     MemorySize = "0.6 - 8.5 GB",
