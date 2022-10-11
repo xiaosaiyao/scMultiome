@@ -25,17 +25,15 @@ This package is a data repository for single cell multiome data within `Experime
 
 Briefly, data set will be disassembled and saved in a hdf5 file, from which individual experiments can be drawn using its own accessor function. You must provide the data set in hdf5 format, its metadata, its documentation, and finally the accessor function that will retrieve the data from `ExperimentHub`.
 
-
-
 <br><br><br>
 
 # Developer Mode
 
-The main purpose of the package is serving data. Adding data is a different process that involves updating the package and as such it must be done in "developer mode". The developer mode allows access to tools that a normal user will never require, such as documentation templates and h5 MAE de-/reconstructors.
+Adding data involves updating the package and as such it must be done in "developer mode". The developer mode allows access to additional tools such as documentation templates and h5 MAE de-/reconstructors.
 
 To work in developer mode, you must first clone the package repository with `git`. Create a branch from `master` and work on that.
 
-Start an R session in the package directory (e.g. by opening the RStudio project in RStudio) and run `devtools::load_all()`. This is necessary for the R engine to temporarily identify your working directory as the package installation directory, and to expose the internal functions that you will be using.
+Start an R session in the package directory (e.g. by opening the RStudio project in RStudio) and load all the functions. This is necessary for the R engine to temporarily identify your working directory as the package installation directory, and to expose the internal functions that you will be using.
 
 ```{r devtools, include = FALSE }
 devtoolsPresent <- requireNamespace("devtools", quietly = TRUE)
@@ -47,13 +45,11 @@ if (devtoolsPresent) {
 
 ```
 
-
-
 <br><br><br>
 
 # Saving Your Data Set
 
-Currently only `MultiAssayExperiment` objects are supported. Experiments will be saved as `SingleCellExperiment`. Other classes will be converted to `SingleCellExperiment` when saving and restored when retrieving. See "Custom Classes" below. Unpublished classes are __not__ allowed, you must convert your objects to `SingleCellExperiment` before storing and re-convert after retrieving the data.
+Currently only `MultiAssayExperiment` objects are supported. Experiments will be saved as `SingleCellExperiment`. Other classes will be converted to `SingleCellExperiment` when saving and restored when retrieving. See "Custom Classes" below. Unpublished classes must be converted to `SingleCellExperiment` before storing and re-convert after retrieving the data.
 
 Use `saveMAE` to save your data set to the `R/data` directory. You can use `testFile` to validate that your data set can be reconstructed.
 
@@ -153,7 +149,7 @@ usethis::use_package("Seurat", type = "Imports")
 
 ### No conversion method exists.
 
-If no method exists to convert your custom class to a `SingleCellExperiment` and _vice versa_, you must either write such functions from scratch, or manually convert your objects to `SingleCellExperiment`s.
+If no method exists to convert your custom class to a `SingleCellExperiment` and _vice versa_, you must either write such functions from scratch, or manually convert your objects to `SingleCellExperiments`.
 
 
 
