@@ -36,6 +36,7 @@ Authors:
 \itemize{
   \item Aleksander Chlebowski \email{aleksander.chlebowski@contractors.roche.com}
   \item Aaron Lun \email{lun.aaron@gene.com}
+  \item Tomasz Wlodarczyk \email{tomasz.wlodarczyk@contractors}
 }
 
 Other contributors:
