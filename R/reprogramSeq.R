@@ -1,11 +1,11 @@
 #'
-#' reprogramSeq_Xie
+#' reprogramSeq
 #'
 #' scMultiome data of LNCaP infected with FOXA1, NKX2-1, GATA6
 #'
-#' @inheritParams prostateENZ_Taavitsainen
+#' @inheritParams prostateENZ
 #'
-#' @inherit prostateENZ_Taavitsainen return
+#' @inherit prostateENZ return
 #'
 #' @format
 #' \code{MultiAssayExperiment} obtained from an \code{ArchR} project.
@@ -23,19 +23,19 @@
 #' @references
 #' Genentech dataset
 #'
-#' @inheritSection prostateENZ_Taavitsainen Data storage and access
+#' @inheritSection prostateENZ "Data storage and access"
 #'
 #' @section Data preparation:
-#' ```{r child = system.file("scripts", "make-data-reprogramSeq_Xie.Rmd", package = "scMultiome")}
+#' ```{r child = system.file("scripts", "make-data-reprogramSeq.Rmd", package = "scMultiome")}
 #' ```
 #'
 #' @examples
-#' reprogramSeq_Xie()
+#' reprogramSeq()
 #'
 #' @export
 #'
 #'
-reprogramSeq_Xie <-
+reprogramSeq <-
     function(metadata = FALSE,
              experiments = c("TileMatrix500",
                              "GeneExpressionMatrix",
@@ -46,7 +46,7 @@ reprogramSeq_Xie <-
         checkmate::assertFlag(metadata)
         experiments <- match.arg(experiments, several.ok = TRUE)
 
-retrieve("reprogramSeq_Xie", metadata, experiments, verbose = FALSE)
+retrieve("reprogramSeq", metadata, experiments, verbose = FALSE)
     }
 
 # place methods to convert your custom class to SingleCellExperiment and vice versa here

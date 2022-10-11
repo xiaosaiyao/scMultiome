@@ -1,7 +1,7 @@
 
 # ExperimentHub metadata
 # see ?ExperimentHubData::makeExperimentHubMetadata for details
-metadata.tfBinding_chipatlas_encode.hg38 <- data.frame(
+metadata.tfBinding.hg38 <- data.frame(
     Title = "TF Binding Info Hg38",
     Description = "Combined transcription factor ChIP-seq data from ChIP-Atlas and ENCODE",
     BiocVersion = "3.16",
@@ -18,7 +18,7 @@ metadata.tfBinding_chipatlas_encode.hg38 <- data.frame(
     DispatchClass = "FilePath",
     RDataPath = "scMultiome/tfbinding"
 )
-metadata.tfBinding_chipatlas_encode.hg19 <- data.frame(
+metadata.tfBinding.hg19 <- data.frame(
     Title = "TF Binding Info Hg19",
     Description = "Combined transcription factor ChIP-seq data from ChIP-Atlas and ENCODE",
     BiocVersion = "3.16",
@@ -35,7 +35,7 @@ metadata.tfBinding_chipatlas_encode.hg19 <- data.frame(
     DispatchClass = "FilePath",
     RDataPath = "scMultiome/tfbinding"
 )
-metadata.tfBinding_chipatlas_encode.mm10 <- data.frame(
+metadata.tfBinding.mm10 <- data.frame(
     Title = "TF Binding Info Mm10",
     Description = "Combined transcription factor ChIP-seq data from ChIP-Atlas and ENCODE",
     BiocVersion = "3.16",
@@ -55,33 +55,36 @@ metadata.tfBinding_chipatlas_encode.mm10 <- data.frame(
 
 # dataset manifest metadata
 # see ?listDatasets for details
-manifest.tfBinding_chipatlas_encode.hg38 <- data.frame(
+manifest.tfBinding.hg38 <- data.frame(
+    Call = "tfBinding",
+    Author = "ChipAtlas, ENCODE",
     Title = "TF Binding Hg38",
     Species = "Homo sapiens",
     Type = "Cell lines",
     Multiome = "n/a",
     DiskSize = "600 MB",
     MemorySize = "250 MB",
-    Call = "tfBinding_chipatlas_encode",
     Version = "2022-09-20"
 )
-manifest.tfBinding_chipatlas_encode.hg19 <- data.frame(
+manifest.tfBinding.hg19 <- data.frame(
+    Call = "tfBinding",
+    Author = "ChipAtlas, ENCODE",
     Title = "TF Binding Hg19",
     Species = "Homo sapiens",
     Type = "Cell lines",
     Multiome = "n/a",
     DiskSize = "600 MB",
     MemorySize = "230 MB",
-    Call = "tfBinding_chipatlas_encode",
     Version = "2022-09-20"
 )
-manifest.tfBinding_chipatlas_encode.mm10 <- data.frame(
+manifest.tfBinding.mm10 <- data.frame(
+    Call = "tfBinding",
+    Author = "ChipAtlas, ENCODE",
     Title = "TF Binding Mm10",
     Species = "Mus musculus",
     Type = "Cell lines",
     Multiome = "n/a",
     DiskSize = "600 MB",
     MemorySize = "60 MB",
-    Call = "tfBinding_chipatlas_encode",
     Version = "2022-09-20"
 )

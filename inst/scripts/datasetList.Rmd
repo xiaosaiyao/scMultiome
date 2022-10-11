@@ -10,8 +10,8 @@ output:
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
-+ **prostateENZ_Taavitsainen**: LNCaP Cells Treated with Enzalutamide
-+ **reprogramSeq_Xie**: Reprogram-seq of LNCaP cells
++ **prostateENZ**: LNCaP Cells Treated with Enzalutamide
++ **reprogramSeq**: Reprogram-seq of LNCaP cells
 + **tfbinding**: TF Binding Info Hg19
 + **tfbinding**: TF Binding Info Hg38
 + **tfbinding**: TF Binding Info Mm10

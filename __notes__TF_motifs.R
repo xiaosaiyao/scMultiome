@@ -19,7 +19,7 @@ motifInfo <- lapply(genomes, getTFMotifInfo)
 ### 2. save that list into a h5 file
 
 # specify file to save to
-fileName <- "inst/extdata/tfBinding_chipatlas_encode.h5"
+fileName <- "inst/extdata/tfBinding.h5"
 
 # create file
 rhdf5::h5createFile(fileName)

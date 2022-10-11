@@ -37,17 +37,15 @@ To work in developer mode, you must first clone the package repository with `git
 
 Start an R session in the package directory (e.g. by opening the RStudio project in RStudio) and run `devtools::load_all()`. This is necessary for the R engine to temporarily identify your working directory as the package installation directory, and to expose the internal functions that you will be using.
 
-```{r devtools, include = FALSE}
+```{r devtools, include = FALSE }
 devtoolsPresent <- requireNamespace("devtools", quietly = TRUE)
-```
-```{r, include = FALSE, eval = devtoolsPresent}
-devtools::load_all()
-```
-```{r, eval = devtoolsPresent}
-# attach development version of the package
-devtools::load_all()
-```
 
+if (devtoolsPresent) {
+    # attach development version of the package
+    devtools::load_all()
+}
+
+```
 
 
 
@@ -59,7 +57,7 @@ Currently only `MultiAssayExperiment` objects are supported. Experiments will be
 
 Use `saveMAE` to save your data set to the `R/data` directory. You can use `testFile` to validate that your data set can be reconstructed.
 
-```{r saving, eval = devtoolsPresent}
+```{r saving, eval = TRUE}
 # construct a dummy data set
 mae <- dummyMAE()
 mae
@@ -109,28 +107,29 @@ SeuratPresent <- requireNamespace("Seurat", quietly = TRUE)
 ```
 
 A `SeuratObject` cannot be converted to `SingleCellExperiment` with `as`:
-```{r attachSeurat, eval = SeuratPresent, include = FALSE}
-library(Seurat)
-```
-```{r, eval = SeuratPresent}
-library(Seurat)
+```{r attachSeurat, eval = TRUE, include = FALSE}
 
-# create example object
-pbmc_raw <- read.table(
-    file = system.file('extdata', 'pbmc_raw.txt', package = 'Seurat'),
-    as.is = TRUE
-)
-pbmc_small <- CreateSeuratObject(counts = pbmc_raw)
-pbmc_small
+if (SeuratPresent) {
+    library(Seurat)
+    
+    # create example object
+    pbmc_raw <- read.table(
+        file = system.file('extdata', 'pbmc_raw.txt', package = 'Seurat'),
+        as.is = TRUE
+    )
+    pbmc_small <- CreateSeuratObject(counts = pbmc_raw)
+    pbmc_small
+}
+
 ```
 
-```{r asSeurat, eval = SeuratPresent, error = TRUE}
+```{r asSeurat, eval = TRUE, error = TRUE}
 # attempt conversion
 as(pbmc_small, "SingleCellExperiment")
 ```
 
 However, the `Seurat` package provides functions to convert between these classes:
-```{r Seurat_SCE, eval = SeuratPresent}
+```{r Seurat_SCE, eval = FALSE}
 # convert SeuratObject to SingleCellExperiment
 (pbmc_sce <- as.SingleCellExperiment(pbmc_small))
 # # revert to SeuratObject
@@ -147,7 +146,7 @@ convertToSeurat <- function(x) {
 }
 ```
 
-You must also `Seurat` as an imported dependency:
+You must also state `Seurat` as an imported dependency:
 ```{r dependency, eval = FALSE}
 usethis::use_package("Seurat", type = "Imports")
 ```
@@ -168,19 +167,19 @@ If you fail to provide conversion handlers, saving your experiments will fail wi
 
 # Creating Metadata
 
-Run `makeMakeMetadata("<DATASET_NAME>")` to create a script to store your data set's metadata. It will be called `inst/scripts/make-metadata-<DATASET_NAME>.R`. Metadata must be a 1-row data frame with specific columns and values must be character strings (some fields allow character vectors). See `inst/scripts/make-metadata.R` for more information and `inst/scripts/make-metadata-prostateENZ_Taavitsainen.R` for an example.
+Run `makeMakeMetadata("<DATASET_NAME>")` to create a script to store your data set's metadata. It will be called `inst/scripts/make-metadata-<DATASET_NAME>.R`. Metadata must be a 1-row data frame with specific columns and values must be character strings (some fields allow character vectors). See `inst/scripts/make-metadata.R` for more information and `inst/scripts/make-metadata-prostateENZ.R` for an example.
 
 The file also stores metadata that will be returned by `listDatasets`. Likewise, this must be a 1-row data frame and values must be character strings.
 
 
 ```{r making metadata, eval = FALSE}
-makeMakeMetadata("example_Author")
+makeMakeMetadata("dataset")
 ```
 
 Once your `make-metadata` file is ready, build the metadata by running the `inst/extdata/make-metadata.R` script. This must run without errors. If successful,
 all the datasets will be captured in `inst/extdata/manifest.csv` and `inst/extdata/metadata.csv`
 
-```{r validation, eval = FALSE}
+```{r build metadata, eval = FALSE}
 # this will add your metadata
 source(system.file("scripts", "make-metadata.R", package = "scMultiome"))
 ```
@@ -188,7 +187,7 @@ source(system.file("scripts", "make-metadata.R", package = "scMultiome"))
 Subsequently, validate the correctness of the metadata by the running `makeExperimentHubMetadata` function. This call must also run without errors. It will return an `ExperimentHub` object that will display your metadata in the form that the end users will see it.
 
 
-```{r validation, eval = FALSE}
+```{r validation, eval = TRUE}
 # this will validate your metadata (not shown)
 ExperimentHubData::makeExperimentHubMetadata(dirname(system.file(package = "scMultiome")))
 ```
@@ -208,7 +207,7 @@ The process of obtaining the data set should also be described.
 First, run `makeMakeData("<DATASET_NAME>")`. This will create an Rmarkdown file called `inst/scripts/make-data-<DATASET_NAME>.Rmd`. Use it to describe how your data set was obtained. This doesn't have to be a working script, just a report. Pseudocode is acceptable. Note that code evaluation has been disabled so that you can copy your actual code and the lengthy ArchR analysis does not run again.
 
 ```{r making, eval = FALSE}
-makeMakeData("example_Author")
+makeMakeData("dataset")
 ```
 
 Second, run `makeR("<DATASET_NAME>")`. This will create an R file called `<DATASET_NAME>.R`, which will provide access and help for your data set. This file will quote the accompanying Rmd file created above. This way the R file itself is more concise and easier to edit. Adjust the file accordingly:
@@ -223,7 +222,7 @@ Second, run `makeR("<DATASET_NAME>")`. This will create an R file called `<DATAS
 
 
 ```{r making2, eval = FALSE}
-makeR("example_Author")
+makeR("dataset")
 ```
 
 Once the files are ready, build the documentation, and `?scMultiome` and `?<DATASET_NAME>` to review it.
@@ -235,7 +234,7 @@ devtools::document()
 ?scMultiome
 
 # view your data set man page
-#help("example_Author")
+#help("dataset")
 ```
 
 

@@ -19,26 +19,6 @@
 #' @section Note:
 #' This function has been kindly contributed by Aaron Lun.
 #'
-#' @name createRawMatrixSeed
-#'
-#' @keywords internal
-#'
-.createRawMatrixSeed <- function(info, path, names = TRUE) {
-    if ("dense_matrix" %in% names(info)) {
-        out <- HDF5Array::HDF5ArraySeed(filepath = path, name = "samp_data/data")
-        .matrix_namer(out, path, names)
-    } else if ("sparse_matrix" %in% names(info)) {
-        out <- HDF5Array::H5SparseMatrixSeed(filepath = path, group = "samp_data/data")
-        .matrix_namer(out, path, names)
-    } else if ("delayed_array" %in% names(info)) {
-        chihaya::loadDelayed(filepath = path, "data")
-    } else {
-        # Just assume it's one of the old objects for now.
-        HDF5Array::HDF5ArraySeed(filepath = path, name = "samp_data/data")
-        # stop("unsupported type '", info$`_extra`$type, "'")
-    }
-}
-
 #' @keywords internal
 #'
 .matrix_namer <- function(seed, path, names) {

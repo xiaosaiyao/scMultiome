@@ -5,7 +5,7 @@
 #'
 #' The creation of all datasets is described in detail in respective help files.
 #' Run \code{listDatasets()} to view a list of available data sets or see \code{Datasets} below.
-#' See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?prostateENZ_Taavitsainen}.
+#' See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?prostateENZ}.
 #'
 #' @section Datasets:
 #' ```{r child = system.file("scripts", "datasetList.Rmd", package = "scMultiome")}

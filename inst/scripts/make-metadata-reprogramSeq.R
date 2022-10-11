@@ -1,7 +1,7 @@
 
 # ExperimentHub metadata
 # see ?ExperimentHubData::makeExperimentHubMetadata for details
-metadata.reprogramSeq_Xie <-
+metadata.reprogramSeq <-
   data.frame(
     Title = "Reprogram-seq of LNCaP cells",
     Description = "scMultiome data of LNCaP infected with FOXA1, NKX2-1, GATA6",
@@ -18,19 +18,20 @@ metadata.reprogramSeq_Xie <-
     RDataClass = "MultiAssayExperiment", # class that is returned from hub
     DispatchClass = "FilePath", # format saved on disk; FilePath only returns file location
     # Location_Prefix = "", # SKIP if data stored in the Bioconductor AWS S3
-    RDataPath = "scMultiome/reprogramSeq_Xie"
+    RDataPath = "scMultiome/reprogramSeq"
 )
 
 # dataset manifest metadata
 # see ?listDatasets for details
-manifest.reprogramSeq_Xie <-
-  data.frame(
-    Title = "Reprogram-seq of LNCaP cells",
-    Species = "Homo sapiens", # e.g. "Homo sapiens"
-    Type = "Cell lines",
-    Multiome = "paired",
-    DiskSize = "421 MB",
-    MemorySize = "660 MB - 2.2 GB",
-    Call = "reprogramSeq_Xie()",
-    Version = "2022-10-04"
+manifest.reprogramSeq <-
+    data.frame(
+        Call = "reprogramSeq",
+        Author = "Xie",
+        Title = "Reprogram-seq of LNCaP cells",
+        Species = "Homo sapiens", # e.g. "Homo sapiens"
+        Type = "Cell lines",
+        Multiome = "paired",
+        DiskSize = "421 MB",
+        MemorySize = "660 MB - 2.2 GB",
+        Version = "2022-10-04"
 )

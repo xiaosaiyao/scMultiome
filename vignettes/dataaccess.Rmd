@@ -37,11 +37,11 @@ knitr::kable(lds, caption = "Available Data Sets")
 
 Access a data set by calling its accessor function:
 ```{r eval = FALSE}
-prostateENZ_Taavitsainen()
+prostateENZ()
 ```
 
 
-See the help files for accessor functions for possible extra options, e.g. `?prostateENZ_Taavitsainen`.
+See the help files for accessor functions for possible extra options, e.g. `?prostateENZ`.
 
 
 
@@ -51,9 +51,9 @@ See the help files for accessor functions for possible extra options, e.g. `?pro
 
 The package contains an additional data set that contains information on transcription factor binding. This is not multiome data but compiled ChIP-seq data that can be used together with multiomes to compute epiregulons. It exists in three varieties, depending on the genome used to build the data. Currently supported genomes are: Hg38, Hg19, and Mm10.
 
-Like multiome data, the ChIP-seq data is packaged into a hdf5 file and can be accessed with the accessor function `motifs`. Unlike multiome data, only one subset can be retrieved at a time, a genome must be specified.
-```{r}
-motifs(genome = "hg38")
+Like multiome data, the ChIP-seq data is packaged into a hdf5 file and can be accessed with the accessor function `tfBinding`. Unlike multiome data, only one subset can be retrieved at a time, a genome must be specified.
+```{r, eval = FALSE}
+tfBinding("hg38")
 ```
 
 

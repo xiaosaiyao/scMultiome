@@ -12,3 +12,4 @@ output:
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
+scMultiome data was processed by ArchR.

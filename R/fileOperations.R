@@ -467,7 +467,7 @@ uploadFile <- function(file, sasToken, endpoint = "https://bioconductorhubs.blob
 
     message("files present in staging directory")
     # list files
-    print(AzureStor::list_storage_files(container))
+    message(AzureStor::list_storage_files(container))
 
     message("commencing upload")
     # upload file
@@ -478,7 +478,7 @@ uploadFile <- function(file, sasToken, endpoint = "https://bioconductorhubs.blob
 
     message("upload complete")
     # list files
-    print(AzureStor::list_storage_files(container))
+    message(AzureStor::list_storage_files(container))
 
     return(invisible(TRUE))
 }

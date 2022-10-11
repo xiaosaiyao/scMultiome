@@ -110,15 +110,3 @@ test_that("writing to a sparse matrix works with guessed index type for block me
     }
 })
 
-test_that("autoloader recognizes the sparse matrix", {
-    x <- Matrix::rsparsematrix(100, 20, 0.2)
-    tmp <- tempfile(fileext = ".h5")
-
-    rhdf5::h5createFile(tmp)
-    rhdf5::h5createGroup(tmp, "samp_data")
-    writeSparseMatrix(x, tmp, "samp_data/data")
-
-    out <- .createRawMatrixSeed(list(`$schema` = "sparse_matrix/v2.json",
-                                     sparse_matrix = list(dimensions = dim(x))), tmp)
-    expect_s4_class(out, "H5SparseMatrixSeed")
-})
