@@ -88,6 +88,7 @@ makeMakeMetadata <- function(dataset) {
         "# dataset manifest metadata",
         "# see ?listDatasets for details",
         paste0("manifest.", dataset, " <-"),
+        "  data.frame(",
         paste0("    Call = \"", dataset, "()\","),
         "    Author = \"<DATA SET AUTHOR>\",",
         "    Title = \"<YOUR DATA TITLE>\",",
