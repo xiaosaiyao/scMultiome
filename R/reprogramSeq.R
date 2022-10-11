@@ -23,7 +23,7 @@
 #' @references
 #' Genentech dataset
 #'
-#' @inheritSection prostateENZ "Data storage and access"
+#' @inheritSection prostateENZ Data storage and access
 #'
 #' @section Data preparation:
 #' ```{r child = system.file("scripts", "make-data-reprogramSeq.Rmd", package = "scMultiome")}

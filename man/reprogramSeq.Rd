@@ -38,6 +38,8 @@ scMultiome data of LNCaP infected with FOXA1, NKX2-1, GATA6
 }
 \section{Data preparation}{
 
+
+scMultiome data was processed by ArchR.
 }
 
 \section{Data storage and access}{
