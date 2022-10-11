@@ -88,14 +88,14 @@ makeMakeMetadata <- function(dataset) {
         "# dataset manifest metadata",
         "# see ?listDatasets for details",
         paste0("manifest.", dataset, " <-"),
-        "  data.frame(",
+        paste0("    Call = \"", dataset, "()\","),
+        "    Author = \"<DATA SET AUTHOR>\",",
         "    Title = \"<YOUR DATA TITLE>\",",
         "    Species = \"<SPECIES NAME>\", # e.g. \"Homo sapiens\"",
-        "    Type = \"<CELL CULTURE OR TISSUE>\",",
+        "    Lineage = \"<TISSUE OR ORGAN>\",",
+        "    Cell_Num = \"<NUMBER OF CELLS>\",",
         "    Multiome = \"<PAIRED OR UNPAIRED>\",",
         "    DiskSize = \"<H5 FILE SIZE ON DISK>\",",
-        "    MemorySize = \"<MAE SIZE IN MEMORY>\",",
-        paste0("    Accessor = \"", dataset, "()\","),
         paste0("    Version = \"", Sys.Date(), "\""),
         ")"
     ))
