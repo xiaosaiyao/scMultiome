@@ -22,11 +22,11 @@ metadata.prostateENZ <- data.frame(
 manifest.prostateENZ <- data.frame(
     Call = "prostateENZ",
     Author = "Taavitsainen",
-    Title = "LNCaP Cells",
+    Title = "LNCaP Cells Treated with Enzalutamide",
     Species = "Homo sapiens",
-    Type = "Cell lines",
+    Lineage = "Prostate",
     Multiome = "unpaired",
+    Cell_Num = "15522",
     DiskSize = "2.9 GB",
-    MemorySize = "0.6 - 8.5 GB",
     Version = "2022-09-06"
 )

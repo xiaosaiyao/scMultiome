@@ -60,10 +60,10 @@ manifest.tfBinding.hg38 <- data.frame(
     Author = "ChipAtlas, ENCODE",
     Title = "TF Binding Hg38",
     Species = "Homo sapiens",
-    Type = "Cell lines",
+    Lineage = "All",
+    Cell_Num = "Bulk",
     Multiome = "n/a",
     DiskSize = "600 MB",
-    MemorySize = "250 MB",
     Version = "2022-09-20"
 )
 manifest.tfBinding.hg19 <- data.frame(
@@ -71,10 +71,10 @@ manifest.tfBinding.hg19 <- data.frame(
     Author = "ChipAtlas, ENCODE",
     Title = "TF Binding Hg19",
     Species = "Homo sapiens",
-    Type = "Cell lines",
+    Lineage = "All",
+    Cell_Num = "Bulk",
     Multiome = "n/a",
     DiskSize = "600 MB",
-    MemorySize = "230 MB",
     Version = "2022-09-20"
 )
 manifest.tfBinding.mm10 <- data.frame(
@@ -82,9 +82,10 @@ manifest.tfBinding.mm10 <- data.frame(
     Author = "ChipAtlas, ENCODE",
     Title = "TF Binding Mm10",
     Species = "Mus musculus",
-    Type = "Cell lines",
+    Lineage = "All",
+    Cell_Num = "Bulk",
     Multiome = "n/a",
     DiskSize = "600 MB",
-    MemorySize = "60 MB",
     Version = "2022-09-20"
 )
+

@@ -29,9 +29,10 @@ manifest.reprogramSeq <-
         Author = "Xie",
         Title = "Reprogram-seq of LNCaP cells",
         Species = "Homo sapiens", # e.g. "Homo sapiens"
-        Type = "Cell lines",
+        Lineage = "Prostate",
+        Cell_Num = "3903",
         Multiome = "paired",
         DiskSize = "421 MB",
-        MemorySize = "660 MB - 2.2 GB",
         Version = "2022-10-04"
 )
+
