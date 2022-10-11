@@ -90,7 +90,7 @@ obj <- <CUSTOM_CLASS_OBJECT>
 as(obj, "SingleCellExperiment")
 ```
 
-This will work for most classes that inherit from `SingleCellExperiment`. All you have to do it add the package that defines the class as a dependency of `scMultiome`:
+This will work for most classes that inherit from `SingleCellExperiment`. All you have to do is add the package that defines the class as a dependency of `scMultiome`:
 ```{r exmaplePackage, eval = FALSE}
 usethis::use_packge("<PACKAGE_NAME>", type = "Imports")
 ```
@@ -176,7 +176,7 @@ The file also stores metadata that will be returned by `listDatasets`. Likewise,
 makeMakeMetadata("dataset")
 ```
 
-Once your `make-metadata` file is ready, build the metadata by running the `inst/extdata/make-metadata.R` script. This must run without errors. If successful,
+Once your `make-metadata` file is ready, build the metadata by running the `inst/scripts/make-metadata.R` script. This must run without errors. If successful,
 all the datasets will be captured in `inst/extdata/manifest.csv` and `inst/extdata/metadata.csv`
 
 ```{r build metadata, eval = FALSE}
@@ -200,7 +200,7 @@ ExperimentHubData::makeExperimentHubMetadata(dirname(system.file(package = "scMu
 # Documenting Your Data Set
 
 Every data set needs a help page to describe the source data, references, and whatever else you deem necessary.
-Since every data set is accessed by its own accessor function, the `R` file that defines the function is the natural place to place the data set documentation. The package framework is constructed such that accessor functions are extremely simple and you can basically copy the original one (`prostateENZ_Taavitsainen`) and most of its documentation.
+Since every data set is accessed by its own accessor function, the `R` file that defines the function is the natural place to place the data set documentation. The package framework is constructed such that accessor functions are extremely simple and you can basically copy the original one (`prostateENZ`) and most of its documentation.
 
 The process of obtaining the data set should also be described.
 
