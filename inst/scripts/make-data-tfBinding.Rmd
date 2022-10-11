@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
 #### 1. Data download
+We download public ChIP-seq peak calls from ChIP-Atlas and ENCODE
 
 #### 1.1. ChIP-Atlas
 

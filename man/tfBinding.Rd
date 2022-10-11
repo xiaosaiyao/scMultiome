@@ -41,6 +41,8 @@ function that extracts the requested genomic build and converts the data frame b
 \section{Data preparation}{
 
 \subsection{1. Data download}{
+
+We download public ChIP-seq peak calls from ChIP-Atlas and ENCODE
 }
 
 \subsection{1.1. ChIP-Atlas}{
