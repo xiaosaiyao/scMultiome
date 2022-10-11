@@ -20,6 +20,7 @@ See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?pros
 \section{Datasets}{
 
 \itemize{
+\item \strong{hematopoiesis}: scATAC-seq and unpaired scRNA-seq of hematopoetic cells
 \item \strong{prostateENZ}: LNCaP Cells Treated with Enzalutamide
 \item \strong{reprogramSeq}: Reprogram-seq of LNCaP cells
 \item \strong{tfbinding}: TF Binding Info Hg19

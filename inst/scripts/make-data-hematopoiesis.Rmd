@@ -1,0 +1,15 @@
+---
+title: "scATAC-seq and unpaired scRNA-seq of hematopoetic cells"
+author: "Xiaosai Yao"
+date: 2022-10-11
+output:
+  BiocStyle::html_document:
+    titlecaps: false
+    toc_float: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+Example scATAC-seq data of hematopoietic cells included in ArchR package was integrated with scRNA-seq. ScATAC-seq data was obtained from GSE139369 and scRNA-seq data was obtained from https://jeffgranja.s3.amazonaws.com/ArchR/TestData/scRNA-Hematopoiesis-Granja-2019.rds"
