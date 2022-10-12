@@ -1,0 +1,20 @@
+---
+title: "Data Set List"
+output:
+  BiocStyle::html_document:
+    titlecaps: false
+    toc_float: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
++ **colonHealthy**: Single-cell analysis of samples from healthy human colon
++ **hematopoiesis**: scATAC-seq and unpaired scRNA-seq of hematopoetic cells
++ **prostateENZ**: LNCaP Cells Treated with Enzalutamide
++ **reprogramSeq**: Reprogram-seq of LNCaP cells
++ **tfbinding**: TF Binding Info Hg19
++ **tfbinding**: TF Binding Info Hg38
++ **tfbinding**: TF Binding Info Mm10
+

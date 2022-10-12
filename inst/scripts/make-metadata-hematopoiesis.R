@@ -7,7 +7,7 @@ metadata.hematopoiesis <-
     Description = "Example scATAC-seq data of hematopoietic cells included in ArchR package was integrated with scRNAseq. ScATAC-seq data was obtained from GSE139369 and scRNA-seq obtained from https://jeffgranja.s3.amazonaws.com/ArchR/TestData/scRNA-Hematopoiesis-Granja-2019.rds",
     BiocVersion = "3.16",
     Genome = "hg19",
-    SourceType = "fragment", # refers to raw data
+    SourceType = "FASTQ", # refers to raw data
     SourceUrl = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE139369", # refers to raw data
     SourceVersion = "2019-10-29", # no commas!
     Species = "Homo sapiens", # e.g. "Homo sapiens"
