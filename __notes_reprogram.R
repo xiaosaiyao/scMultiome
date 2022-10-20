@@ -35,11 +35,6 @@ hm <- testFile("inst/extdata/reprogramSeq.h5")
 
 
 
-
-
-
-
-
 # materialize whole object in memory to measure size
 exps <- as.list(experiments(hm))
 exps %>% lapply(assays) %>% sapply(length)

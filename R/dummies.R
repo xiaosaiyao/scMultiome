@@ -63,6 +63,17 @@ dummySCE <- function(...) {
             row.names = rownames(ans)
         )
     )
+
+    alt.mat.1 <- matrix(stats::rpois(nfeats * ncells, 5), ncol = ncells)
+    colnames(alt.mat.1) <- colnames(ans)
+
+    alt.mat.2 <- matrix(stats::rpois(nfeats * ncells, 5), ncol = ncells)
+    colnames(alt.mat.2) <- colnames(ans)
+
+    altExp(ans, "Hash") <- SingleCellExperiment(list(counts = alt.mat.1))
+
+    altExp(ans, "Protein") <- SingleCellExperiment(list(counts = alt.mat.2))
+
     return(ans)
 }
 

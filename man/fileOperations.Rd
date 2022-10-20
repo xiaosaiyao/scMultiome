@@ -5,6 +5,8 @@
 \alias{saveMAE}
 \alias{loadMAE}
 \alias{saveExp}
+\alias{saveExp,SummarizedExperiment-method}
+\alias{saveExp,SingleCellExperiment-method}
 \alias{loadExp}
 \alias{testFile}
 \alias{uploadFile}
@@ -14,9 +16,13 @@ saveMAE(mae, file, experiments = NULL, verbose = TRUE, overwrite = FALSE)
 
 loadMAE(file, experiments, verbose = FALSE)
 
-saveExp(exp, expName, file, verbose)
+saveExp(exp, expName, file, verbose = TRUE)
 
-loadExp(file, expName, verbose)
+\S4method{saveExp}{SummarizedExperiment}(exp, expName, file, verbose = TRUE)
+
+\S4method{saveExp}{SingleCellExperiment}(exp, expName, file, verbose = TRUE)
+
+loadExp(file, expName, verbose = TRUE)
 
 testFile(file)
 
@@ -104,14 +110,14 @@ mae <- scMultiome:::dummyMAE(experiments = c("EXP1", "EXP2"))
 
 fileName <- tempfile(fileext = ".h5")
 saveMAE(mae, fileName)                        # save MAE
-loadMAE(fileName, c("EXP1", "EXP2"), TRUE)    # load MAE (called internally)
-loadMAE(fileName, "EXP1", TRUE)               # load one experiment from MAE (called internally)
+mae_reload <- loadMAE(fileName, c("EXP1", "EXP2"), TRUE)    # load MAE (called internally)
+mae_reload_exp1 <- loadMAE(fileName, "EXP1", TRUE)               # load one experiment from MAE (called internally)
 
-# cerate dummy SingleCellExperiment
+# create dummy SingleCellExperiment
 sce <- scMultiome:::dummySCE()
 
 saveExp(sce, "EXP3", fileName, TRUE)          # save one experiment (called internally)
-loadExp(fileName, "EXP1", TRUE)               # load one experiment (called internally)
+sce_reload <- loadExp(fileName, "EXP1", TRUE)               # load one experiment (called internally)
 
 testFile(fileName)                            # load whole MAE
 }

@@ -81,7 +81,7 @@ test_that("loading mae", {
     expect_s4_class(ansLoad, "MultiAssayExperiment")
     expect_identical(length(experiments(ansLoad)), 2L)
 })
-test_that("assay idenitty pre- and post", {
+test_that("assay identity pre- and post", {
     expect_identical(assay(mae[[1]], 1), methods::as(assay(ansLoad[[1]], 1), "dgCMatrix"))
     expect_identical(assay(mae[[1]], 2), methods::as(assay(ansLoad[[1]], 2), "dgCMatrix"))
     expect_identical(assay(mae[[2]], 1), methods::as(assay(ansLoad[[2]], 1), "dgCMatrix"))
