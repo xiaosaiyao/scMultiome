@@ -38,6 +38,8 @@ storeGR <- function(x) {
 #'
 restoreGR <- function(df) {
     checkmate::assertDataFrame(df)
+    basic <- c("seqnames", "start", "end", "width", "strand")
+    df[basic] <- lapply(df[basic], function(x) methods::as(x, typeof(x)))
     ans <- GenomicRanges::makeGRangesFromDataFrame(df, keep.extra.columns=TRUE)
 
     return(ans)
