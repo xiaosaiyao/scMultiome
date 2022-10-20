@@ -25,8 +25,8 @@
 #'
 storeGR <- function(x) {
     checkmate::assertClass(x, "GRanges")
-
     ans <- as.data.frame(x)
+    rownames(ans) <- names(x)
     ans[vapply(ans, is.factor, logical(1L))] <- lapply(Filter(is.factor, ans), as.character)
 
     return(ans)
@@ -38,10 +38,7 @@ storeGR <- function(x) {
 #'
 restoreGR <- function(df) {
     checkmate::assertDataFrame(df)
-
-    basic <- c("seqnames", "start", "end", "width", "strand")
-    df[basic] <- lapply(df[basic], function(x) methods::as(x, typeof(x)))
-    ans <- GenomicRanges::GRanges(df)
+    ans <- GenomicRanges::makeGRangesFromDataFrame(df, keep.extra.columns=TRUE)
 
     return(ans)
 }
