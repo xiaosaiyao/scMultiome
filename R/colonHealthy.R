@@ -37,8 +37,10 @@
 #' ```{r child = system.file("scripts", "make-data-colonHealthy.Rmd", package = "scMultiome")}
 #' ```
 #'
-#' @export
+#' @examples
+#' reprogramSeq()
 #'
+#' @export
 #'
 colonHealthy <-
     function(metadata = FALSE,

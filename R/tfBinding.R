@@ -32,7 +32,7 @@
 #' \emph{EMBO}; Vol. 19, EMBO reports. 2018.
 #' \href{http://dx.doi.org/10.15252/embr.201846255}{doi: 10.15252/embr.201846255}
 #'
-#' ENCODE {https://www.encodeproject.org/}
+#' ENCODE: {https://www.encodeproject.org/}
 #'
 #'
 #' @section Data storage and access:
@@ -51,9 +51,8 @@
 #'
 #' @export
 #'
-#'
 tfBinding <- function(genome = c("hg38", "hg19", "mm10"),
-                                       metadata = FALSE) {
+                      metadata = FALSE) {
     checkmate::assertFlag(metadata)
     genome <- match.arg(genome, several.ok = FALSE)
 

@@ -6,23 +6,33 @@
 \alias{dummyMAE}
 \title{create dummy data sets}
 \usage{
-dummySCE(...)
+dummySCE(
+  features = c("rowData", "rowRanges", "reducedDims", "altExps", "none")
+)
 
-dummyMAE(experiments = c("EXP1", "EXP2"))
+dummyMAE(experiments = list(EXP1 = NULL, EXP2 = NULL))
 }
 \arguments{
-\item{experiments}{character string of experiment names}
+\item{features}{character string specifying which (optional) features to create in the SCE}
+
+\item{experiments}{named list of character vectors
+specifying experiments to create and their features}
 }
 \value{
 \code{dummySCE} returns a \code{SingleCellExperiment}.
 \code{dummyMAE} returns a \code{MultiAssayExperiment}.
 }
 \description{
-Create summy SCE and MAE objects
+Create dummy SCE and MAE objects.
 }
 \examples{
 scMultiome:::dummySCE()
-scMultiome:::dummyMAE("dummyExperiment")
+scMultiome:::dummySCE("rowData")
+scMultiome:::dummySCE("rowRanges")
+scMultiome:::dummySCE("reducedDims")
+scMultiome:::dummySCE("altExps")
+
+scMultiome:::dummyMAE(list("dummyExperiment" = NULL))
 
 }
 \keyword{internal}

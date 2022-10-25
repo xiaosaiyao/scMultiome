@@ -1,9 +1,11 @@
 
 #' create dummy data sets
 #'
-#' Create summy SCE and MAE objects
+#' Create dummy SCE and MAE objects.
 #'
-#' @param experiments character string of experiment names
+#' @param features character string specifying which (optional) features to create in the SCE
+#' @param experiments named list of character vectors
+#'                    specifying experiments to create and their features
 #'
 #' @return
 #' \code{dummySCE} returns a \code{SingleCellExperiment}.
@@ -13,7 +15,12 @@
 #'
 #' @examples
 #' scMultiome:::dummySCE()
-#' scMultiome:::dummyMAE("dummyExperiment")
+#' scMultiome:::dummySCE("rowData")
+#' scMultiome:::dummySCE("rowRanges")
+#' scMultiome:::dummySCE("reducedDims")
+#' scMultiome:::dummySCE("altExps")
+#'
+#' scMultiome:::dummyMAE(list("dummyExperiment" = NULL))
 #'
 
 
@@ -23,7 +30,9 @@
 #' @keywords internal
 #' @rdname dummies
 #'
-dummySCE <- function(...) {
+dummySCE <- function(features = c("rowData", "rowRanges", "reducedDims", "altExps", "none")) {
+    features <- match.arg(features, several.ok = TRUE)
+
     ncells <- 10
     nfeats <- 20
 
@@ -36,46 +45,52 @@ dummySCE <- function(...) {
     pca <- matrix(stats::runif(ncells * 5), ncells)
     tsne <- matrix(stats::rnorm(ncells * 2), ncells)
 
-    ans <- SingleCellExperiment(
-        assays = list(counts = u, logcounts = v),
-        reducedDims = S4Vectors::SimpleList(PCA = pca, tSNE = tsne))
+    ans <- SingleCellExperiment(assays = list(counts = u, logcounts = v))
+
     rownames(ans) <- paste("feat", seq_len(nfeats), sep = "_")
     colnames(ans) <- paste("cell", seq_len(ncells), sep = "_")
-
     colData(ans) <- S4Vectors::DataFrame(
         "Cell" = colnames(ans),
         "one" = sample(letters, ncells),
         "two" = stats::rnorm(ncells),
         row.names = colnames(ans)
     )
-    rowData(ans) <- S4Vectors::DataFrame(
-        "Feat" = rownames(ans),
-        "idx" = seq_along(rownames(ans)),
-        row.names = rownames(ans)
-    )
-    rowRanges(ans) <- GenomicRanges::GRanges(
-        data.frame(
-            "seqnames" = paste("chr", seq_along(rownames(ans))),
-            "start" = seq_along(rownames(ans)),
-            "end" = seq_along(rownames(ans)) * 5,
-            "width" = seq_along(rownames(ans)) * 5,
-            "strand" = rep_len(c("+", "-"), length(rownames(ans))),
+    if (is.element("rowRanges", features)) {
+        rowRanges(ans) <- GenomicRanges::GRanges(
+            data.frame(
+                "seqnames" = paste("chr", seq_along(rownames(ans))),
+                "start" = seq_along(rownames(ans)),
+                "end" = seq_along(rownames(ans)) * 5,
+                "width" = seq_along(rownames(ans)) * 5,
+                "strand" = rep_len(c("+", "-"), length(rownames(ans))),
+                row.names = rownames(ans)
+            )
+        )
+    }
+    if (is.element("rowData", features)) {
+        rowData(ans) <- S4Vectors::DataFrame(
+            "Feat" = paste("chr", seq_along(rownames(ans))),
+            "idx" = seq_along(rownames(ans)),
             row.names = rownames(ans)
         )
-    )
+    }
+    if (is.element("reducedDims", features)) {
+        reducedDims(ans) <- S4Vectors::SimpleList(PCA = pca, tSNE = tsne)
+    }
+    if (is.element("altExps", features)) {
+        alt.mat.1 <- matrix(stats::rpois(nfeats * ncells, 5), ncol = ncells)
+        colnames(alt.mat.1) <- colnames(ans)
 
-    alt.mat.1 <- matrix(stats::rpois(nfeats * ncells, 5), ncol = ncells)
-    colnames(alt.mat.1) <- colnames(ans)
+        alt.mat.2 <- matrix(stats::rpois(nfeats * ncells, 5), ncol = ncells)
+        colnames(alt.mat.2) <- colnames(ans)
 
-    alt.mat.2 <- matrix(stats::rpois(nfeats * ncells, 5), ncol = ncells)
-    colnames(alt.mat.2) <- colnames(ans)
-
-    altExp(ans, "Hash") <- SingleCellExperiment(list(counts = alt.mat.1))
-
-    altExp(ans, "Protein") <- SingleCellExperiment(list(counts = alt.mat.2))
+        altExp(ans, "Hash") <- SingleCellExperiment(list(counts = alt.mat.1))
+        altExp(ans, "Protein") <- SingleCellExperiment(list(counts = alt.mat.2))
+    }
 
     return(ans)
 }
+
 
 
 #' @import MultiAssayExperiment
@@ -83,11 +98,15 @@ dummySCE <- function(...) {
 #' @keywords internal
 #' @rdname dummies
 #'
-dummyMAE <- function(experiments = c("EXP1", "EXP2")) {
-    checkmate::assertCharacter(experiments)
+dummyMAE <- function(experiments = list("EXP1" = NULL, "EXP2" = NULL)) {
+    checkmate::assertList(experiments)
+    lapply(experiments, checkmate::assertCharacter, null.ok = TRUE)
+
+    experiments <- lapply(experiments, function(x) {
+        if (is.null(x)) c("rowData", "rowRanges", "reducedDims", "altExps") else x
+    })
 
     expList <- lapply(experiments, dummySCE)
-    names(expList) <- experiments
     mae <- MultiAssayExperiment(experiments = expList)
     return(mae)
 }

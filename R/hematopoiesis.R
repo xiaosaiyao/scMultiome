@@ -35,7 +35,6 @@
 #'
 #' @export
 #'
-#'
 hematopoiesis <-
     function(metadata = FALSE,
              experiments = c("TileMatrix500",
@@ -45,9 +44,5 @@ hematopoiesis <-
         checkmate::assertFlag(metadata)
         experiments <- match.arg(experiments, several.ok = TRUE)
 
-retrieve("hematopoiesis", metadata, experiments, verbose = FALSE)
+        retrieve("hematopoiesis", metadata, experiments, verbose = FALSE)
     }
-
-# place methods to convert your custom class to SingleCellExperiment and vice versa here
-# skip if conversion can be done with `as`
-# see ?convertSCE and the Adding Data Sets vignette (Custom Classes) for details

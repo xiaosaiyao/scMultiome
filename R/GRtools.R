@@ -17,8 +17,7 @@
 #' @return
 #' \code{storeGR} returns a data frame, \code{restoreGR} returns a \code{GRanges} object.
 #'
-#'
-#'
+
 #' @rdname GRtools
 #'
 #' @keywords internal

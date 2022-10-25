@@ -64,7 +64,8 @@ for (genome in c("hg38", "mm10"))\{
                                  fileLIST[,5] == "All cell types" &
                                  fileLIST[,7] == "05"),]
     
-    download.files <- paste0("wget http://dbarchive.biosciencedbc.jp/kyushu-u/", genome,"/assembled/", TFLIST$V1, ".bed")
+    download.files <- paste0("wget http://dbarchive.biosciencedbc.jp/kyushu-u/", 
+                             genome,"/assembled/", TFLIST$V1, ".bed")
     write.table(x = download.files,
                 file = paste0(dir, genome, ".sh"),
                 quote = FALSE,
@@ -100,7 +101,8 @@ library(GenomicRanges)
 library(rtracklayer)
 
 ##################### chipatlas_bedfiles_merge #####################
-## Takes in a list of bed files and an accompanying legend that shows which BED files correspond to  a specific TF
+## Takes in a list of bed files and an accompanying legend that shows 
+## which BED files correspond to  a specific TF
 ## Outputs a directory of merged bed files
 
 dir = '/gstore/scratch/u/yaox19/chipAtlas/'
@@ -130,7 +132,7 @@ for (genome in genomes)\{
   ### get list of TFs represented in BED files
   TF.list <- unique(metadata$TF)
 
-  for (i in 1:length(TF.list))\{
+  for (i in seq_along(TF.list)) \{
 
     print(TF.list[i])
 
@@ -164,7 +166,8 @@ for (genome in genomes)\{
 Filter and merge ENCODE peaks
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{############### filter peaks ####################
-## Takes in bed files and filters the peaks in each file based on the enrichment score.
+## Takes in bed files and filters the peaks 
+## in each file based on the enrichment score.
 ## Low Enrichment peaks are filtered out.
 
 dir = '/gstore/scratch/u/yaox19/encode/'
@@ -175,7 +178,7 @@ for (genome in c("mm10", "hg38"))\{
     list_beds <- list.files(paste0(dir, genome, "/raw"), pattern = "*.bed.gz")
 
     #filter each bed file to have p value score > 4
-    for (i in 1:length(list_beds))\{
+    for (i in seq_along(list_beds)) \{
 
         print(list_beds[i])
 
@@ -185,7 +188,8 @@ for (genome in c("mm10", "hg38"))\{
 
         if (nrow(post_QC_bed) >100)\{
             write.table(post_QC_bed,
-                        paste0('/gstore/scratch/u/yaox19/encode/', genome, "/filtered/", list_beds[i]),
+                        paste0('/gstore/scratch/u/yaox19/encode/', 
+                               genome, "/filtered/", list_beds[i]),
                         row.names = F, col.names = F, quote = F, sep="\\t")
         \}
 
@@ -196,7 +200,8 @@ for (genome in c("mm10", "hg38"))\{
 
 
 ##################### ENCODE_bedfiles_merge #####################
-## Takes in a list of bed files and an accompanying legend that shows which BED files correspond to  a specific TF
+## Takes in a list of bed files and an accompanying legend that shows 
+## which BED files correspond to  a specific TF
 ## Outputs a directory of merged bed files
 
 
@@ -221,7 +226,8 @@ for (genome in c("hg38","mm10"))\{
     \}
 
     metadata$"File.accession" <- trimws( metadata$"File.accession")
-    metadata$"File.accession" <- paste0(dir, genome, "/filtered/", metadata$"File.accession",".bed.gz")
+    metadata$"File.accession" <- paste0(dir, genome, "/filtered/",
+                                        metadata$"File.accession",".bed.gz")
     colnames(metadata) <- c("filename","TF")
 
     # remove files that do not exist
@@ -233,7 +239,7 @@ for (genome in c("hg38","mm10"))\{
     # get list of TFs represented in BED files
     TF.list <- unique(metadata$TF)
 
-    for (i in 1:length(TF.list))\{
+    for (i in seq_along(TF.list)) \{
 
         print(TF.list[i])
 
@@ -242,7 +248,7 @@ for (genome in c("hg38","mm10"))\{
 
         # merge bed files and sort by chromosome and starting coordinate
 
-        merged_bed <- lapply(TF.files, function(file) \{read.delim(file, skip = 0, header = FALSE)\})
+        merged_bed <- lapply(TF.files, function(file) read.delim(file, skip = 0, header = FALSE))
         merged_bed <- do.call('rbind', merged_bed)
         merged_bed$V1 <- factor(merged_bed$V1, levels = chr_order[[genome]])
         merged_bed <- na.omit(merged_bed)
@@ -289,7 +295,7 @@ for (genome in c("mm10", "hg38"))\{
     encode.TFs <- setdiff(encode.files, chipatlas.files)
 
     #### shared.TFs
-    for (i in 1:length(shared.TFs))\{
+    for (i in seq_along(shared.TFs)) \{
 
         print(shared.TFs[i])
 
@@ -310,7 +316,7 @@ for (genome in c("mm10", "hg38"))\{
     \}
 
     ##### chipatlas
-    for (i in 1:length(chipatlas.TFs))\{
+    for (i in seq_along(chipatlas.TFs)) \{
 
         print(chipatlas.TFs[i])
 
@@ -330,7 +336,7 @@ for (genome in c("mm10", "hg38"))\{
     \}
 
     ##### encode
-    for (i in 1:length(encode.TFs))\{
+    for (i in seq_along(length(encode.TFs))) \{
 
         print(encode.TFs[i])
 
@@ -360,7 +366,8 @@ Perform liftover from hg38 to hg19 for the ChIP-seq binding sites
 # need to reformat chain file from space to tab
 # sed -r 's/^([0-9]+) ([0-9]+) ([0-9]+)$/\\1\\t\\2\\t\\3/' hg38ToHg19.over.chain > hg38_to_hg19_tabs.chain
 
-ch <- rtracklayer::import.chain(con = "/gstore/project/lineage/xiaosai/chipatlas/data/hg38_to_hg19_tabs.chain")
+ch <- rtracklayer::import.chain(
+    con = "/gstore/project/lineage/xiaosai/chipatlas/data/hg38_to_hg19_tabs.chain")
 
 # install liftover
 if (!require("BiocManager", quietly = TRUE))
@@ -397,5 +404,5 @@ Oki S, Ohta T, Shioi G, Hatanaka H, Ogasawara O, Okuda Y, Kawaji H, Nakaki R, Se
 \emph{EMBO}; Vol. 19, EMBO reports. 2018.
 \href{http://dx.doi.org/10.15252/embr.201846255}{doi: 10.15252/embr.201846255}
 
-ENCODE {https://www.encodeproject.org/}
+ENCODE: {https://www.encodeproject.org/}
 }
