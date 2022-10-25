@@ -30,7 +30,7 @@ manifest.hematopoiesis <-
     Title = "scATAC-seq and unpaired scRNA-seq of hematopoetic cells",
     Species = "Homo sapiens", # e.g. "Homo sapiens"
     Lineage = "blood",
-    Cell_Num = "10250",
+    CellNumber = "10250",
     Multiome = "unpaired",
     DiskSize = "1.0 GB",
     Version = "2019-10-29"

@@ -28,9 +28,9 @@ To list currently available data sets, use `listDatasets()` or see package help 
 
 ## Data Storage and Access
 
-Data sets in `MultiAssayExperiment` form are saved to disk with the `saveMAE` function. It creates an hdf5 file and dispatches individual experiments to `saveExp`. `saveExpe` disassembles and saves experiments to the file.
+Data sets in `MultiAssayExperiment` form are saved to disk with the `saveMAE` function. It creates an hdf5 file and dispatches individual experiments to `saveExp`. `saveExp` disassembles and saves experiments to the file.
 
-Each data set is accessed by its own accessor function. Calling an accessor internally queries `ExperimentHub` for the resource, which causes the file to be downloaded and cached. The path to the cached file is passed to `loadMAE`, which in turn calls `loadExp` for each experiment specified in the accessor call. `loadExp` reads experiment components and reassembles them, and then `loadMAE` builds a `MultiAssayExperiment` object. This object is the final return value of the accessor function.
+Each data set is accessed by its own accessor function. Accessor functions call the internal `retrieve` function to query `ExperimentHub` for the resource in question, which causes the file to be downloaded and cached. The path to the cached file is passed to `loadMAE`, which in turn calls `loadExp` for each experiment specified in the accessor call. `loadExp` reads experiment components and reassembles them, and then `loadMAE` builds a `MultiAssayExperiment` object. This object is the final return value of the accessor function.
 
 ![](inst/images/scMultiome.png)
 
@@ -49,12 +49,13 @@ BiocManager::install("scMultiome")
 ├── README.md                       this file
 ├── DESCRIPTION                     package metadata
 ├── NAMESPACE                       namespace information
-├── developer_notes.Rmd             notes for developers
 ├── R/                              functions
 ├── man/                            help files
+├── tests/                          unit test files
 ├── vignettes/                      vignettes
 ├── images/                         images
 ├── inst/
+│   ├── images/                     image files used in documentation
 │   ├── extdata/                    external data, including data set metadata
 │   └── scripts/                    scripts, including ones to create data set metadata
 └── scMultiome.Rproj                RStudio project file           

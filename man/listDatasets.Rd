@@ -10,13 +10,14 @@ listDatasets()
 A \code{DataFrame} listing all available data sets,
 with one data set per row and the following columns:
 \itemize{
+\item{Call: function call used to access the data set directly}
+\item{Author: original data set author}
 \item{Title: data set name}
 \item{Species: species name}
-\item{Type: sample type, e.g. cell culture, tissue}
+\item{Lineage: sample lineage}
+\item{CellNumber: number of cells in the data set}
 \item{Multiome: paired or unpaired}
 \item{DiskSize: size of the dataset in storage (also size of the download)}
-\item{MemorySize: size of the dataset in memory}
-\item{Call: function used to access the dataset directly}
 \item{Version: data set version number or upload date}
 }
 }

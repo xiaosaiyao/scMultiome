@@ -20,13 +20,13 @@ metadata.prostateENZ <- data.frame(
 
 # dataset manifest metadata
 manifest.prostateENZ <- data.frame(
-    Call = "prostateENZ",
+    Call = "prostateENZ()",
     Author = "Taavitsainen",
     Title = "LNCaP Cells Treated with Enzalutamide",
     Species = "Homo sapiens",
     Lineage = "Prostate",
     Multiome = "unpaired",
-    Cell_Num = "15522",
+    CellNumber = "15522",
     DiskSize = "2.9 GB",
     Version = "2022-09-06"
 )

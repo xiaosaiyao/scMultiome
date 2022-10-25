@@ -34,7 +34,6 @@
 #'
 #' @export
 #'
-#'
 reprogramSeq <-
     function(metadata = FALSE,
              experiments = c("TileMatrix500",
@@ -46,9 +45,5 @@ reprogramSeq <-
         checkmate::assertFlag(metadata)
         experiments <- match.arg(experiments, several.ok = TRUE)
 
-retrieve("reprogramSeq", metadata, experiments, verbose = FALSE)
+        retrieve("reprogramSeq", metadata, experiments, verbose = FALSE)
     }
-
-# place methods to convert your custom class to SingleCellExperiment and vice versa here
-# skip if conversion can be done with `as`
-# see ?convertSCE and the Adding Data Sets vignette (Custom Classes) for details

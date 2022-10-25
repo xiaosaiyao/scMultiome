@@ -17,6 +17,13 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{css, echo=FALSE}
+.scroll250 {
+  max-height: 250px;
+  overflow-y: auto;
+  background-color: inherit;
+}
+```
 
 
 # Introduction
@@ -24,6 +31,8 @@ knitr::opts_chunk$set(echo = TRUE)
 This package is a data repository for single cell multiome data within `ExperimentHub`. It also provides a framework to add more multiome data with minimal effort but the process cannot be fully automated. This vignette will guide you.
 
 Briefly, data set will be disassembled and saved in a hdf5 file, from which individual experiments can be drawn using its own accessor function. You must provide the data set in hdf5 format, its metadata, its documentation, and finally the accessor function that will retrieve the data from `ExperimentHub`.
+
+
 
 <br><br><br>
 
@@ -45,15 +54,17 @@ if (devtoolsPresent) {
 
 ```
 
+
+
 <br><br><br>
 
 # Saving Your Data Set
 
-Currently only `MultiAssayExperiment` objects are supported. Experiments will be saved as `SingleCellExperiment`. Other classes will be converted to `SingleCellExperiment` when saving and restored when retrieving. See "Custom Classes" below. Unpublished classes must be converted to `SingleCellExperiment` before storing and re-convert after retrieving the data.
+Currently only `MultiAssayExperiment` objects are supported. Experiments must be objects that inherit from `SummarizedExperiment` and will usually be `SingleCellExperiment`, hence full support is provided for the latter and their slots (`reducedDims` and `altExps`).
 
 Use `saveMAE` to save your data set to the `R/data` directory. You can use `testFile` to validate that your data set can be reconstructed.
 
-```{r saving, eval = TRUE}
+```{r saving, eval = TRUE, class.output = "scroll250", class.echo = "scroll250"}
 # construct a dummy data set
 mae <- dummyMAE()
 mae
@@ -69,93 +80,6 @@ testFile(fileName)
 ```
 
 For a detailed explanation of the process see `?saveMAE`.
-
-
-## Custom Classes
-
-If any of your experiments is not a `SingleCellExperiment`, attempts will be made to convert it to one before storing and to recover its original class upon retrieving. This automatic handling a custom class requires that: 1) the package that defines it is available and 2) an appropriate methods exists to convert that class to a `SingleCellExperiment` and a `SingleCellExperiment` back to that class. See `?experimentCalss` for details and consult case studies below.
-
-
-
-### Class conversions can be done with `as`.
-
-Conversion is handled by the `as` generic function:
-```{r as, eval = FALSE}
-obj <- <CUSTOM_CLASS_OBJECT>
-
-as(obj, "SingleCellExperiment")
-```
-
-This will work for most classes that inherit from `SingleCellExperiment`. All you have to do is add the package that defines the class as a dependency of `scMultiome`:
-```{r exmaplePackage, eval = FALSE}
-usethis::use_packge("<PACKAGE_NAME>", type = "Imports")
-```
-Note that per Bioconductor's requirements the package must be available from CRAN or Bioconductor.
-
-
-
-### Class conversions cannot be done with `as` but methods exist.
-
-The `Seurat` package is frequently used in genomic analyses. Data is stored in the `SeuratObject` class. See <https://satijalab.org/seurat/> for details.
-
-```{r Seurat, include = FALSE}
-SeuratPresent <- requireNamespace("Seurat", quietly = TRUE)
-```
-
-A `SeuratObject` cannot be converted to `SingleCellExperiment` with `as`:
-```{r attachSeurat, eval = TRUE, include = FALSE}
-
-if (SeuratPresent) {
-    library(Seurat)
-    
-    # create example object
-    pbmc_raw <- read.table(
-        file = system.file('extdata', 'pbmc_raw.txt', package = 'Seurat'),
-        as.is = TRUE
-    )
-    pbmc_small <- CreateSeuratObject(counts = pbmc_raw)
-    pbmc_small
-}
-
-```
-
-```{r asSeurat, eval = TRUE, error = TRUE}
-# attempt conversion
-as(pbmc_small, "SingleCellExperiment")
-```
-
-However, the `Seurat` package provides functions to convert between these classes:
-```{r Seurat_SCE, eval = FALSE}
-# convert SeuratObject to SingleCellExperiment
-(pbmc_sce <- as.SingleCellExperiment(pbmc_small))
-# # revert to SeuratObject
-(pbmc_seurat <- as.Seurat(pbmc_sce))
-```
-
-Here is how to wrap this in our convention:
-```{r conversionMethods, eval = FALSE}
-convertFromSeurat <- function(x) {
-    Seurat::as.SingleCellExperiment(x)
-}
-convertToSeurat <- function(x) {
-    Seurat::as.Seurat(x)
-}
-```
-
-You must also state `Seurat` as an imported dependency:
-```{r dependency, eval = FALSE}
-usethis::use_package("Seurat", type = "Imports")
-```
-
-### No conversion method exists.
-
-If no method exists to convert your custom class to a `SingleCellExperiment` and _vice versa_, you must either write such functions from scratch, or manually convert your objects to `SingleCellExperiments`.
-
-
-
-### Convertion methods are missing and are not supplied.
-
-If you fail to provide conversion handlers, saving your experiments will fail with an error and loading will return `SingleCellExperiment`s with a warning.
 
 
 
@@ -183,11 +107,10 @@ source(system.file("scripts", "make-metadata.R", package = "scMultiome"))
 Subsequently, validate the correctness of the metadata by the running `makeExperimentHubMetadata` function. This call must also run without errors. It will return an `ExperimentHub` object that will display your metadata in the form that the end users will see it.
 
 
-```{r validation, eval = TRUE}
+```{r validation, eval = TRUE, class.output = "scroll250"}
 # this will validate your metadata (not shown)
 ExperimentHubData::makeExperimentHubMetadata(dirname(system.file(package = "scMultiome")))
 ```
-
 
 
 
@@ -211,7 +134,7 @@ Second, run `makeR("<DATASET_NAME>")`. This will create an R file called `<DATAS
 1. Give the file the same Title was used in the `make-metadata-<>.R` file.
 2. Add a Description section.
 3. Document any arguments other than `experiments` and `metadata`.
-4. Describe the format of your MultiAssayExperiment.
+4. Describe the format of your `MultiAssayExperiment`.
 5. Cite appropriate references.
 6. Make sure the default value of the `experiments` argument reflects the experiment names in your data set.
 7. If you want to restore custom classes to your experiments, add converting functions here. They do not require documentation or exporting.
@@ -230,7 +153,7 @@ devtools::document()
 ?scMultiome
 
 # view your data set man page
-#help("dataset")
+help("dataset")
 ```
 
 
@@ -239,7 +162,7 @@ devtools::document()
 
 # Updating Package Files
 
-Edit the DESCRIPTION file to update package metadata: add yourself as package author and package version.
+Edit the `DESCRIPTION` file to update package metadata: add yourself as package author and package version.
 
 ```{r DESCRIPTION, eval = FALSE}
 desc::desc_add_author("<GIVEN_NAME>", "<FAMILY_NAME>", "<EMAIL>", role = "aut")
@@ -266,9 +189,9 @@ uploadFile(file = fileName, sasToken = "<SAS_TOKEN>")
 
 Consult [this vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/HubPub/inst/doc/CreateAHubPackage.html#additional-resources-to-existing-hub-package) for current Bioconductor requirements.
 
-<br>
 
 
+<br><br><br>
 
 # Congratulations
 

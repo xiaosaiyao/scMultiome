@@ -94,7 +94,7 @@ makeMakeMetadata <- function(dataset) {
         "    Title = \"<YOUR DATA TITLE>\",",
         "    Species = \"<SPECIES NAME>\", # e.g. \"Homo sapiens\"",
         "    Lineage = \"<TISSUE OR ORGAN>\",",
-        "    Cell_Num = \"<NUMBER OF CELLS>\",",
+        "    CellNumber = \"<NUMBER OF CELLS>\",",
         "    Multiome = \"<PAIRED OR UNPAIRED>\",",
         "    DiskSize = \"<H5 FILE SIZE ON DISK>\",",
         paste0("    Version = \"", Sys.Date(), "\""),
@@ -154,7 +154,6 @@ makeR <- function(dataset) {
         "#'",
         "#' @export",
         "#'",
-        "#'",
         paste(dataset, "<-"),
         "    function(metadata = FALSE,",
         "             experiments = c(\"TileMatrix500\",",
@@ -165,12 +164,8 @@ makeR <- function(dataset) {
         "        checkmate::assertFlag(metadata)",
         "        experiments <- match.arg(experiments, several.ok = TRUE)",
         "",
-        paste0("retrieve(\"", dataset, "\", metadata, experiments, verbose = FALSE)"),
-        "    }",
-        "",
-        "# place methods to convert your custom class to SingleCellExperiment and vice versa here",
-        "# skip if conversion can be done with `as`",
-        "# see ?convertSCE and the Adding Data Sets vignette (Custom Classes) for details"
+        paste0("        retrieve(\"", dataset, "\", metadata, experiments, verbose = FALSE)"),
+        "    }"
     ))
 
     if ("tools:rstudio" %in% search() && requireNamespace("rstudioapi", quietly = TRUE)) {

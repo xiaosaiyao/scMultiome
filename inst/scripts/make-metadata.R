@@ -19,8 +19,8 @@ lapply(files, source)
 
 
 # collate manifest
-all.manifest <- ls(envir = .GlobalEnv, pattern = "^manifest\\..+")
-manifest <- do.call(rbind, mget(all.manifest))
+manifest.all <- ls(envir = .GlobalEnv, pattern = "^manifest\\..+")
+manifest <- do.call(rbind, mget(manifest.all))
 
 # write manifest to file - DO NOT ALTER
 utils::write.csv(manifest,

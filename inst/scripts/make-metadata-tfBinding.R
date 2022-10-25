@@ -56,34 +56,34 @@ metadata.tfBinding.mm10 <- data.frame(
 # dataset manifest metadata
 # see ?listDatasets for details
 manifest.tfBinding.hg38 <- data.frame(
-    Call = "tfBinding",
+    Call = "tfBinding()",
     Author = "ChipAtlas, ENCODE",
     Title = "TF Binding Hg38",
     Species = "Homo sapiens",
     Lineage = "All",
-    Cell_Num = "Bulk",
+    CellNumber = "Bulk",
     Multiome = "n/a",
     DiskSize = "600 MB",
     Version = "2022-09-20"
 )
 manifest.tfBinding.hg19 <- data.frame(
-    Call = "tfBinding",
+    Call = "tfBinding()",
     Author = "ChipAtlas, ENCODE",
     Title = "TF Binding Hg19",
     Species = "Homo sapiens",
     Lineage = "All",
-    Cell_Num = "Bulk",
+    CellNumber = "Bulk",
     Multiome = "n/a",
     DiskSize = "600 MB",
     Version = "2022-09-20"
 )
 manifest.tfBinding.mm10 <- data.frame(
-    Call = "tfBinding",
+    Call = "tfBinding()",
     Author = "ChipAtlas, ENCODE",
     Title = "TF Binding Mm10",
     Species = "Mus musculus",
     Lineage = "All",
-    Cell_Num = "Bulk",
+    CellNumber = "Bulk",
     Multiome = "n/a",
     DiskSize = "600 MB",
     Version = "2022-09-20"

@@ -23,12 +23,12 @@ metadata.colonHealthy <- data.frame(
 # dataset manifest metadata
 # see ?listDatasets for details
 manifest.colonHealthy <- data.frame(
-    Call = "colonHealthy",
+    Call = "colonHealthy()",
     Author = "Zhang",
     Title = "Healthy colon",
     Species = "Homo sapiens", # e.g. "Homo sapiens"
     Lineage = "Colon",
-    Cell_Num = "59231",
+    CellNumber = "59231",
     Multiome = "unpaired",
     DiskSize = "6.7 GB",
     Version = "2022-09-21"

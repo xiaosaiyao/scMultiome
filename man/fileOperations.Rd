@@ -14,15 +14,15 @@
 \usage{
 saveMAE(mae, file, experiments = NULL, verbose = TRUE, overwrite = FALSE)
 
-loadMAE(file, experiments, verbose = FALSE)
+loadMAE(file, experiments, verbose)
 
-saveExp(exp, expName, file, verbose = TRUE)
+saveExp(exp, expName, file, verbose)
 
-\S4method{saveExp}{SummarizedExperiment}(exp, expName, file, verbose = TRUE)
+\S4method{saveExp}{SummarizedExperiment}(exp, expName, file, verbose)
 
-\S4method{saveExp}{SingleCellExperiment}(exp, expName, file, verbose = TRUE)
+\S4method{saveExp}{SingleCellExperiment}(exp, expName, file, verbose)
 
-loadExp(file, expName, verbose = TRUE)
+loadExp(file, expName, verbose)
 
 testFile(file)
 
@@ -65,7 +65,7 @@ Functions to disassemble and save, and load and reassemble MultiAssayExperiment 
 }
 \details{
 These are utilities for developers to add new data sets to the package.
-Most of them will usually be called internally.
+Most will usually be called internally.
 
 \code{saveMAE} is used to save a \code{MultiAssayExperiment} to a hdf5 file.
 It creates the \code{file} and passes individual \code{experiments} to \code{saveExp}.
@@ -76,7 +76,6 @@ the top level group called \code{expName}, e.g. "GeneScoreMatrix",
 and lower level groups to store specific elements:
 \itemize{
 \item{\code{experiment} class is saved in group "class"}
-\item{the name of the package where the class is defined is saved in group "pacakge"}
 \item{assays are saved as sparse matrices in subgroup "assays", using \code{writeSparseMatrix}}
 \item{\code{colData} and \code{colnames} are saved in subgroup "properties"}
 \item{if \code{experiment} has \code{rownames}, the are saved in "properties"}
@@ -87,6 +86,8 @@ it is converted to a data frame and saved in "properties"}
 it is deparsed to a string and saved in "properties"}
 \item{if \code{experiment} has a \code{reducedDims} component,
 they are saved in subgroup "reducedDims"}
+\item{if \code{experiment} has a \code{altExps} component,
+they are saved in subgroup "altExps" by recursively calling \code{saveExp}}
 }
 \code{DataFrames} (e.g. \code{colData}, \code{rowData}, embeddings)
 are converted to \code{data.frames} and saved as compound type.
@@ -95,8 +96,9 @@ are converted to \code{data.frames} and saved as compound type.
 in which the data set is stored and uses \code{loadExp} to extract the specified \code{experiments}.
 
 \code{loadExp} first checks which property elements are stored for the experiment in question,
-loads all elements of the experiment and builds a \code{SingleCellExperiment} object.
-If the original class of the experiment is different, an attempt is made to convert to that class.
+loads all elements of the experiment and builds a \code{SummarizedExperiment} object.
+If the experiment was originally a \code{SingleCellExperiment}, the class, as well as
+possible additinal slots, are restored.
 
 \code{testFile} can be used to test whether a data set loads correctly from a local file.
 It calls \code{loadMAE} and extracts all experiment verbosely.
@@ -106,20 +108,20 @@ It calls \code{loadMAE} and extracts all experiment verbosely.
 \examples{
 
 # create dummy MultiAssayExperiment
-mae <- scMultiome:::dummyMAE(experiments = c("EXP1", "EXP2"))
+mae <- scMultiome:::dummyMAE()
 
 fileName <- tempfile(fileext = ".h5")
-saveMAE(mae, fileName)                        # save MAE
-mae_reload <- loadMAE(fileName, c("EXP1", "EXP2"), TRUE)    # load MAE (called internally)
-mae_reload_exp1 <- loadMAE(fileName, "EXP1", TRUE)               # load one experiment from MAE (called internally)
+saveMAE(mae, fileName)                                # save MAE
+remae <- loadMAE(fileName, c("EXP1", "EXP2"), TRUE)   # load MAE (internal)
+remae_exp1 <- loadMAE(fileName, "EXP1", TRUE)         # load MAE with one experiment (internal)
 
 # create dummy SingleCellExperiment
 sce <- scMultiome:::dummySCE()
 
-saveExp(sce, "EXP3", fileName, TRUE)          # save one experiment (called internally)
-sce_reload <- loadExp(fileName, "EXP1", TRUE)               # load one experiment (called internally)
+saveExp(sce, "EXP3", fileName, TRUE)                  # save one experiment (internal)
+resce <- loadExp(fileName, "EXP3", TRUE)              # load one experiment (internal)
 
-testFile(fileName)                            # load whole MAE
+testFile(fileName)                                    # load whole MAE
 }
 \seealso{
 Vignette "rhdf5 - HDF5 interface for R" (\code{vignette} or \code{browseVignettes})

@@ -231,6 +231,10 @@ single hdf5 file. Data and can be accessed with a special function that extracts
 elements of the requested experiment(s), reassembles them, and builds an MAE.
 }
 
+\examples{
+reprogramSeq()
+
+}
 \references{
 \enumerate{
 \item Zhang K, Hocker JD, Miller M, Hou X, Chiou J, Poirion OB, Qiu Y, Li YE,

@@ -25,12 +25,12 @@ metadata.reprogramSeq <-
 # see ?listDatasets for details
 manifest.reprogramSeq <-
     data.frame(
-        Call = "reprogramSeq",
+        Call = "reprogramSeq()",
         Author = "Xie",
         Title = "Reprogram-seq of LNCaP cells",
         Species = "Homo sapiens", # e.g. "Homo sapiens"
         Lineage = "Prostate",
-        Cell_Num = "3903",
+        CellNumber = "3903",
         Multiome = "paired",
         DiskSize = "430 MB",
         Version = "2022-10-04"
