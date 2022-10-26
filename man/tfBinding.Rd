@@ -52,7 +52,7 @@ ChIP-seq binding sites were downloaded from \href{https://github.com/inutano/chi
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{# metatdata 
 # download fileList.tab from https://dbarchive.biosciencedbc.jp/kyushu-u/metadata/fileList.tab
 
-dir <- "/gstore/scratch/u/yaox19/chipAtlas/"
+dir <- "chipAtlas/"
 fileLIST <- read.delim(paste0(dir, "metadata/fileList.tab"), header = FALSE)
 
 
@@ -105,8 +105,8 @@ library(rtracklayer)
 ## which BED files correspond to  a specific TF
 ## Outputs a directory of merged bed files
 
-dir = '/gstore/scratch/u/yaox19/chipAtlas/'
-outdir = '/gstore/project/lineage/xiaosai/chipatlas/data/chipatlas'
+dir <- 'chipAtlas/'
+outdir <- 'chipatlas/data/chipatlas'
 
 
 
@@ -170,8 +170,8 @@ Filter and merge ENCODE peaks
 ## in each file based on the enrichment score.
 ## Low Enrichment peaks are filtered out.
 
-dir = '/gstore/scratch/u/yaox19/encode/'
-outdir = '/gstore/project/lineage/xiaosai/chipatlas/data/encode/'
+dir = 'encode/'
+outdir = 'chipatlas/data/encode/'
 for (genome in c("mm10", "hg38"))\{
 
     # Make a list of all the bed files
@@ -275,7 +275,7 @@ for (genome in c("hg38","mm10"))\{
 \subsection{2.3. Merge both ENCODE and ChIP-Atlas}{
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{
-dir <- "/gstore/project/lineage/xiaosai/chipatlas/data/"
+dir <- "chipatlas/data/"
 
 chr_order <- list()
 chr_order[["mm10"]] <- c(paste0("chr",1:19),"chrX","chrY","chrM")
@@ -367,7 +367,7 @@ Perform liftover from hg38 to hg19 for the ChIP-seq binding sites
 # sed -r 's/^([0-9]+) ([0-9]+) ([0-9]+)$/\\1\\t\\2\\t\\3/' hg38ToHg19.over.chain > hg38_to_hg19_tabs.chain
 
 ch <- rtracklayer::import.chain(
-    con = "/gstore/project/lineage/xiaosai/chipatlas/data/hg38_to_hg19_tabs.chain")
+    con = "chipatlas/data/hg38_to_hg19_tabs.chain")
 
 # install liftover
 if (!require("BiocManager", quietly = TRUE))
