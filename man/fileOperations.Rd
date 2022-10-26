@@ -97,8 +97,8 @@ in which the data set is stored and uses \code{loadExp} to extract the specified
 
 \code{loadExp} first checks which property elements are stored for the experiment in question,
 loads all elements of the experiment and builds a \code{SummarizedExperiment} object.
-If the experiment was originally a \code{SingleCellExperiment}, the class, as well as
-possible additinal slots, are restored.
+If the experiment was originally a \code{SingleCellExperiment} or a subclass thereof,
+that class as well as possible additional slots are restored.
 
 \code{testFile} can be used to test whether a data set loads correctly from a local file.
 It calls \code{loadMAE} and extracts all experiment verbosely.
