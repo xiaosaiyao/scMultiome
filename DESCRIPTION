@@ -1,4 +1,3 @@
-Type: Package
 Package: scMultiome
 Title: Collection of Public Single-Cell Multiome (scATAC + scRNAseq) Datasets
 Version: 0.99.2
