@@ -22,7 +22,7 @@ write.csv(head(iris), fileName2)
 
 # saving
 suppressMessages({
-    ansSave <- saveMAE(mae, fileName, verbose = FALSE)
+    ansSave <- saveMAE(mae, fileName, verbose = TRUE)
     ansSave2 <- saveMAE(mae, fileName, verbose = FALSE, overwrite = TRUE)
 })
 test_that("saving mae", {
