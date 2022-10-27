@@ -1,6 +1,6 @@
 Package: scMultiome
 Title: Collection of Public Single-Cell Multiome (scATAC + scRNAseq) Datasets
-Version: 0.99.3
+Version: 0.99.4
 Authors@R: c(
     person("Xiaosai", "Yao", , "yao.xiaosai@gene.com", role = "cre"),
     person("Aleksander", "Chlebowski", , "aleksander.chlebowski@contractors.roche.com", role = "aut"),
@@ -46,4 +46,4 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 biocViews: PackageTypeData, ExperimentHub, SingleCellData, ExpressionData,
-    Homo_sapiens_Data, CellCulture, Tissue, GEO
+    SequencingData, Homo_sapiens_Data, CellCulture, Tissue, GEO
