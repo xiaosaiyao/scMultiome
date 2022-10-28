@@ -38,6 +38,7 @@ Authors:
   \item Aleksander Chlebowski \email{aleksander.chlebowski@contractors.roche.com}
   \item Aaron Lun \email{lun.aaron@gene.com}
   \item Tomasz Wlodarczyk \email{tomasz.wlodarczyk@contractors}
+  \item Natalie Fox \email{natalie.fox@roche.com}
 }
 
 Other contributors:
