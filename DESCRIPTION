@@ -18,7 +18,8 @@ Depends:
     ExperimentHub,
     MultiAssayExperiment,
     SingleCellExperiment,
-    SummarizedExperiment
+    SummarizedExperiment,
+    rhdf5
 Imports: 
     AzureStor,
     DelayedArray,
