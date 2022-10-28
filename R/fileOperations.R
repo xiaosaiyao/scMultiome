@@ -95,6 +95,7 @@
 #' @rdname fileOperations
 #'
 #' @export
+#' @author Aleksander Chlebowski and Xiaosai
 #'
 saveMAE <- function(mae, file, experiments = NULL, verbose = TRUE, overwrite = FALSE) {
     # TODO:

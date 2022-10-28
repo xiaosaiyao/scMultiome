@@ -28,3 +28,6 @@ Summary information for all data sets available in the package.
 listDatasets()
 
 }
+\author{
+Aleksander Chlebowski
+}

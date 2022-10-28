@@ -128,3 +128,6 @@ Vignette "rhdf5 - HDF5 interface for R" (\code{vignette} or \code{browseVignette
 for details of hdf5 file construction.\cr
 \code{writeSparseMatrix} for details of saving sparse matrices.
 }
+\author{
+Aleksander Chlebowski and Xiaosai
+}

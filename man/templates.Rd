@@ -30,3 +30,6 @@ Each function creates a file and attempts to open it in RStudio for editing.
 \code{makeMakeMetadata} creates an R script called \code{inst/scripts/make-metadata-<dataset>.R}.\cr
 \code{makeR} creates an R file called \code{R/<dataset>.Rmd}.\cr
 }
+\author{
+Aleksander Chlebowski
+}
