@@ -177,16 +177,17 @@ load.matrix <- function(matrix.type, archrProj, embedding.map = NULL, numThreads
     # Get the SummarizedExperimets with one column per cell and then convert to SingleCellExperiments
     se <- suppressMessages(getMatrixFromProject(archrProj, matrix.type, binarize = binarize, threads = numThreads))
 
-    # # check that colData colnames match the getCellColData colnames and replace if not matching
-    # if('projColData[, colnames(projColData) %in% colnames(colData)]' %in% colnames(colData(se))) {
-    #     cell.col.data <- getCellColData(archrProj)
-    #     missing.colname <- setdiff(colnames(cell.col.data),colnames(colData(se)))
-    #     if(length(missing.colname) == 1 &&
-    #        length(which(colnames(colData(se)) == 'projColData[, colnames(projColData) %in% colnames(colData)]')) == 1) {
-    #         colnames(colData(se))[
-    #             which(colnames(colData(se)) == 'projColData[, colnames(projColData) %in% colnames(colData)]')] <- missing.colname
-    #     }
-    # }
+    # check that colData colnames match the getCellColData colnames and replace if not matching
+    if('projColData[, colnames(projColData) %ni% colnames(colData)]' %in% colnames(colData(se))) {
+        cell.col.data <- getCellColData(archrProj)
+        missing.colname <- setdiff(colnames(cell.col.data),colnames(colData(se)))
+        if(length(missing.colname) == 1 &&
+           length(which(colnames(colData(se)) == 'projColData[, colnames(projColData) %ni% colnames(colData)]')) == 1) {
+            colnames(colData(se))[which(colnames(colData(se)) ==
+                                            'projColData[, colnames(projColData) %ni% colnames(colData)]')] <- missing.colname;
+        }
+    }
+
 
     # Create the rowRanges for the experiment
     if(matrix.type == 'TileMatrix') {
