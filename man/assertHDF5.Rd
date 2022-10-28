@@ -44,3 +44,6 @@ assertHDF5(fileName2)   # fails
 \references{
 \url{http://web.ics.purdue.edu/~aai/HDF5/html/H5.format.html#BootBlock}
 }
+\author{
+Aleksander Chlebowski
+}

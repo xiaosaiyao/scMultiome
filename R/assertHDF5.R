@@ -34,7 +34,7 @@
 #' <http://web.ics.purdue.edu/~aai/HDF5/html/H5.format.html#BootBlock>
 #'
 #' @export
-#'
+#' @author Aleksander Chlebowski
 assertHDF5 <- function(path) {
 
   fileHead <- readBin(path, "raw", n = 8L)

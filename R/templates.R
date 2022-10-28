@@ -18,6 +18,7 @@
 #' @name templates
 #'
 #' @rdname templates
+#' @author Aleksander Chlebowski
 #'
 makeMakeData <- function(dataset) {
     checkmate::assertString(dataset)

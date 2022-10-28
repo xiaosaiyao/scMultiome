@@ -22,6 +22,7 @@
 #' listDatasets()
 #'
 #' @export
+#' @author Aleksander Chlebowski
 #'
 listDatasets <- function () {
     path <- system.file("extdata", "manifest.csv", package = "scMultiome")
