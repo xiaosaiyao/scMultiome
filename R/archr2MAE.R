@@ -13,7 +13,6 @@
 #' @importFrom SummarizedExperiment colData
 #' @importFrom MultiAssayExperiment colData colData<- MultiAssayExperiment ExperimentList listToMap
 #' @importFrom S4Vectors DataFrame
-#' @importFrom rhdf5 h5closeAll
 
 archr2MAE <- function(archrDir, numThreads = 1) {
 
@@ -46,7 +45,6 @@ archr2MAE <- function(archrDir, numThreads = 1) {
 #' @importFrom ArchR getAvailableMatrices loadArchRProject getArchRThreads getArchRLogging addArchRLogging
 #' @importFrom BiocGenerics start
 #' @importFrom methods as
-#' @importFrom rhdf5 h5closeAll
 #'
 #' @keywords internal
 create.exp.list.from.archr <- function(archrDir,
@@ -90,7 +88,6 @@ create.exp.list.from.archr <- function(archrDir,
 }
 
 #' @importFrom ArchR getEmbedding
-#' @importFrom rhdf5 h5closeAll
 #' @keywords internal
 create.embedding.map <- function(archrProj) {
     reduced.dim.names <- names(archrProj@reducedDims)
@@ -127,6 +124,7 @@ create.embedding.map <- function(archrProj) {
 #' @importFrom IRanges IRanges
 #' @importFrom BiocGenerics start end end<-
 #' @importFrom SummarizedExperiment rowData
+#' @importFrom GenomeInfoDb seqlevels sortSeqlevels
 #' @keywords internal
 assign.tile.rowranges <- function(se, chrSizes) {
     # Create the GRanges for the tile matrix
@@ -168,7 +166,7 @@ assign.tile.rowranges <- function(se, chrSizes) {
 #' @importFrom S4Vectors SimpleList
 #' @importFrom methods as
 #' @importFrom SummarizedExperiment rowData rowData<-
-#' @importFrom rhdf5 h5read h5closeAll
+#' @importFrom rhdf5 h5read
 #' @keywords internal
 load.matrix <- function(matrix.type, archrProj, embedding.map = NULL, numThreads = getArchRThreads()) {
     message(matrix.type)

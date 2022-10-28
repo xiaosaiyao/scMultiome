@@ -19,7 +19,7 @@
 #' write.csv(mtcars, fileName2)
 #'
 #' assertHDF5(fileName1)   # passes
-#' \dontrun{
+#' \donttest{
 #' assertHDF5(fileName2)   # fails
 #' }
 #'

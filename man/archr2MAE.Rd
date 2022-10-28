@@ -4,7 +4,7 @@
 \alias{archr2MAE}
 \title{Create a MultiAssayExperiment from an ArchR project}
 \usage{
-archr2MAE(archrDir, numThreads = getArchRThreads())
+archr2MAE(archrDir, numThreads = 1)
 }
 \arguments{
 \item{archrDir}{String specifying the ArchR project directory. The directory should contain a Save-ArchR-Project.rds.}

@@ -28,10 +28,11 @@ Imports:
     checkmate,
     methods,
     rhdf5,
-    ArchR
-Suggests: 
+    ArchR,
     BiocGenerics,
     IRanges,
+    GenomeInfoDb
+Suggests: 
     Matrix,
     knitr,
     rmarkdown,
