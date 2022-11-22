@@ -36,11 +36,10 @@
 #'
 #'
 #' @section Data storage and access:
-#' Each genomic build is a separate \code{GRangesList} object. Each \code{GRangesList}
-#' is split into individual \code{GRanges} objects, converted into data frames,
-#' and then stored in a single hdf5 file. Data can be accessed with a special
-#' function that extracts the requested genomic build and converts the data frame back to
-#' \code{GRangesList}.
+#' Each genomic build is a separate \code{GRangesList} object, stored in a separate hdf5 file.
+#' Each \code{GRangesList} is split into individual \code{GRanges} objects and converted into data frames.
+#' All genomic builds can be accessed with the same \code{tfBinding} function with \code{genome} specifying the
+#' requested genomic build which is loaded and converted back to a \code{GRangesList}.
 #'
 #' @section Data preparation:
 #' ```{r child = system.file("scripts", "make-data-tfBinding.Rmd", package = "scMultiome")}
@@ -57,14 +56,15 @@ tfBinding <- function(genome = c("hg38", "hg19", "mm10"),
     genome <- match.arg(genome, several.ok = FALSE)
 
 
-    eh <- AnnotationHub::query(ExperimentHub::ExperimentHub(), c("scMultiome", "tfBinding"))
+    genomeName <- paste("tfBinding", genome, sep="_")
+    eh <- AnnotationHub::query(ExperimentHub::ExperimentHub(), c("scMultiome", genomeName))
     ans <- if (metadata) {
-        eh[genome]
+        eh[genomeName]
     } else {
-        fileName <- eh[[genome]]
+        fileName <- eh[[genomeName]]
         fc <- rhdf5::h5ls(fileName)
-        TFs <- fc[fc[["group"]] == sprintf("/%s", genome), "name"]
-        motifInfo <- lapply(TFs, function(x) rhdf5::h5read(file = fileName, name = sprintf("/%s/%s", genome, x)))
+        TFs <- fc[fc[["group"]] == "/","name"]
+        motifInfo <- lapply(TFs, function(x) rhdf5::h5read(file = fileName, name = sprintf("/%s", x)))
         motifInfo <- lapply(motifInfo, restoreGR)
         names(motifInfo) <- TFs
         GenomicRanges::GRangesList(motifInfo, compress = FALSE)

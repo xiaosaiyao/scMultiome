@@ -31,11 +31,10 @@ mouse genomic builds, which can be used with multiome data to compute epiregulon
 }
 \section{Data storage and access}{
 
-Each genomic build is a separate \code{GRangesList} object. Each \code{GRangesList}
-is split into individual \code{GRanges} objects, converted into data frames,
-and then stored in a single hdf5 file. Data can be accessed with a special
-function that extracts the requested genomic build and converts the data frame back to
-\code{GRangesList}.
+Each genomic build is a separate \code{GRangesList} object, stored in a separate hdf5 file.
+Each \code{GRangesList} is split into individual \code{GRanges} objects and converted into data frames.
+All genomic builds can be accessed with the same \code{tfBinding} function with \code{genome} specifying the
+requested genomic build which is loaded and converted back to a \code{GRangesList}.
 }
 
 \section{Data preparation}{

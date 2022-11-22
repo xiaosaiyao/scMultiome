@@ -16,7 +16,7 @@ metadata.tfBinding.hg38 <- data.frame(
     Maintainer = desc::desc_get_maintainer(),
     RDataClass = "GRangesList",
     DispatchClass = "FilePath",
-    RDataPath = "scMultiome/tfbinding"
+    RDataPath = "scMultiome/tfBinding_hg38"
 )
 metadata.tfBinding.hg19 <- data.frame(
     Title = "TF Binding Info Hg19",
@@ -33,7 +33,7 @@ metadata.tfBinding.hg19 <- data.frame(
     Maintainer = desc::desc_get_maintainer(),
     RDataClass = "GRangesList",
     DispatchClass = "FilePath",
-    RDataPath = "scMultiome/tfbinding"
+    RDataPath = "scMultiome/tfBinding_hg19"
 )
 metadata.tfBinding.mm10 <- data.frame(
     Title = "TF Binding Info Mm10",
@@ -50,24 +50,24 @@ metadata.tfBinding.mm10 <- data.frame(
     Maintainer = desc::desc_get_maintainer(),
     RDataClass = "GRangesList",
     DispatchClass = "FilePath",
-    RDataPath = "scMultiome/tfbinding"
+    RDataPath = "scMultiome/tfBinding_mm10"
 )
 
 # dataset manifest metadata
 # see ?listDatasets for details
 manifest.tfBinding.hg38 <- data.frame(
-    Call = "tfBinding()",
+    Call = "tfBinding(\"hg38\")",
     Author = "ChipAtlas, ENCODE",
     Title = "TF Binding Hg38",
     Species = "Homo sapiens",
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "600 MB",
+    DiskSize = "600 MB", #To be updated
     Version = "2022-09-20"
 )
 manifest.tfBinding.hg19 <- data.frame(
-    Call = "tfBinding()",
+    Call = "tfBinding(\"hg19\")",
     Author = "ChipAtlas, ENCODE",
     Title = "TF Binding Hg19",
     Species = "Homo sapiens",
@@ -78,7 +78,7 @@ manifest.tfBinding.hg19 <- data.frame(
     Version = "2022-09-20"
 )
 manifest.tfBinding.mm10 <- data.frame(
-    Call = "tfBinding()",
+    Call = "tfBinding(\"mm10\")",
     Author = "ChipAtlas, ENCODE",
     Title = "TF Binding Mm10",
     Species = "Mus musculus",
