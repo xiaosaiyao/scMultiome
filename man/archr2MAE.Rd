@@ -7,15 +7,19 @@
 archr2MAE(archrDir, numThreads = 1)
 }
 \arguments{
-\item{archrDir}{String specifying the ArchR project directory. The directory should contain a Save-ArchR-Project.rds.}
+\item{archrDir}{character string specifying the ArchR project directory,
+which must contain a file called Save-ArchR-Project.rds}
 
-\item{numThreads}{Integer specifying threads to be used for parallel computing during ArchR project setup}
+\item{numThreads}{single integer specifying number of threads to be used
+for parallel computing during ArchR project setup}
 }
 \value{
 A \linkS4class{MultiAssayExperiment}
 }
 \description{
-Import the matrices from a ArchR project to into a MultiAssayExperiment where each ArchR matrix is a SingleCellExperiment. Metadata is not added to the MultiAssayExperiment or Experiments.
+Import the matrices from a ArchR project to into a MultiAssayExperiment,
+where each ArchR matrix is a SingleCellExperiment.
+Metadata is not added to the MultiAssayExperiment or Experiments.
 }
 \author{
 Natalie Fox

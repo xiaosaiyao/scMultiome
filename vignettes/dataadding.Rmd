@@ -38,20 +38,23 @@ Briefly, data set will be disassembled and saved in a hdf5 file, from which indi
 
 # Developer Mode
 
-Adding data involves updating the package and as such it must be done in "developer mode". The developer mode allows access to additional tools such as documentation templates and h5 MAE de-/reconstructors.
+Adding data involves updating the package and as such it must be done in "developer mode". The developer mode allows access to additional tools such as documentation templates.
 
 To work in developer mode, you must first clone the package repository with `git`. Create a branch from `master` and work on that.
 
 Start an R session in the package directory (e.g. by opening the RStudio project in RStudio) and load all the functions. This is necessary for the R engine to temporarily identify your working directory as the package installation directory, and to expose the internal functions that you will be using.
 
-```{r devtools, include = FALSE }
-devtoolsPresent <- requireNamespace("devtools", quietly = TRUE)
+```{r devtoolsAvailable, include = FALSE}
+devtoolsAvailable <- requireNamespace("devtools", quietly = TRUE)
 
-if (devtoolsPresent) {
+if (devtoolsAvailable) {
     # attach development version of the package
     devtools::load_all()
 }
 
+```
+```{r devtools, eval = FALSE}
+devtools::load_all()
 ```
 
 
@@ -62,9 +65,16 @@ if (devtoolsPresent) {
 
 Currently only `MultiAssayExperiment` objects are supported. Experiments must be objects that inherit from `SummarizedExperiment` and will usually be `SingleCellExperiment`, hence full support is provided for the latter and their slots (`reducedDims` and `altExps`).
 
+If you start with an ArchR project, you can use `archr2MAE` to convert to it a `MultiAssayExperiment`.
+```{r archr2MAE, eval = FALSE}
+# convert ArchR project to MAE
+MAE <- archr2MAE("<ARCHR_PATH>")
+```
+
+
 Use `saveMAE` to save your data set to the `R/data` directory. You can use `testFile` to validate that your data set can be reconstructed.
 
-```{r saving, eval = TRUE, class.output = "scroll250", class.echo = "scroll250"}
+```{r saving, eval = devtoolsAvailable, class.output = "scroll250", class.echo = "scroll250"}
 # construct a dummy data set
 mae <- dummyMAE()
 mae
@@ -107,7 +117,7 @@ source(system.file("scripts", "make-metadata.R", package = "scMultiome"))
 Subsequently, validate the correctness of the metadata by the running `makeExperimentHubMetadata` function. This call must also run without errors. It will return an `ExperimentHub` object that will display your metadata in the form that the end users will see it.
 
 
-```{r validation, eval = TRUE, class.output = "scroll250"}
+```{r validation, eval = FALSE, class.output = "scroll250"}
 # this will validate your metadata (not shown)
 ExperimentHubData::makeExperimentHubMetadata(dirname(system.file(package = "scMultiome")))
 ```
