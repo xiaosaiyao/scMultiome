@@ -67,7 +67,7 @@ Refer to the [ArchR book](https://www.archrproject.com/bookdown/index.html) for 
 
 # Conversion to MAE
 
-ArchR projects were converted to `MultiAssayExperiment` objects. Each Matrix in the project becomes a `SingleCellExperiment`, its `colData` is derived from the project's `cellColData` slot, and `rowData` and `rowRanges` are created as needed. Reduced dimensionalities and embeddings of the project are attached to the Matrices they were obtained from and are stored in the `reducedDims` slot.
+ArchR projects were converted to `MultiAssayExperiment` objects with `archr2MAE`. Each Matrix in the project becomes a `SingleCellExperiment`, its `colData` is derived from the project's `cellColData` slot, and `rowData` and `rowRanges` are created as needed. Reduced dimensionalities and embeddings of the project are attached to the Matrices they were obtained from and are stored in the `reducedDims` slot.
 
 
 

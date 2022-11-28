@@ -14,6 +14,8 @@ The `scMultiome` package is a collection of public single cell multiome data set
 
 Current multiomic data sets consist of gene expression and chromatin accessibility but can be extended to include any other modalities. The data sets are either paired multiomic data sets or unpaired data sets with data integration performed by the `ArchR` [package](https://www.archrproject.com/). The `ArchR` projects were converted to `MultiAssayExperiment` objects. [MultiAssayExperiment](https://www.bioconductor.org/packages/devel/bioc/vignettes/MultiAssayExperiment/inst/doc/MultiAssayExperiment.html) objects can be constructed easily from individual matrices pre-processed by users' favorite packages.
 
+The `archr2MAE` function is provided to convert an ArchR project to a `MultiAssayExperiment`.
+
 The `MultiAssayExperiment` object is saved in hdf5 files. The nature of the hdf5 format allows the MAEs to be split into individual experiments and store them in one file, so you can choose freely which ones to load. Experiments, usually `SingleCellExperiment` objects, are disassembled into parts, which are saved in the hdf5 hierarchy. Assays are saved as sparse arrays to save storage.
 
 Upon loading, selected experiments are reassembled and wrapped into an MAE object. Assays are represented by `DelayedMatrix` objects to save memory.

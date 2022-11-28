@@ -18,8 +18,7 @@ Depends:
     ExperimentHub,
     MultiAssayExperiment,
     SingleCellExperiment,
-    SummarizedExperiment,
-    rhdf5
+    SummarizedExperiment
 Imports: 
     AzureStor,
     DelayedArray,
@@ -32,7 +31,8 @@ Imports:
     ArchR,
     BiocGenerics,
     IRanges,
-    GenomeInfoDb
+    GenomeInfoDb,
+    rhdf5
 Suggests: 
     Matrix,
     knitr,
