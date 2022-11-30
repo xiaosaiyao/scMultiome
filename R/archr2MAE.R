@@ -95,34 +95,39 @@ create.exp.list.from.archr <- function(archrDir, numThreads = ArchR::getArchRThr
 
 #' @keywords internal
 create.embedding.map <- function(archrProj) {
-    ### I think this will always return an unnamed vector (lapply only returns named if X is named)
-    ### but there is a loop later that iterates over its names
-    reduced.dim.names <- names(archrProj@reducedDims)
-    reduced.dim.matrix.type <- unlist(lapply(reduced.dim.names,
-                                             function(x) {archrProj@reducedDims[[x]]$useMatrix}))
+  
+    # map which matrix was used to create each reduced dimension set
+    reduced.dim.matrix.type <- lapply(
+      archrProj@reducedDims,
+      function(x) {x$useMatrix}
+    )
 
-    embedding.colnames <- unlist(lapply(names(archrProj@embeddings),
-                                 function(x) {colnames(ArchR::getEmbedding(archrProj, x))}))
-    embedding.reduced.dim.mapping <- unique(sub('#.*','', embedding.colnames))
+    # map which reduced dim set was used to create each embedding
+    embedding.reduced.dim.mapping <- lapply(
+      names(archrProj@embeddings),
+      function(x, archrProj) {unique(sub('#.*','',colnames(ArchR::getEmbedding(archrProj, x))))},
+      archrProj = archrProj
+    )
+    names(embedding.reduced.dim.mapping) <- names(archrProj@embeddings)
+
+    # map which matrix each embedding was created from
     embedding.map <- list()
-
-    for(reduced.dim.name in names(reduced.dim.matrix.type)) {
-        matrix.name <- reduced.dim.matrix.type[reduced.dim.name]
-
-        if(matrix.name == 'TileMatrix') {
-            matrix.name <- paste0(matrix.name,archrProj@reducedDims[[reduced.dim.name]]$tileSize);
+    for(embedding.name in names(embedding.reduced.dim.mapping)) {
+        
+        # match embeddings without a specified matrix to TileMatrix500
+        matrix.name <- 'TileMatrix500'
+        reduced.dim.name <- embedding.reduced.dim.mapping[[embedding.name]]
+        if(reduced.dim.name %in% names(embedding.reduced.dim.mapping)) {
+            matrix.name <- reduced.dim.matrix.type[[reduced.dim.name]];
+            if(matrix.name == 'TileMatrix') {
+                # add tile size to the matrix name to match the experiment name
+                matrix.name <- paste0(matrix.name,archrProj@reducedDims[[reduced.dim.name]]$tileSize)
+            }
         }
-        embedding.map[[matrix.name]] <- c(
-            embedding.map[[matrix.name]],
-            colnames(embedding.reduced.dim.mapping)[which(embedding.reduced.dim.mapping == reduced.dim.name)]
-        )
-    }
 
-    # match Embeddings without a specified matrix to TileMatrix500
-    ### embedding.reduced.dim.mapping is a vector and will always have NULL colnames
-    unspecified.embedding.names <- setdiff(colnames(embedding.reduced.dim.mapping), unlist(embedding.map))
-    if(length(unspecified.embedding.names) > 0) {
-        embedding.map[['TileMatrix500']] <- c(embedding.map[['TileMatrix500']], unspecified.embedding.names)
+        if(length(embedding.name) > 0) {
+          embedding.map[[matrix.name]] <- c(embedding.map[[matrix.name]], embedding.name)
+        }
     }
 
     return(embedding.map)
