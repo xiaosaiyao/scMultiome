@@ -6,8 +6,6 @@
 #'
 #' @param archrDir character string specifying the ArchR project directory,
 #'                 which must contain a file called Save-ArchR-Project.rds
-#' @param numThreads single integer specifying number of threads to be used
-#'                   for parallel computing during ArchR project setup
 #'
 #' @return A \linkS4class{MultiAssayExperiment}
 #'
@@ -17,14 +15,12 @@
 #'
 #' @export
 #'
-archr2MAE <- function(archrDir, numThreads = 1) {
+archr2MAE <- function(archrDir, defaultEmbeddingMatrix = 'TileMatrix') {
     checkmate::assertDirectoryExists(archrDir, access = "r")
     checkmate::assertFileExists(file.path(archrDir, "Save-ArchR-Project.rds"), access = "r")
-    checkmate::assertCount(numThreads)
 
     # Get list of Single Cell Experiments
-    all.exp <- create.exp.list.from.archr(archrDir = archrDir,
-                                          numThreads = numThreads)
+    all.exp <- create.exp.list.from.archr(archrDir = archrDir, defaultEmbeddingMatrix = defaultEmbeddingMatrix)
 
     # reorder experiments so tile matrices are first in MultiAssayExperiment
     tile.matrix.names <- names(all.exp)[grep('TileMatrix', names(all.exp))]
@@ -52,7 +48,7 @@ archr2MAE <- function(archrDir, numThreads = 1) {
 
 #' @importFrom rhdf5 h5closeAll h5ls h5read
 #' @keywords internal
-create.exp.list.from.archr <- function(archrDir, numThreads = ArchR::getArchRThreads()) {
+create.exp.list.from.archr <- function(archrDir, defaultEmbeddingMatrix = 'TileMatrix') {
 
     archr.logging <- ArchR::getArchRLogging()
     ArchR::addArchRLogging(useLogs = FALSE)
@@ -66,24 +62,14 @@ create.exp.list.from.archr <- function(archrDir, numThreads = ArchR::getArchRThr
     archrProj <- suppressMessages(ArchR::loadArchRProject(archrDir))
 
     # map which Embeddings should be saved to which SingleCellExperiment
-    embedding.map <- create.embedding.map(archrProj)
+    embedding.map <- create.embedding.map(archrProj, defaultMatrix = defaultEmbeddingMatrix)
 
     # import the existing matrices into Experiment objects
     all.exp <- list()
     available.matrices <- ArchR::getAvailableMatrices(archrProj)
 
     for(matrix.type in available.matrices) {
-        sce <- load.matrix(matrix.type, archrProj, embedding.map, numThreads)
-        if(matrix.type == 'TileMatrix') {
-            tile.size <- BiocGenerics::start(rowRanges(sce))[2] - BiocGenerics::start(rowRanges(sce))[1]
-            tile.size.check <- BiocGenerics::start(rowRanges(sce))[3] - BiocGenerics::start(rowRanges(sce))[2]
-            if(tile.size != tile.size.check) {
-                stop('not sure of the tile size')
-            }
-            matrix.type <- paste0(matrix.type, tile.size)
-        }
-
-        all.exp[[matrix.type]] <- sce
+        all.exp[[matrix.type]] <- load.matrix(matrix.type, archrProj, embedding.map)
     }
 
     ArchR::addArchRLogging(useLogs = archr.logging)
@@ -94,7 +80,7 @@ create.exp.list.from.archr <- function(archrDir, numThreads = ArchR::getArchRThr
 
 
 #' @keywords internal
-create.embedding.map <- function(archrProj) {
+create.embedding.map <- function(archrProj, defaultMatrix = 'TileMatrix') {
   
     # map which matrix was used to create each reduced dimension set
     reduced.dim.matrix.type <- lapply(
@@ -114,8 +100,8 @@ create.embedding.map <- function(archrProj) {
     embedding.map <- list()
     for(embedding.name in names(embedding.reduced.dim.mapping)) {
         
-        # match embeddings without a specified matrix to TileMatrix500
-        matrix.name <- 'TileMatrix500'
+        # match embeddings without a specified matrix to TileMatrix
+        matrix.name <- defaultMatrix
         reduced.dim.name <- embedding.reduced.dim.mapping[[embedding.name]]
         if(reduced.dim.name %in% names(embedding.reduced.dim.mapping)) {
             matrix.name <- reduced.dim.matrix.type[[reduced.dim.name]];
@@ -173,8 +159,7 @@ assign.tile.rowranges <- function(se, chrSizes) {
 #' @import SummarizedExperiment
 #' @import SingleCellExperiment
 #' @keywords internal
-load.matrix <- function(matrix.type, archrProj, embedding.map = NULL,
-                        numThreads = ArchR::getArchRThreads()) {
+load.matrix <- function(matrix.type, archrProj, embedding.map = NULL) {
     message(matrix.type)
 
     # check if the matrix was created as binary or not
@@ -183,7 +168,7 @@ load.matrix <- function(matrix.type, archrProj, embedding.map = NULL,
 
     # Get the SummarizedExperimets with one column per cell and then convert to SingleCellExperiments
     se <- suppressMessages(
-        ArchR::getMatrixFromProject(archrProj, matrix.type, binarize = binarize, threads = numThreads))
+        ArchR::getMatrixFromProject(archrProj, matrix.type, binarize = binarize, threads = 1))
 
     # check that colData colnames match the getCellColData colnames and replace if not matching
     anExpression <- 'projColData[, colnames(projColData) %ni% colnames(colData)]'
@@ -199,8 +184,6 @@ load.matrix <- function(matrix.type, archrProj, embedding.map = NULL,
     # Create the rowRanges for the experiment
     if(matrix.type == 'TileMatrix') {
         se <- assign.tile.rowranges(se,chrSizes = ArchR::getGenomeAnnotation(archrProj)$chromSizes)
-        tile.size <- GenomicRanges::width(rowRanges(se))[1]
-        matrix.type <- paste0(matrix.type,tile.size)
     } else if(is.null(rowRanges(se)) & all(c('start','end','strand') %in% names(rowData(se)))) {
         row.data <- rowData(se)
         row.data$start[row.data$strand == 2] <- rowData(se)$end[row.data$strand == 2]
