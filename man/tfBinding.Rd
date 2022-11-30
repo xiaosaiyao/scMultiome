@@ -33,8 +33,8 @@ mouse genomic builds, which can be used with multiome data to compute epiregulon
 
 Each genomic build is a separate \code{GRangesList} object, stored in a separate hdf5 file.
 Each \code{GRangesList} is split into individual \code{GRanges} objects and converted into data frames.
-All genomic builds can be accessed with the same \code{tfBinding} function with \code{genome} specifying the
-requested genomic build which is loaded and converted back to a \code{GRangesList}.
+All genomic builds can be accessed with the same function \code{tfBinding}.
+The genomic build specified by \code{genome} is loaded and converted back to a \code{GRangesList}.
 }
 
 \section{Data preparation}{
@@ -388,7 +388,7 @@ saveRDS(grl_hg19, file = "hg19_motif_bed_granges.rds")
 }
 
 \examples{
-tfBinding("hg38")
+tfBinding("mm10")
 
 }
 \references{
