@@ -6,6 +6,8 @@
 #'
 #' @param archrDir character string specifying the ArchR project directory,
 #'                 which must contain a file called Save-ArchR-Project.rds
+#' @param defaultEmbeddingMatrix character string specifying the name of the matrix that
+#' unmapped embeddings should be associated with
 #'
 #' @return A \linkS4class{MultiAssayExperiment}
 #'
@@ -81,7 +83,7 @@ create.exp.list.from.archr <- function(archrDir, defaultEmbeddingMatrix = 'TileM
 
 #' @keywords internal
 create.embedding.map <- function(archrProj, defaultMatrix = 'TileMatrix') {
-  
+
     # map which matrix was used to create each reduced dimension set
     reduced.dim.matrix.type <- lapply(
       archrProj@reducedDims,
@@ -99,7 +101,7 @@ create.embedding.map <- function(archrProj, defaultMatrix = 'TileMatrix') {
     # map which matrix each embedding was created from
     embedding.map <- list()
     for(embedding.name in names(embedding.reduced.dim.mapping)) {
-        
+
         # match embeddings without a specified matrix to TileMatrix
         matrix.name <- defaultMatrix
         reduced.dim.name <- embedding.reduced.dim.mapping[[embedding.name]]

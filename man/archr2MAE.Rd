@@ -4,14 +4,14 @@
 \alias{archr2MAE}
 \title{Create a MultiAssayExperiment from an ArchR project}
 \usage{
-archr2MAE(archrDir, numThreads = 1)
+archr2MAE(archrDir, defaultEmbeddingMatrix = "TileMatrix")
 }
 \arguments{
 \item{archrDir}{character string specifying the ArchR project directory,
 which must contain a file called Save-ArchR-Project.rds}
 
-\item{numThreads}{single integer specifying number of threads to be used
-for parallel computing during ArchR project setup}
+\item{defaultEmbeddingMatrix}{character string specifying the name of the matrix that
+unmapped embeddings should be associated with}
 }
 \value{
 A \linkS4class{MultiAssayExperiment}
