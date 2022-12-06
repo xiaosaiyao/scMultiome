@@ -104,10 +104,6 @@ create.embedding.map <- function(archrProj, defaultMatrix = "TileMatrix") {
         reduced.dim.name <- embedding.reduced.dim.mapping[[embedding.name]]
         if (reduced.dim.name %in% names(embedding.reduced.dim.mapping)) {
             matrix.name <- reduced.dim.matrix.type[[reduced.dim.name]]
-            if (matrix.name == "TileMatrix") {
-                # add tile size to the matrix name to match the experiment name
-                matrix.name <- paste0(matrix.name, archrProj@reducedDims[[reduced.dim.name]]$tileSize)
-            }
         }
 
         embedding.map[[matrix.name]] <- c(embedding.map[[matrix.name]], embedding.name)
@@ -117,40 +113,6 @@ create.embedding.map <- function(archrProj, defaultMatrix = "TileMatrix") {
 }
 
 
-
-#' @import SummarizedExperiment
-#' @keywords internal
-assign.tile.rowranges <- function(se, chrSizes) {
-    # Create the GRanges for the tile matrix
-    se.row.data <- rowData(se)
-    tile.size <- se.row.data$start[2] - se.row.data$start[1]
-    tile.size.check <- se.row.data$start[3] - se.row.data$start[2]
-    if (tile.size != tile.size.check) {
-        stop('not sure of the tile size')
-    }
-    se.tile.size <- tile.size
-    if (length(tile.size) == 1) {
-        rowRanges(se) <- GenomicRanges::GRanges(
-            seqnames = rowData(se)$seqnames,
-            ranges = IRanges::IRanges(
-                start = rowData(se)$start + 1,
-                end = rowData(se)$start + tile.size
-            )
-        )
-        # adjust the tiles on the end of the chromosomes to match the chromosome ends
-        for (chr in seqlevels(rowRanges(se))) {
-            chr.end <- BiocGenerics::end(chrSizes)[as.logical(seqnames(chrSizes) == chr)]
-            BiocGenerics::end(rowRanges(se))[as.logical(seqnames(rowRanges(se)) == chr) &
-                                                 BiocGenerics::end(rowRanges(se)) > chr.end] <- chr.end
-        }
-        rowRanges(se) <- GenomeInfoDb::sortSeqlevels(rowRanges(se))
-        se <- se[order(rowRanges(se)), ]
-        rownames(se) <- paste0(seqnames(rowRanges(se)), ":",
-                               BiocGenerics::start(rowRanges(se)), "-", BiocGenerics::end(rowRanges(se)))
-    }
-
-    return(se)
-}
 
 
 
@@ -205,8 +167,7 @@ load.matrix <- function(matrix.type, archrProj, embedding.map = NULL) {
 
     # add reduced dimensions
     reduced.dims.list <- S4Vectors::SimpleList()
-    ## isolate the reducedDim object that uses TileMatrix
-    tileSize <- Find(function(x) x[["useMatrix"]] == "TileMatrix", archrProj@reducedDims)[["tileSize"]]
+
     ## determine matrix types
     reduced.dim.matrix.type <- unlist(lapply(
         archrProj@reducedDims,
@@ -214,9 +175,6 @@ load.matrix <- function(matrix.type, archrProj, embedding.map = NULL) {
             id <- x$useMatrix
             if (is.null(id)) {
                 id <- "TileMatrix"
-            }
-            if (id == "TileMatrix") {
-                paste0(id, tileSize)
             } else {
                 id
             }
@@ -248,3 +206,39 @@ load.matrix <- function(matrix.type, archrProj, embedding.map = NULL) {
 
     return(sce)
 }
+
+
+#' @import SummarizedExperiment
+#' @keywords internal
+assign.tile.rowranges <- function(se, chrSizes) {
+    # Create the GRanges for the tile matrix
+    se.row.data <- rowData(se)
+    tile.size <- se.row.data$start[2] - se.row.data$start[1]
+    tile.size.check <- se.row.data$start[3] - se.row.data$start[2]
+    if (tile.size != tile.size.check) {
+        stop('not sure of the tile size')
+    }
+    se.tile.size <- tile.size
+    if (length(tile.size) == 1) {
+        rowRanges(se) <- GenomicRanges::GRanges(
+            seqnames = rowData(se)$seqnames,
+            ranges = IRanges::IRanges(
+                start = rowData(se)$start + 1,
+                end = rowData(se)$start + tile.size
+            )
+        )
+        # adjust the tiles on the end of the chromosomes to match the chromosome ends
+        for (chr in seqlevels(rowRanges(se))) {
+            chr.end <- BiocGenerics::end(chrSizes)[as.logical(seqnames(chrSizes) == chr)]
+            BiocGenerics::end(rowRanges(se))[as.logical(seqnames(rowRanges(se)) == chr) &
+                                                 BiocGenerics::end(rowRanges(se)) > chr.end] <- chr.end
+        }
+        rowRanges(se) <- GenomeInfoDb::sortSeqlevels(rowRanges(se))
+        se <- se[order(rowRanges(se)), ]
+        rownames(se) <- paste0(seqnames(rowRanges(se)), ":",
+                               BiocGenerics::start(rowRanges(se)), "-", BiocGenerics::end(rowRanges(se)))
+    }
+
+    return(se)
+}
+
