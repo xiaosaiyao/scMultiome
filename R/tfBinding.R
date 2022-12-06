@@ -36,10 +36,8 @@
 #'
 #'
 #' @section Data storage and access:
-#' Each genomic build is a separate \code{GRangesList} object, stored in a separate hdf5 file.
-#' Each \code{GRangesList} is split into individual \code{GRanges} objects and converted into data frames.
+#' Each genomic build is a separate \code{GRangesList} object, stored in a separate RDS file.
 #' All genomic builds can be accessed with the same function \code{tfBinding}.
-#' The genomic build specified by \code{genome} is loaded and converted back to a \code{GRangesList}.
 #'
 #' @section Data preparation:
 #' ```{r child = system.file("scripts", "make-data-tfBinding.Rmd", package = "scMultiome")}
@@ -62,18 +60,8 @@ tfBinding <- function(genome = c("hg38", "hg19", "mm10"),
         if (metadata) {
             eh[genomeName]
         } else {
-            # retrieve path to (cached) resource file
-            fileName <- eh[[genomeName]]
-            # list contents o file
-            fc <- rhdf5::h5ls(fileName)
-            # get names of groups in the root group
-            TFs <- fc[fc[["group"]] == "/", "name"]
-            motifInfo <- lapply(TFs, function(x) rhdf5::h5read(file = fileName, name = sprintf("/%s", x)))
-            motifInfo <- lapply(motifInfo, restoreGR)
-            names(motifInfo) <- TFs
-            GenomicRanges::GRangesList(motifInfo, compress = FALSE)
+            readRDS(eh[[genomeName]])
         }
 
     return(ans)
 }
-
