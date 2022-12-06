@@ -63,7 +63,7 @@ manifest.tfBinding.hg38 <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "490 MB", #To be updated
+    DiskSize = "280 MB",
     Version = "2022-09-20"
 )
 manifest.tfBinding.hg19 <- data.frame(
@@ -74,7 +74,7 @@ manifest.tfBinding.hg19 <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "490 MB",
+    DiskSize = "275 MB",
     Version = "2022-09-20"
 )
 manifest.tfBinding.mm10 <- data.frame(
@@ -85,7 +85,7 @@ manifest.tfBinding.mm10 <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "275 MB",
+    DiskSize = "160 MB",
     Version = "2022-09-20"
 )
 

@@ -51,7 +51,7 @@ See the help files for accessor functions for possible extra options, e.g. `?pro
 
 The package contains additional data sets that contain information on transcription factor binding. These are not multiome data but compiled ChIP-seq data that can be used together with multiomes to compute epiregulons. Currently three genomic builds genomes are provided: Hg38, Hg19, and Mm10.
 
-Like multiome data, the ChIP-seq data is packaged into individual hdf5 files but they are accessed with a common accessor function, `tfBinding`. Only one subset can be retrieved at a time, a genome must be specified.
+The ChIP-seq data is packaged into individual RDS files but they are accessed with a common accessor function, `tfBinding`. Only one subset can be retrieved at a time, a genome must be specified.
 ```{r, eval = FALSE}
 tfBinding("hg38")
 ```
