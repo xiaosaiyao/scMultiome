@@ -43,13 +43,6 @@ archr2MAE <- function(archrDir, defaultEmbeddingMatrix = "TileMatrix") {
     # Get list of Single Cell Experiments
     all.exp <- create.exp.list.from.archr(archrProj  = archrProj, defaultEmbeddingMatrix = defaultEmbeddingMatrix)
 
-    # # reorder experiments so tile matrices are first in MultiAssayExperiment
-    # tile.matrix.names <- names(all.exp)[grep("TileMatrix", names(all.exp))]
-    # se.names <- c(tile.matrix.names[order(as.numeric(sub("TileMatrix", "", tile.matrix.names)))],
-    #               setdiff(names(all.exp), tile.matrix.names))
-    #
-    # all.exp <- all.exp[se.names]
-
     # create the sample Map for the MultiAssayExperiment
     el <- ExperimentList(all.exp)
     maplist <- lapply(all.exp, function(se) {
