@@ -22,15 +22,33 @@ archr2MAE <- function(archrDir, defaultEmbeddingMatrix = "TileMatrix") {
     checkmate::assertFileExists(file.path(archrDir, "Save-ArchR-Project.rds"), access = "r")
     checkmate::assertString(defaultEmbeddingMatrix)
 
+    # Load ArchR project
+    archr.logging <- ArchR::getArchRLogging()
+    ArchR::addArchRLogging(useLogs = archr.logging)
+
+    # Check that there is a saved ArchR project in the directory
+    if (! "Save-ArchR-Project.rds" %in% list.files(archrDir)) {
+        stop("No Save-ArchR-Project.rds file found in the ArchR project directory.",
+             "Are you sure this is an ArchR project directory?")
+    }
+
+    archrProj <- suppressMessages(ArchR::loadArchRProject(archrDir))
+
+    # Check that defaultEmbeddingMatrix is found in ArchR project
+    if (!defaultEmbeddingMatrix %in% ArchR::getAvailableMatrices(archrProj)) {
+        stop(defaultEmbeddingMatrix, " not found in ArchR project")
+    }
+
+
     # Get list of Single Cell Experiments
-    all.exp <- create.exp.list.from.archr(archrDir = archrDir, defaultEmbeddingMatrix = defaultEmbeddingMatrix)
+    all.exp <- create.exp.list.from.archr(archrProj  = archrProj, defaultEmbeddingMatrix = defaultEmbeddingMatrix)
 
-    # reorder experiments so tile matrices are first in MultiAssayExperiment
-    tile.matrix.names <- names(all.exp)[grep("TileMatrix", names(all.exp))]
-    se.names <- c(tile.matrix.names[order(as.numeric(sub("TileMatrix", "", tile.matrix.names)))],
-                  setdiff(names(all.exp), tile.matrix.names))
-
-    all.exp <- all.exp[se.names]
+    # # reorder experiments so tile matrices are first in MultiAssayExperiment
+    # tile.matrix.names <- names(all.exp)[grep("TileMatrix", names(all.exp))]
+    # se.names <- c(tile.matrix.names[order(as.numeric(sub("TileMatrix", "", tile.matrix.names)))],
+    #               setdiff(names(all.exp), tile.matrix.names))
+    #
+    # all.exp <- all.exp[se.names]
 
     # create the sample Map for the MultiAssayExperiment
     el <- ExperimentList(all.exp)
@@ -51,18 +69,7 @@ archr2MAE <- function(archrDir, defaultEmbeddingMatrix = "TileMatrix") {
 
 #' @importFrom rhdf5 h5closeAll h5ls h5read
 #' @keywords internal
-create.exp.list.from.archr <- function(archrDir, defaultEmbeddingMatrix = "TileMatrix") {
-
-    archr.logging <- ArchR::getArchRLogging()
-    ArchR::addArchRLogging(useLogs = FALSE)
-
-    # Check that there is a saved ArchR project in the directory
-    if (! "Save-ArchR-Project.rds" %in% list.files(archrDir)) {
-        stop("No Save-ArchR-Project.rds file found in the ArchR project directory.",
-             "Are you sure this is an ArchR project directory?")
-    }
-
-    archrProj <- suppressMessages(ArchR::loadArchRProject(archrDir))
+create.exp.list.from.archr <- function(archrProj, defaultEmbeddingMatrix = "TileMatrix") {
 
     # map which Embeddings should be saved to which SingleCellExperiment
     embedding.map <- create.embedding.map(archrProj, defaultMatrix = defaultEmbeddingMatrix)
@@ -75,7 +82,6 @@ create.exp.list.from.archr <- function(archrDir, defaultEmbeddingMatrix = "TileM
         all.exp[[matrix.type]] <- load.matrix(matrix.type, archrProj, embedding.map)
     }
 
-    ArchR::addArchRLogging(useLogs = archr.logging)
 
     return(all.exp)
 }
