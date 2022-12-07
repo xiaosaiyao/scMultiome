@@ -6,8 +6,8 @@
 #'
 #' @param archrDir character string specifying the ArchR project directory,
 #'                 which must contain a file called Save-ArchR-Project.rds
-#' @param defaultEmbeddingMatrix character string specifying the name of the matrix that
-#'                               unmapped embeddings should be associated with
+#' @param defaultMatrix character string specifying the name of the matrix that
+#' unmapped embeddings and reduced dimension matrices should be associated with
 #'
 #' @return A \linkS4class{MultiAssayExperiment}
 #'
@@ -17,10 +17,10 @@
 #'
 #' @export
 #'
-archr2MAE <- function(archrDir, defaultEmbeddingMatrix = "TileMatrix") {
+archr2MAE <- function(archrDir, defaultMatrix = "TileMatrix") {
     checkmate::assertDirectoryExists(archrDir, access = "r")
     checkmate::assertFileExists(file.path(archrDir, "Save-ArchR-Project.rds"), access = "r")
-    checkmate::assertString(defaultEmbeddingMatrix)
+    checkmate::assertString(defaultMatrix)
 
     # Load ArchR project
     archr.logging <- ArchR::getArchRLogging()
@@ -34,14 +34,14 @@ archr2MAE <- function(archrDir, defaultEmbeddingMatrix = "TileMatrix") {
 
     archrProj <- suppressMessages(ArchR::loadArchRProject(archrDir))
 
-    # Check that defaultEmbeddingMatrix is found in ArchR project
-    if (!defaultEmbeddingMatrix %in% ArchR::getAvailableMatrices(archrProj)) {
-        stop(defaultEmbeddingMatrix, " not found in ArchR project")
+    # Check that defaultMatrix is found in ArchR project
+    if (!defaultMatrix %in% ArchR::getAvailableMatrices(archrProj)) {
+        stop(defaultMatrix, " not found in ArchR project")
     }
 
 
     # Get list of Single Cell Experiments
-    all.exp <- create.exp.list.from.archr(archrProj  = archrProj, defaultEmbeddingMatrix = defaultEmbeddingMatrix)
+    all.exp <- create.exp.list.from.archr(archrProj  = archrProj, defaultMatrix = defaultMatrix)
 
     # create the sample Map for the MultiAssayExperiment
     el <- ExperimentList(all.exp)
@@ -62,17 +62,17 @@ archr2MAE <- function(archrDir, defaultEmbeddingMatrix = "TileMatrix") {
 
 #' @importFrom rhdf5 h5closeAll h5ls h5read
 #' @keywords internal
-create.exp.list.from.archr <- function(archrProj, defaultEmbeddingMatrix = "TileMatrix") {
+create.exp.list.from.archr <- function(archrProj, defaultMatrix = "TileMatrix") {
 
     # map which Embeddings should be saved to which SingleCellExperiment
-    embedding.map <- create.embedding.map(archrProj, defaultMatrix = defaultEmbeddingMatrix)
+    embedding.map <- create.embedding.map(archrProj, defaultMatrix = defaultMatrix)
 
     # import the existing matrices into Experiment objects
     all.exp <- list()
     available.matrices <- ArchR::getAvailableMatrices(archrProj)
 
     for (matrix.type in available.matrices) {
-        all.exp[[matrix.type]] <- load.matrix(matrix.type, archrProj, embedding.map)
+        all.exp[[matrix.type]] <- load.matrix(matrix.type, archrProj, embedding.map, defaultMatrix = defaultMatrix)
     }
 
 
@@ -101,8 +101,11 @@ create.embedding.map <- function(archrProj, defaultMatrix = "TileMatrix") {
         # match embeddings without a specified matrix to TileMatrix
         matrix.name <- defaultMatrix
         reduced.dim.name <- embedding.reduced.dim.mapping[[embedding.name]]
-        if (reduced.dim.name %in% names(embedding.reduced.dim.mapping)) {
-            matrix.name <- reduced.dim.matrix.type[[reduced.dim.name]]
+        if (reduced.dim.name %in% names(reduced.dim.matrix.type)) {
+            if (!is.null(reduced.dim.matrix.type[[reduced.dim.name]])){
+                matrix.name <- reduced.dim.matrix.type[[reduced.dim.name]]
+            }
+
         }
 
         embedding.map[[matrix.name]] <- c(embedding.map[[matrix.name]], embedding.name)
@@ -118,7 +121,7 @@ create.embedding.map <- function(archrProj, defaultMatrix = "TileMatrix") {
 #' @import SummarizedExperiment
 #' @import SingleCellExperiment
 #' @keywords internal
-load.matrix <- function(matrix.type, archrProj, embedding.map = NULL) {
+load.matrix <- function(matrix.type, archrProj, embedding.map = NULL, defaultMatrix) {
     message(matrix.type)
 
     # check if the matrix was created as binary or not
@@ -173,11 +176,12 @@ load.matrix <- function(matrix.type, archrProj, embedding.map = NULL) {
         function(x) {
             id <- x$useMatrix
             if (is.null(id)) {
-                id <- "TileMatrix"
-            } else {
-                id
+                id <- defaultMatrix
             }
+            id
         }))
+
+
     for (rd.name in names(reduced.dim.matrix.type[reduced.dim.matrix.type == matrix.type])) {
         reduced.dims.list[[rd.name]] <- ArchR::getReducedDims(archrProj, rd.name)
     }
