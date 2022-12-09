@@ -163,9 +163,9 @@ load.matrix <- function(matrix.type, archrProj, embedding.map = NULL, defaultMat
     sce <- methods::as(se, "SingleCellExperiment")
 
     # change the assay Name
-    if (any(grepl("Matrix", assayNames(sce)))) {
-        assayNames(sce) <- "counts"
-    }
+    assayNames(sce)[grep("GeneExpressionMatrix|GeneIntegrationMatrix", assayNames(sce))] <- "logcounts"
+    assayNames(sce)[grep("PeakMatrix|TileMatrix", assayNames(sce))] <- "counts"
+
 
     # add reduced dimensions
     reduced.dims.list <- S4Vectors::SimpleList()
