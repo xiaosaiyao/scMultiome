@@ -6,8 +6,8 @@
 #'
 #' @param archrDir character string specifying the ArchR project directory,
 #'                 which must contain a file called Save-ArchR-Project.rds
-#' @param defaultEmbeddingMatrix character string specifying the name of the matrix that
-#'                               unmapped embeddings should be associated with
+#' @param defaultMatrix character string specifying the name of the matrix that
+#' unmapped embeddings and reduced dimension matrices should be associated with
 #'
 #' @return A \linkS4class{MultiAssayExperiment}
 #'
@@ -17,20 +17,31 @@
 #'
 #' @export
 #'
-archr2MAE <- function(archrDir, defaultEmbeddingMatrix = "TileMatrix") {
+archr2MAE <- function(archrDir, defaultMatrix = "TileMatrix") {
     checkmate::assertDirectoryExists(archrDir, access = "r")
     checkmate::assertFileExists(file.path(archrDir, "Save-ArchR-Project.rds"), access = "r")
-    checkmate::assertString(defaultEmbeddingMatrix)
+    checkmate::assertString(defaultMatrix)
+
+    # Load ArchR project
+    archr.logging <- ArchR::getArchRLogging()
+    ArchR::addArchRLogging(useLogs = archr.logging)
+
+    # Check that there is a saved ArchR project in the directory
+    if (! "Save-ArchR-Project.rds" %in% list.files(archrDir)) {
+        stop("No Save-ArchR-Project.rds file found in the ArchR project directory.",
+             "Are you sure this is an ArchR project directory?")
+    }
+
+    archrProj <- suppressMessages(ArchR::loadArchRProject(archrDir))
+
+    # Check that defaultMatrix is found in ArchR project
+    if (!defaultMatrix %in% ArchR::getAvailableMatrices(archrProj)) {
+        stop(defaultMatrix, " not found in ArchR project")
+    }
+
 
     # Get list of Single Cell Experiments
-    all.exp <- create.exp.list.from.archr(archrDir = archrDir, defaultEmbeddingMatrix = defaultEmbeddingMatrix)
-
-    # reorder experiments so tile matrices are first in MultiAssayExperiment
-    tile.matrix.names <- names(all.exp)[grep("TileMatrix", names(all.exp))]
-    se.names <- c(tile.matrix.names[order(as.numeric(sub("TileMatrix", "", tile.matrix.names)))],
-                  setdiff(names(all.exp), tile.matrix.names))
-
-    all.exp <- all.exp[se.names]
+    all.exp <- create.exp.list.from.archr(archrProj  = archrProj, defaultMatrix = defaultMatrix)
 
     # create the sample Map for the MultiAssayExperiment
     el <- ExperimentList(all.exp)
@@ -51,31 +62,19 @@ archr2MAE <- function(archrDir, defaultEmbeddingMatrix = "TileMatrix") {
 
 #' @importFrom rhdf5 h5closeAll h5ls h5read
 #' @keywords internal
-create.exp.list.from.archr <- function(archrDir, defaultEmbeddingMatrix = "TileMatrix") {
-
-    archr.logging <- ArchR::getArchRLogging()
-    ArchR::addArchRLogging(useLogs = FALSE)
-
-    # Check that there is a saved ArchR project in the directory
-    if (! "Save-ArchR-Project.rds" %in% list.files(archrDir)) {
-        stop("No Save-ArchR-Project.rds file found in the ArchR project directory.",
-             "Are you sure this is an ArchR project directory?")
-    }
-
-    archrProj <- suppressMessages(ArchR::loadArchRProject(archrDir))
+create.exp.list.from.archr <- function(archrProj, defaultMatrix = "TileMatrix") {
 
     # map which Embeddings should be saved to which SingleCellExperiment
-    embedding.map <- create.embedding.map(archrProj, defaultMatrix = defaultEmbeddingMatrix)
+    embedding.map <- create.embedding.map(archrProj, defaultMatrix = defaultMatrix)
 
     # import the existing matrices into Experiment objects
     all.exp <- list()
     available.matrices <- ArchR::getAvailableMatrices(archrProj)
 
     for (matrix.type in available.matrices) {
-        all.exp[[matrix.type]] <- load.matrix(matrix.type, archrProj, embedding.map)
+        all.exp[[matrix.type]] <- load.matrix(matrix.type, archrProj, embedding.map, defaultMatrix = defaultMatrix)
     }
 
-    ArchR::addArchRLogging(useLogs = archr.logging)
 
     return(all.exp)
 }
@@ -102,12 +101,11 @@ create.embedding.map <- function(archrProj, defaultMatrix = "TileMatrix") {
         # match embeddings without a specified matrix to TileMatrix
         matrix.name <- defaultMatrix
         reduced.dim.name <- embedding.reduced.dim.mapping[[embedding.name]]
-        if (reduced.dim.name %in% names(embedding.reduced.dim.mapping)) {
-            matrix.name <- reduced.dim.matrix.type[[reduced.dim.name]]
-            if (matrix.name == "TileMatrix") {
-                # add tile size to the matrix name to match the experiment name
-                matrix.name <- paste0(matrix.name, archrProj@reducedDims[[reduced.dim.name]]$tileSize)
+        if (reduced.dim.name %in% names(reduced.dim.matrix.type)) {
+            if (!is.null(reduced.dim.matrix.type[[reduced.dim.name]])){
+                matrix.name <- reduced.dim.matrix.type[[reduced.dim.name]]
             }
+
         }
 
         embedding.map[[matrix.name]] <- c(embedding.map[[matrix.name]], embedding.name)
@@ -118,46 +116,12 @@ create.embedding.map <- function(archrProj, defaultMatrix = "TileMatrix") {
 
 
 
-#' @import SummarizedExperiment
-#' @keywords internal
-assign.tile.rowranges <- function(se, chrSizes) {
-    # Create the GRanges for the tile matrix
-    se.row.data <- rowData(se)
-    tile.size <- se.row.data$start[2] - se.row.data$start[1]
-    tile.size.check <- se.row.data$start[3] - se.row.data$start[2]
-    if (tile.size != tile.size.check) {
-        stop('not sure of the tile size')
-    }
-    se.tile.size <- tile.size
-    if (length(tile.size) == 1) {
-        rowRanges(se) <- GenomicRanges::GRanges(
-            seqnames = rowData(se)$seqnames,
-            ranges = IRanges::IRanges(
-                start = rowData(se)$start + 1,
-                end = rowData(se)$start + tile.size
-            )
-        )
-        # adjust the tiles on the end of the chromosomes to match the chromosome ends
-        for (chr in seqlevels(rowRanges(se))) {
-            chr.end <- BiocGenerics::end(chrSizes)[as.logical(seqnames(chrSizes) == chr)]
-            BiocGenerics::end(rowRanges(se))[as.logical(seqnames(rowRanges(se)) == chr) &
-                                                 BiocGenerics::end(rowRanges(se)) > chr.end] <- chr.end
-        }
-        rowRanges(se) <- GenomeInfoDb::sortSeqlevels(rowRanges(se))
-        se <- se[order(rowRanges(se)), ]
-        rownames(se) <- paste0(seqnames(rowRanges(se)), ":",
-                               BiocGenerics::start(rowRanges(se)), "-", BiocGenerics::end(rowRanges(se)))
-    }
-
-    return(se)
-}
-
 
 
 #' @import SummarizedExperiment
 #' @import SingleCellExperiment
 #' @keywords internal
-load.matrix <- function(matrix.type, archrProj, embedding.map = NULL) {
+load.matrix <- function(matrix.type, archrProj, embedding.map = NULL, defaultMatrix) {
     message(matrix.type)
 
     # check if the matrix was created as binary or not
@@ -199,28 +163,25 @@ load.matrix <- function(matrix.type, archrProj, embedding.map = NULL) {
     sce <- methods::as(se, "SingleCellExperiment")
 
     # change the assay Name
-    if (any(grepl("Matrix", assayNames(sce)))) {
-        assayNames(sce) <- "counts"
-    }
+    assayNames(sce)[grep("GeneExpressionMatrix|GeneIntegrationMatrix", assayNames(sce))] <- "logcounts"
+    assayNames(sce)[grep("PeakMatrix|TileMatrix", assayNames(sce))] <- "counts"
+
 
     # add reduced dimensions
     reduced.dims.list <- S4Vectors::SimpleList()
-    ## isolate the reducedDim object that uses TileMatrix
-    tileSize <- Find(function(x) x[["useMatrix"]] == "TileMatrix", archrProj@reducedDims)[["tileSize"]]
+
     ## determine matrix types
     reduced.dim.matrix.type <- unlist(lapply(
         archrProj@reducedDims,
         function(x) {
             id <- x$useMatrix
             if (is.null(id)) {
-                id <- "TileMatrix"
+                id <- defaultMatrix
             }
-            if (id == "TileMatrix") {
-                paste0(id, tileSize)
-            } else {
-                id
-            }
+            id
         }))
+
+
     for (rd.name in names(reduced.dim.matrix.type[reduced.dim.matrix.type == matrix.type])) {
         reduced.dims.list[[rd.name]] <- ArchR::getReducedDims(archrProj, rd.name)
     }
@@ -248,3 +209,39 @@ load.matrix <- function(matrix.type, archrProj, embedding.map = NULL) {
 
     return(sce)
 }
+
+
+#' @import SummarizedExperiment
+#' @keywords internal
+assign.tile.rowranges <- function(se, chrSizes) {
+    # Create the GRanges for the tile matrix
+    se.row.data <- rowData(se)
+    tile.size <- se.row.data$start[2] - se.row.data$start[1]
+    tile.size.check <- se.row.data$start[3] - se.row.data$start[2]
+    if (tile.size != tile.size.check) {
+        stop('not sure of the tile size')
+    }
+    se.tile.size <- tile.size
+    if (length(tile.size) == 1) {
+        rowRanges(se) <- GenomicRanges::GRanges(
+            seqnames = rowData(se)$seqnames,
+            ranges = IRanges::IRanges(
+                start = rowData(se)$start + 1,
+                end = rowData(se)$start + tile.size
+            )
+        )
+        # adjust the tiles on the end of the chromosomes to match the chromosome ends
+        for (chr in seqlevels(rowRanges(se))) {
+            chr.end <- BiocGenerics::end(chrSizes)[as.logical(seqnames(chrSizes) == chr)]
+            BiocGenerics::end(rowRanges(se))[as.logical(seqnames(rowRanges(se)) == chr) &
+                                                 BiocGenerics::end(rowRanges(se)) > chr.end] <- chr.end
+        }
+        rowRanges(se) <- GenomeInfoDb::sortSeqlevels(rowRanges(se))
+        se <- se[order(rowRanges(se)), ]
+        rownames(se) <- paste0(seqnames(rowRanges(se)), ":",
+                               BiocGenerics::start(rowRanges(se)), "-", BiocGenerics::end(rowRanges(se)))
+    }
+
+    return(se)
+}
+

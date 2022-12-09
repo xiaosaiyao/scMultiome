@@ -4,14 +4,14 @@
 \alias{archr2MAE}
 \title{Create a MultiAssayExperiment from an ArchR project}
 \usage{
-archr2MAE(archrDir, defaultEmbeddingMatrix = "TileMatrix")
+archr2MAE(archrDir, defaultMatrix = "TileMatrix")
 }
 \arguments{
 \item{archrDir}{character string specifying the ArchR project directory,
 which must contain a file called Save-ArchR-Project.rds}
 
-\item{defaultEmbeddingMatrix}{character string specifying the name of the matrix that
-unmapped embeddings should be associated with}
+\item{defaultMatrix}{character string specifying the name of the matrix that
+unmapped embeddings and reduced dimension matrices should be associated with}
 }
 \value{
 A \linkS4class{MultiAssayExperiment}
