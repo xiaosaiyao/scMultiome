@@ -35,7 +35,7 @@ Data sets in `MultiAssayExperiment` form are saved to disk with the `saveMAE` fu
 Each data set is accessed by its own accessor function. Accessor functions call the internal `retrieve` function to query `ExperimentHub` for the resource in question, which causes the file to be downloaded and cached. The path to the cached file is passed to `loadMAE`, which in turn calls `loadExp` for each experiment specified in the accessor call. `loadExp` reads experiment components and reassembles them, and then `loadMAE` builds a `MultiAssayExperiment` object. This object is the final return value of the accessor function.
 
 ![](inst/images/scMultiome.png)
-
+![](inst/images/scMultiome.functions.svg)
 
 ## Installation:
 ```
