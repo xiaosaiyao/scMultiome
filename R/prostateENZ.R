@@ -18,7 +18,7 @@
 #' Annotated with the Hg38 genome build.
 #' Contains the following experiments:
 #' \itemize{
-#'   \item{\strong{TileMatrix500}: SingleCellExperiment with 6062095 rows and 15522 columns}
+#'   \item{\strong{TileMatrix}: SingleCellExperiment with 6062095 rows and 15522 columns}
 #'   \item{\strong{GeneScoreMatrix}: SingleCellExperiment with 24919 rows and 15522 columns}
 #'   \item{\strong{GeneIntegrationMatrix}: SingleCellExperiment with 23525 rows and 15522 columns}
 #'   \item{\strong{PeakMatrix}: SingleCellExperiment with 80210 rows and 15522 columns}
@@ -48,7 +48,7 @@
 #'
 prostateENZ <-
     function(metadata = FALSE,
-             experiments = c("TileMatrix500",
+             experiments = c("TileMatrix",
                              "GeneScoreMatrix",
                              "GeneIntegrationMatrix",
                              "PeakMatrix",
