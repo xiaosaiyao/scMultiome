@@ -12,7 +12,7 @@
 #' \code{MultiAssayExperiment} obtained from an \code{ArchR} project. Annotated with the Hg38 genome build.
 #' Contains the following experiments:
 #' \itemize{
-#'   \item{\strong{TileMatrix500}: SingleCellExperiment with 6062095 rows and 59231 columns}
+#'   \item{\strong{TileMatrix}: SingleCellExperiment with 6062095 rows and 59231 columns}
 #'   \item{\strong{GeneIntegrationMatrix}: SingleCellExperiment with 19020 rows and 59231 columns}
 #'   \item{\strong{GeneScoreMatrix}: SingleCellExperiment with 24919 rows and 59231 columns}
 #'   \item{\strong{MotifMatrix}: SingleCellExperiment with 870 rows and 59231 columns}
@@ -44,7 +44,7 @@
 #'
 colonHealthy <-
     function(metadata = FALSE,
-             experiments = c("TileMatrix500",
+             experiments = c("TileMatrix",
                              "GeneIntegrationMatrix",
                              "GeneScoreMatrix",
                              "MotifMatrix",
