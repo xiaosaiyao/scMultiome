@@ -546,7 +546,6 @@ testFile <- function(file) {
 #'
 uploadFile <- function(file, sasToken, endpoint = "https://bioconductorhubs.blob.core.windows.net") {
     checkmate::assertFileExists(file, access = "r")
-    assertHDF5(file)
     checkmate::assertString(sasToken)
     checkmate::assertString(endpoint)
 
