@@ -10,6 +10,34 @@ Single cell data is gaining sophistication - Cells can be measured in multiple m
 The `scMultiome` package is a collection of public single cell multiome data sets pre-processed and packaged into `MultiAssayExperiment` objects for downstream analysis. It also provides basic functions to save the `MultiAssayExperiment` as `.hdf5` files so that users can load only the desired modalities into memory.
 
 
+## Installation:
+```
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+
+BiocManager::install("scMultiome")
+```
+If you would like to use the `archr2MAE` function to convert from ArchR project to MultiAssayExperiment, install ArchR
+
+```
+devtools::install_github("GreenleafLab/ArchR", ref="master", repos = BiocManager::repositories())
+
+```
+
+## Package Contents
+
+To list currently available data sets,
+
+```
+listDatasets()
+```
+
+or see package help with 
+
+```
+?scMultiome
+```
+
+
 ## Data Format
 
 Current multiomic data sets consist of gene expression and chromatin accessibility but can be extended to include any other modalities. The data sets are either paired multiomic data sets or unpaired data sets with data integration performed by the `ArchR` [package](https://www.archrproject.com/). The `ArchR` projects were converted to `MultiAssayExperiment` objects. [MultiAssayExperiment](https://www.bioconductor.org/packages/devel/bioc/vignettes/MultiAssayExperiment/inst/doc/MultiAssayExperiment.html) objects can be constructed easily from individual matrices pre-processed by users' favorite packages.
@@ -23,9 +51,6 @@ Upon loading, selected experiments are reassembled and wrapped into an MAE objec
 _NOTE: These data sets can be quite large. See `listDatasets()` to avoid surprises._
 
 
-## Package Contents
-
-To list currently available data sets, use `listDatasets()` or see package help with `?scMultiome`.
 
 
 ## Data Storage and Access
@@ -37,18 +62,7 @@ Each data set is accessed by its own accessor function. Accessor functions call 
 ![](inst/images/scMultiome.png)
 ![](inst/images/scMultiome.functions.svg)
 
-## Installation:
-```
-if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 
-BiocManager::install("scMultiome")
-```
-If you would like to use the `archr2MAE` function to convert from ArchR project to MultiAssayExperiment, install ArchR
-
-```
-devtools::install_github("GreenleafLab/ArchR", ref="master", repos = BiocManager::repositories())
-
-```
 
 ## Package Structure:
 
