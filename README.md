@@ -43,6 +43,12 @@ if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 
 BiocManager::install("scMultiome")
 ```
+If you would like to use the `archr2MAE` function to convert from ArchR project to MultiAssayExperiment, install ArchR
+
+```
+devtools::install_github("GreenleafLab/ArchR", ref="master", repos = BiocManager::repositories())
+
+```
 
 ## Package Structure:
 
