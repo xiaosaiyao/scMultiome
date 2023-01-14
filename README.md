@@ -37,6 +37,9 @@ or see package help with
 ?scMultiome
 ```
 
+## Tutorial
+
+For a quick start, please see our [vignette](https://xiaosaiyao.github.io/scMultiome/vignettes/scMultiome.html)
 
 ## Data Format
 
