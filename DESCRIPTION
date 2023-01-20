@@ -28,13 +28,10 @@ Imports:
     S4Vectors,
     checkmate,
     methods,
-    rhdf5,
-    ArchR,
-    BiocGenerics,
-    IRanges,
-    GenomeInfoDb,
     rhdf5
 Suggests: 
+    BiocGenerics,
+    IRanges,
     Matrix,
     knitr,
     rmarkdown,
@@ -42,8 +39,7 @@ Suggests:
     testthat (>= 3.0.0),
     devtools,
     BiocStyle,
-    ExperimentHubData,
-    Seurat
+    ExperimentHubData
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3
