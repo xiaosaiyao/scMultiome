@@ -15,10 +15,10 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 
 scATAC data was downloaded from Gene Expression Omnibus
 (acc. no. [GSE168667](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE168667))
-and analyzed with SingleCell ATAC - 10X pipeline v2.0.0. \cr
+and analyzed with SingleCell ATAC - 10X pipeline v2.0.0. 
 scRNAseq data was downloaded from  Gene Expression Omnibus
 (acc.no. [GSE168668](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE168668))
-and analyzed with SingleCell Gene Expression Analysis - 10X pipeline v6.0.1. \cr
+and analyzed with SingleCell Gene Expression Analysis - 10X pipeline v6.0.1. 
 
 Downstream analysis was performed with the \code{ArchR} package:
 
@@ -167,4 +167,4 @@ MAElim <- MultiAssayExperiment::MultiAssayExperiment(
 saveMAE("inst/extdata/prostateENZ.h5")
 ```
 
-\cr
+

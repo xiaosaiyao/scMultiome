@@ -58,7 +58,7 @@ hematopoiesis()
 }
 \references{
 Single-cell multiomic analysis identifies regulatory programs in mixed-phenotype acute leukemia
-associated with prostate cancer relapse. \cr
-Granja \emph{et al.}, \emph{Nature Biotechnology} 2019 Dec;37(12):1458-1465. \cr
+associated with prostate cancer relapse.
+Granja \emph{et al.}, \emph{Nature Biotechnology} 2019 Dec;37(12):1458-1465.
 \href{https://www.nature.com/articles/s41587-019-0332-7}{doi: 10.1038/s41587-019-0332-7}
 }

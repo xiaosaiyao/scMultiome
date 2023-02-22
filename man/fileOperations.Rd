@@ -125,7 +125,7 @@ testFile(fileName)                                    # load whole MAE
 }
 \seealso{
 Vignette "rhdf5 - HDF5 interface for R" (\code{vignette} or \code{browseVignettes})
-for details of hdf5 file construction.\cr
+for details of hdf5 file construction.
 \code{writeSparseMatrix} for details of saving sparse matrices.
 }
 \author{

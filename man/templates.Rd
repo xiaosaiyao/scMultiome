@@ -26,9 +26,9 @@ Create templates for data set documentation.
 Functions to facilitate documenting a new data set.
 Each function creates a file and attempts to open it in RStudio for editing.
 
-\code{makeMakeData} creates an Rmarkdown report called \code{inst/scripts/make-data-<dataset>.Rmd}.\cr
-\code{makeMakeMetadata} creates an R script called \code{inst/scripts/make-metadata-<dataset>.R}.\cr
-\code{makeR} creates an R file called \code{R/<dataset>.Rmd}.\cr
+\code{makeMakeData} creates an Rmarkdown report called \code{inst/scripts/make-data-<dataset>.Rmd}.
+\code{makeMakeMetadata} creates an R script called \code{inst/scripts/make-metadata-<dataset>.R}.
+\code{makeR} creates an R file called \code{R/<dataset>.Rmd}.
 }
 \author{
 Aleksander Chlebowski

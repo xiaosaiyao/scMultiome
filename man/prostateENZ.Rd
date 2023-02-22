@@ -50,10 +50,10 @@ elements of the requested experiment(s), reassembles them, and builds an MAE.
 
 scATAC data was downloaded from Gene Expression Omnibus
 (acc. no. \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE168667}{GSE168667})
-and analyzed with SingleCell ATAC - 10X pipeline v2.0.0. \cr
+and analyzed with SingleCell ATAC - 10X pipeline v2.0.0.
 scRNAseq data was downloaded from  Gene Expression Omnibus
 (acc.no. \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE168668}{GSE168668})
-and analyzed with SingleCell Gene Expression Analysis - 10X pipeline v6.0.1. \cr
+and analyzed with SingleCell Gene Expression Analysis - 10X pipeline v6.0.1.
 
 Downstream analysis was performed with the \code{ArchR} package:
 \subsection{1. Initiate \code{ArchR} project}{
@@ -203,8 +203,6 @@ MAElim <- MultiAssayExperiment::MultiAssayExperiment(
 # save object
 saveMAE("inst/extdata/prostateENZ.h5")
 }\if{html}{\out{</div>}}
-
-\cr
 }
 }
 
@@ -220,7 +218,7 @@ prostateENZ()
 }
 \references{
 Single-cell ATAC and RNA sequencing reveal pre-existing and persistent cells
-associated with prostate cancer relapse. \cr
-Taavitsainen \emph{et al.}, \emph{Nature Communications} 2021 Sep 6;12(1):5307 \cr
+associated with prostate cancer relapse.
+Taavitsainen \emph{et al.}, \emph{Nature Communications} 2021 Sep 6;12(1):5307
 \href{https://pubmed.ncbi.nlm.nih.gov/34489465/}{doi: 10.1038/s41467-021-25624-1}
 }

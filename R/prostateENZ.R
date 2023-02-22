@@ -27,8 +27,8 @@
 #'
 #' @references
 #' Single-cell ATAC and RNA sequencing reveal pre-existing and persistent cells
-#' associated with prostate cancer relapse. \cr
-#' Taavitsainen \emph{et al.}, \emph{Nature Communications} 2021 Sep 6;12(1):5307 \cr
+#' associated with prostate cancer relapse. 
+#' Taavitsainen \emph{et al.}, \emph{Nature Communications} 2021 Sep 6;12(1):5307 
 #' \href{https://pubmed.ncbi.nlm.nih.gov/34489465/}{doi: 10.1038/s41467-021-25624-1}
 #'
 #' @section Data storage and access:

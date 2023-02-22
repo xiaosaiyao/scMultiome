@@ -40,9 +40,9 @@ collected from adult human donors.
 
 scATAC data was downloaded from Gene Expression Omnibus
 (acc. no. \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE165659}{GSE165659})
-and analyzed with SingleCell ATAC - 10X pipeline v2.0.0 \cr
+and analyzed with SingleCell ATAC - 10X pipeline v2.0.0
 scRNAseq data in form of Seurat objects was downloaded from  https://drive.google.com/drive/folders/12j9ufV1L0uWbUlab-VoXRznDLKDO7PQ. In case
-of future change in the data storage location, it will be updated in the readme file in project's Github repository (https://github.com/winstonbecker/scCRC_continuum) \cr
+of future change in the data storage location, it will be updated in the readme file in project's Github repository (https://github.com/winstonbecker/scCRC_continuum)
 
 Downstream analysis was performed with the \code{ArchR} package v. 1.0.2:
 
