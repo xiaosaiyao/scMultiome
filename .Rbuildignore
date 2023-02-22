@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 ^inst/extdata/.*\\.h5$
 ^inst/extdata/.*\\.rds$
+^.github
+^.gitignore
