@@ -11,7 +11,7 @@
 
 <meta name="author" content="Aleksander Chlebowski and Xiaosai Yao" />
 
-<meta name="date" content="2023-01-10" />
+<meta name="date" content="2023-03-19" />
 
 <title>scMultiome tutorial</title>
 
@@ -697,7 +697,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">scMultiome tutorial</h1>
 <p class="author-name">Aleksander Chlebowski and Xiaosai Yao</p>
-<h4 class="date">10 January 2023</h4>
+<h4 class="date">19 March 2023</h4>
 
 </div>
 
@@ -736,8 +736,9 @@ function toggle_visibility(id1) {
 
 <div id="introduction" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
-<p>Single cell data is gaining sophistication - Cells can be measured in multiple modalities including gene expression, chromatin accessibility, cell surface markers and protein expression. These orthogonal measures of the same or matched cells enable a holistic construction of the cell state. However it has been challenging to share multiomic data, especially in an integrated format that consolidates the multiple layers of measurement. The <code>MultiAssayExperiment</code> provides a framework to package the various modalities into a single dataset on a per cell basis.</p>
-<p>The <code>scMultiome</code> package is a collection of public single cell multiome data sets pre-processed and packaged into <code>MultiAssayExperiment</code> objects for downstream analysis. It also provides basic functions to save the <code>MultiAssayExperiment</code> as <code>.hdf5</code> files so that users can load only the desired modalities into memory. <code>scMultiome</code> provides interface with the <code>ArchR</code> <a href="https://www.archrproject.com/">package</a> by allowing the conversion of an ArchR project to a <code>MultiAssayExperiment</code>.</p>
+<p>Single cell data is gaining sophistication - Cells can be measured in multiple modalities including gene expression, chromatin accessibility, cell surface markers and protein expression. These orthogonal measures of the same or matched cells enable a holistic construction of the cell state. However it has been challenging to share multiomic data, especially in an integrated format that consolidates the multiple layers of measurement. The <code>MultiAssayExperiment</code> container (implemented in the <em><a href="https://bioconductor.org/packages/3.17/MultiAssayExperiment">MultiAssayExperiment</a></em> package) provides a framework to package the various modalities into a single object on a per cell basis.</p>
+<p>The <code>scMultiome</code> package is a collection of public single cell multiome data sets pre-processed and packaged into <code>MultiAssayExperiment</code> objects for downstream analysis. It also provides basic functions to save the <code>MultiAssayExperiment</code> as <code>.hdf5</code> files so that users need to only load the desired modalities into memory. <code>scMultiome</code> provides interface with the <a href="https://www.archrproject.com/"><em>ArchR</em></a> package by allowing the conversion of an ArchR project to a <code>MultiAssayExperiment</code>.</p>
+<p>The ‘scMultiome’ package is similar to <em><a href="https://bioconductor.org/packages/3.17/SingleCellMultiModal">SingleCellMultiModal</a></em> in terms of providing multimodal data as an ExperimentHub package. One key difference is that we included additional functionalities to load only the desired modalities, and allow users to save their <code>MAE</code> objects as <code>.hdf5</code>s. The selective loading of experiments is desirable because multimodal data can be large: A typical 10x scMultiome consists of 100-200K atac-seq peaks on top of the typical 30-50K genes from rna-seq. Finally, <code>scMultiome</code> provides a list of transcription factor and chromatin co-activator binding sites compiled from ENCODE, ChIP-Atlas or Cistrome-DB ChIP-seq data as <code>GRangesList</code> objects. ChIP-seq data complements transcription factor motif information by potentially distinguishing related family members and providing occupancy information of chromatin factors that do not directly bind to DNA.</p>
 </div>
 <div id="installation" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Installation</h1>
@@ -893,8 +894,26 @@ listDatasets()</code></pre>
 </tbody>
 </table></div>
 <p>Access a data set by calling its accessor function:</p>
-<pre class="r"><code>prostateENZ()
-</code></pre>
+<pre class="r"><code>prostateENZ(metadata = TRUE)
+#&gt; snapshotDate(): 2023-03-13
+#&gt; ExperimentHub with 1 record
+#&gt; # snapshotDate(): 2023-03-13
+#&gt; # names(): EH7792
+#&gt; # package(): scMultiome
+#&gt; # $dataprovider: Tampere University
+#&gt; # $species: Homo sapiens
+#&gt; # $rdataclass: MultiAssayExperiment
+#&gt; # $rdatadateadded: 2022-12-13
+#&gt; # $title: LNCaP Cells Treated with Enzalutamide
+#&gt; # $description: Multiome data (scATAC and scRNAseq) for enzalutamide-treated LNCaP cells. Measured (unpaired) wi...
+#&gt; # $taxonomyid: 9606
+#&gt; # $genome: hg38
+#&gt; # $sourcetype: tar.gz
+#&gt; # $sourceurl: https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE168667&amp;format=file, https://www.ncbi.nlm.nih.gov...
+#&gt; # $sourcesize: NA
+#&gt; # $tags: c(&quot;CellCulture&quot;, &quot;ExpressionData&quot;, &quot;GEO&quot;, &quot;Homo_sapiens_Data&quot;, &quot;SequencingData&quot;,
+#&gt; #   &quot;SingleCellData&quot;, &quot;Tissue&quot;) 
+#&gt; # retrieve record with &#39;object[[&quot;EH7792&quot;]]&#39;</code></pre>
 <p>See the help files for accessor functions for possible extra options, e.g. <code>?prostateENZ</code>.</p>
 </div>
 <div id="transcription-factor-binding-sites" class="section level2" number="3.2">
@@ -907,7 +926,26 @@ listDatasets()</code></pre>
 <p>Academic institutions are free to use both sources but commercial entities should only use <code>atlas</code> due to restrictions imposed by Cistrome-DB.</p>
 <p>If multiple ChIP-seq files are available for the same transcription factor, the peaks are merged to create a union set of peaks. Currently three genomic builds genomes are provided: hg38, hg19, and mm10.</p>
 <p>The ChIP-seq data is packaged into individual RDS files and they are accessed with a common accessor function, <code>tfBinding</code>, specifying the genome and source.</p>
-<pre class="r"><code>tfBinding(&quot;hg38&quot;, &quot;atlas&quot;)</code></pre>
+<pre class="r"><code>tfBinding(genome = &quot;hg38&quot;, source =&quot;atlas&quot;, metadata = TRUE)
+#&gt; snapshotDate(): 2023-03-13
+#&gt; ExperimentHub with 1 record
+#&gt; # snapshotDate(): 2023-03-13
+#&gt; # names(): EH7814
+#&gt; # package(): scMultiome
+#&gt; # $dataprovider: Genentech
+#&gt; # $species: Homo sapiens
+#&gt; # $rdataclass: GRangesList
+#&gt; # $rdatadateadded: 2023-01-13
+#&gt; # $title: TF Binding Info hg38 (ChIP-Atlas and ENCODE)
+#&gt; # $description: Combined transcription factor ChIP-seq data from ChIP-Atlas and ENCODE
+#&gt; # $taxonomyid: 9606
+#&gt; # $genome: hg38
+#&gt; # $sourcetype: BED
+#&gt; # $sourceurl: https://github.com/inutano/chip-atlas/
+#&gt; # $sourcesize: NA
+#&gt; # $tags: c(&quot;CellCulture&quot;, &quot;ExpressionData&quot;, &quot;GEO&quot;, &quot;Homo_sapiens_Data&quot;, &quot;SequencingData&quot;,
+#&gt; #   &quot;SingleCellData&quot;, &quot;Tissue&quot;) 
+#&gt; # retrieve record with &#39;object[[&quot;EH7814&quot;]]&#39;</code></pre>
 <p><br><br><br></p>
 </div>
 </div>
@@ -944,14 +982,15 @@ Refer to the <a href="https://www.archrproject.com/bookdown/index.html">ArchR bo
 </div>
 <div id="conversion-to-mae" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> Conversion to MAE</h2>
-<p>ArchR projects are converted to <code>MultiAssayExperiment</code> objects.</p>
-<pre class="r"><code>mae &lt;- archr2MAE(&quot;&lt;ARCHR_PATH&gt;&quot;)
+<p>ArchR projects are converted to <code>MultiAssayExperiment</code> objects. <code>arch2MAE</code> is available in version &gt;1.0.3 of ArchR.</p>
+<pre class="r"><code>library(ArchR)
+mae &lt;- archr2MAE(&quot;&lt;ARCHR_PATH&gt;&quot;)
 </code></pre>
-<p>Each Matrix in the project becomes a <code>SingleCellExperiment</code>; its <code>colData</code> is derived from the project’s <code>cellColData</code> slot, and <code>rowData</code> and <code>rowRanges</code> are created as needed. Reduced dimensionalities and embeddings of the project are attached to the matrices they were obtained from and are stored in the <code>reducedDims</code> slot.</p>
+<p>Each Matrix in the project becomes a <code>SingleCellExperiment</code>; its <code>colData</code> is derived from the project’s <code>cellColData</code> slot, and <code>rowData</code> and <code>rowRanges</code> are created as needed. Reduced dimensions and embeddings of the project are attached to the matrices they were obtained from and are stored in the <code>reducedDims</code> slot.</p>
 </div>
 <div id="contributing" class="section level2" number="4.4">
 <h2><span class="header-section-number">4.4</span> Contributing</h2>
-<p>If you want to contribute your publicly available multiome data set, please read the vignette <em>Adding Datasets</em> and contact the package maintainer, Xiaosai Yao <a href="mailto:yao.xiaosai@gene.com" class="email">yao.xiaosai@gene.com</a>.</p>
+<p>If you want to contribute your publicly available multiome data set, please read the section <a href="#adding-datasets">Adding Datasets</a> and contact the package maintainer, Xiaosai Yao <a href="mailto:xiaosai.yao@gmail.com" class="email">xiaosai.yao@gmail.com</a>.</p>
 <p><br><br><br></p>
 </div>
 </div>
@@ -970,18 +1009,6 @@ Refer to the <a href="https://www.archrproject.com/bookdown/index.html">ArchR bo
 <p>Currently only <code>MultiAssayExperiment</code> objects are supported. Experiments must be objects that inherit from <code>SummarizedExperiment</code> and will usually be <code>SingleCellExperiment</code>, hence full support is provided for the latter and their slots (<code>reducedDims</code> and <code>altExps</code>).</p>
 <pre class="r"><code># construct a dummy data set
 mae &lt;- dummyMAE()
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 mae
 #&gt; A MultiAssayExperiment object of 2 listed
 #&gt;  experiments with user-defined names and respective classes.
@@ -1016,13 +1043,9 @@ saveMAE(mae, fileName)
 #&gt;   ...rownames
 #&gt;   ... rowRanges
 #&gt;   ... metadata
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 #&gt;   writing reducedDims
 #&gt;   ... PCA
 #&gt;   ... tSNE
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 #&gt;   writing altExps
 #&gt;   ... Hash
 #&gt;   dissassembling experiment
@@ -1032,10 +1055,6 @@ saveMAE(mae, fileName)
 #&gt;   writing properties
 #&gt;   ...colnames
 #&gt;   ... metadata
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 #&gt;   ... Protein
 #&gt;   dissassembling experiment
 #&gt;   writing class
@@ -1044,10 +1063,6 @@ saveMAE(mae, fileName)
 #&gt;   writing properties
 #&gt;   ...colnames
 #&gt;   ... metadata
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 #&gt;  ... done
 #&gt; saving experiment EXP2
 #&gt;   dissassembling experiment
@@ -1062,13 +1077,9 @@ saveMAE(mae, fileName)
 #&gt;   ...rownames
 #&gt;   ... rowRanges
 #&gt;   ... metadata
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 #&gt;   writing reducedDims
 #&gt;   ... PCA
 #&gt;   ... tSNE
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 #&gt;   writing altExps
 #&gt;   ... Hash
 #&gt;   dissassembling experiment
@@ -1078,10 +1089,6 @@ saveMAE(mae, fileName)
 #&gt;   writing properties
 #&gt;   ...colnames
 #&gt;   ... metadata
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 #&gt;   ... Protein
 #&gt;   dissassembling experiment
 #&gt;   writing class
@@ -1090,10 +1097,6 @@ saveMAE(mae, fileName)
 #&gt;   writing properties
 #&gt;   ...colnames
 #&gt;   ... metadata
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 #&gt;  ... done
 #&gt; $EXP1
 #&gt; [1] TRUE
@@ -1102,9 +1105,9 @@ saveMAE(mae, fileName)
 #&gt; [1] TRUE</code></pre>
 <p>You can use <code>testFile</code> to validate that your data set can be reconstructed.</p>
 <pre class="r"><code>testFile(fileName)
-#&gt; TESTING loading MAE from file:   /local/tmp/RtmpLt296A/file3bc695ca11e.h5
+#&gt; TESTING loading MAE from file:   /local/tmp/Rtmp1mYOsk/file348359a6f1b1.h5
 #&gt; LOADING ALL EXPERIMENTS: EXP1, EXP2
-#&gt; loading dataset stored in file /local/tmp/RtmpLt296A/file3bc695ca11e.h5
+#&gt; loading dataset stored in file /local/tmp/Rtmp1mYOsk/file348359a6f1b1.h5
 #&gt; loading experiments
 #&gt; loading EXP1
 #&gt;   loading properties
@@ -1149,11 +1152,7 @@ saveMAE(mae, fileName)
 #&gt;   ...rownames
 #&gt;   ...metadata
 #&gt;   ...reducedDims
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 #&gt;   ...altExps
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 #&gt; loading EXP2
 #&gt;   loading properties
 #&gt;   ... colnames
@@ -1197,11 +1196,7 @@ saveMAE(mae, fileName)
 #&gt;   ...rownames
 #&gt;   ...metadata
 #&gt;   ...reducedDims
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 #&gt;   ...altExps
-#&gt; Found more than one class &quot;package_version&quot; in cache; using the first, from namespace &#39;AnnotationHubData&#39;
-#&gt; Also defined by &#39;SeuratObject&#39;
 #&gt; building MultiAssayExperiment
 #&gt; A MultiAssayExperiment object of 2 listed
 #&gt;  experiments with user-defined names and respective classes.
@@ -1289,7 +1284,7 @@ desc::desc_bump_version(&quot;minor&quot;)
 </div>
 <div id="congratulations" class="section level2" number="5.9">
 <h2><span class="header-section-number">5.9</span> Congratulations</h2>
-<p>If you found any of this vignette or the process confusing, we would welcome feedback and gladly add more clarifications. Please email the package maintainer, Xiaosai Yao <a href="mailto:yao.xiaosai@gene.com" class="email">yao.xiaosai@gene.com</a>.</p>
+<p>If you found any of this vignette or the process confusing, we would welcome feedback and gladly add more clarifications. Please email the package maintainer, Xiaosai Yao <a href="mailto:xiaosai.yao@gmail.com" class="email">xiaosai.yao@gmail.com</a>.</p>
 </div>
 </div>
 <div id="session-info" class="section level1" number="6">
@@ -1315,87 +1310,47 @@ desc::desc_bump_version(&quot;minor&quot;)
 #&gt; [1] stats4    stats     graphics  grDevices utils     datasets  methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt;  [1] scMultiome_0.99.5           BiocStyle_2.27.0            testthat_3.1.5              SingleCellExperiment_1.21.0
-#&gt;  [5] MultiAssayExperiment_1.25.5 SummarizedExperiment_1.29.1 Biobase_2.59.0              GenomicRanges_1.51.4       
-#&gt;  [9] GenomeInfoDb_1.35.10        IRanges_2.33.0              S4Vectors_0.37.3            MatrixGenerics_1.11.0      
-#&gt; [13] matrixStats_0.63.0          ExperimentHub_2.7.0         AnnotationHub_3.7.0         BiocFileCache_2.7.1        
-#&gt; [17] dbplyr_2.2.1                BiocGenerics_0.45.0         futile.logger_1.4.3        
+#&gt;  [1] BiocStyle_2.27.1            scMultiome_0.99.10          SingleCellExperiment_1.21.1 MultiAssayExperiment_1.25.7
+#&gt;  [5] SummarizedExperiment_1.29.1 Biobase_2.59.0              GenomicRanges_1.51.4        GenomeInfoDb_1.35.16       
+#&gt;  [9] IRanges_2.33.0              S4Vectors_0.37.4            MatrixGenerics_1.11.0       matrixStats_0.63.0         
+#&gt; [13] ExperimentHub_2.7.1         AnnotationHub_3.7.3         BiocFileCache_2.7.2         dbplyr_2.3.1               
+#&gt; [17] BiocGenerics_0.45.2        
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;   [1] R.methodsS3_1.8.2             progress_1.2.2                urlchecker_1.0.1             
-#&gt;   [4] goftest_1.2-3                 artificer.matrix_1.3.7        Biostrings_2.67.0            
-#&gt;   [7] HDF5Array_1.27.0              vctrs_0.5.1                   spatstat.random_3.0-1        
-#&gt;  [10] digest_0.6.30                 png_0.1-8                     ggrepel_0.9.2                
-#&gt;  [13] deldir_1.0-6                  parallelly_1.33.0             MASS_7.3-58.1                
-#&gt;  [16] reshape2_1.4.4                httpuv_1.6.7                  withr_2.5.0                  
-#&gt;  [19] xfun_0.35                     ellipsis_0.3.2                survival_3.5-0               
-#&gt;  [22] memoise_2.0.1                 commonmark_1.8.1              profvis_0.3.7                
-#&gt;  [25] zoo_1.8-11                    pbapply_1.6-0                 R.oo_1.25.0                  
-#&gt;  [28] AzureRMR_2.4.3                prettyunits_1.1.1             KEGGREST_1.39.0              
-#&gt;  [31] promises_1.2.0.1              httr_1.4.4                    restfulr_0.0.15              
-#&gt;  [34] globals_0.16.2                fitdistrplus_1.1-8            artificer.schemas_0.99.2     
-#&gt;  [37] rhdf5filters_1.11.0           ps_1.7.2                      rhdf5_2.43.0                 
-#&gt;  [40] rstudioapi_0.14               miniUI_0.1.1.1                generics_0.1.3               
-#&gt;  [43] processx_3.8.0                curl_4.3.3                    zlibbioc_1.45.0              
-#&gt;  [46] polyclip_1.10-4               artificer.sce_1.3.4           GenomeInfoDbData_1.2.9       
-#&gt;  [49] RBGL_1.75.0                   interactiveDisplayBase_1.37.0 xtable_1.8-4                 
-#&gt;  [52] stringr_1.4.1                 desc_1.4.2                    evaluate_0.19                
-#&gt;  [55] genomitory.schemas_0.99.0     hms_1.1.2                     bookdown_0.31                
-#&gt;  [58] irlba_2.3.5.1                 colorspace_2.0-3              filelock_1.0.2               
-#&gt;  [61] ROCR_1.0-11                   reticulate_1.27               spatstat.data_3.0-0          
-#&gt;  [64] magrittr_2.0.3                lmtest_0.9-40                 later_1.3.0                  
-#&gt;  [67] lattice_0.20-45               spatstat.geom_3.0-3           future.apply_1.10.0          
-#&gt;  [70] getPass_0.2-2                 scattermore_0.8               XML_3.99-0.13                
-#&gt;  [73] cowplot_1.1.1                 RcppAnnoy_0.0.20              pillar_1.8.1                 
-#&gt;  [76] nlme_3.1-161                  artificer.mae_1.3.4           compiler_4.3.0               
-#&gt;  [79] stringi_1.7.8                 tensor_1.5                    devtools_2.4.5               
-#&gt;  [82] GenomicAlignments_1.35.0      plyr_1.8.8                    crayon_1.5.2                 
-#&gt;  [85] abind_1.4-5                   BiocIO_1.9.1                  sp_1.5-1                     
-#&gt;  [88] bit_4.0.5                     dplyr_1.0.10                  codetools_0.2-18             
-#&gt;  [91] ArtifactDB_1.9.5              bslib_0.4.1                   plotly_4.10.1                
-#&gt;  [94] metacommons_1.9.0             mime_0.12                     splines_4.3.0                
-#&gt;  [97] Rcpp_1.0.9                    artificer.ranges_1.3.4        BiocCheck_1.35.9             
-#&gt; [100] dsdb.schemas_0.99.1           knitr_1.41                    blob_1.2.3                   
-#&gt; [103] utf8_1.2.2                    BiocVersion_3.17.1            fs_1.5.2                     
-#&gt; [106] listenv_0.9.0                 checkmate_2.1.0               initiate.archr_1.0.16        
-#&gt; [109] pkgbuild_1.4.0                tibble_3.1.8                  Matrix_1.5-3                 
-#&gt; [112] callr_3.7.3                   dsassembly_1.7.6              pheatmap_1.0.12              
-#&gt; [115] pkgconfig_2.0.3               tools_4.3.0                   cachem_1.0.6                 
-#&gt; [118] RSQLite_2.2.20                viridisLite_0.4.1             DBI_1.1.3                    
-#&gt; [121] fastmap_1.1.0                 rmarkdown_2.19                scales_1.2.1                 
-#&gt; [124] grid_4.3.0                    usethis_2.1.6                 AzureGraph_1.3.2             
-#&gt; [127] ica_1.0-3                     Seurat_4.3.0                  Rsamtools_2.15.1             
-#&gt; [130] sass_0.4.4                    patchwork_1.1.2               BiocManager_1.30.19          
-#&gt; [133] graph_1.77.1                  RANN_2.6.1                    biocViews_1.67.2             
-#&gt; [136] yaml_2.3.6                    AnnotationForge_1.41.0        roxygen2_7.2.3               
-#&gt; [139] rtracklayer_1.59.1            cli_3.4.1                     purrr_1.0.0                  
-#&gt; [142] maw.utils_1.5.1               leiden_0.4.3                  lifecycle_1.0.3              
-#&gt; [145] askpass_1.1                   uwot_0.1.14                   lambda.r_1.2.4               
-#&gt; [148] sessioninfo_1.2.2             backports_1.4.1               BiocParallel_1.33.9          
-#&gt; [151] gtable_0.3.1                  rjson_0.2.21                  artificer.se_1.3.5           
-#&gt; [154] ggridges_0.5.4                progressr_0.13.0              parallel_4.3.0               
-#&gt; [157] jsonlite_1.8.4                bitops_1.0-7                  ggplot2_3.4.0                
-#&gt; [160] bit64_4.0.5                   assertthat_0.2.1              brio_1.1.3                   
-#&gt; [163] Rtsne_0.16                    genomitory_2.1.6              spatstat.utils_3.0-1         
-#&gt; [166] SeuratObject_4.1.3            futile.options_1.0.1          jquerylib_0.1.4              
-#&gt; [169] highr_0.9                     R.utils_2.12.2                lazyeval_0.2.2               
-#&gt; [172] shiny_1.7.4                   htmltools_0.5.4               sctransform_0.3.5            
-#&gt; [175] rappdirs_0.3.3                formatR_1.13                  gp.auth_1.7.0                
-#&gt; [178] glue_1.6.2                    maw.archr_1.0.22              XVector_0.39.0               
-#&gt; [181] qpdf_1.3.0                    RCurl_1.98-1.9                rprojroot_2.0.3              
-#&gt; [184] gridExtra_2.3                 igraph_1.3.5                  R6_2.5.1                     
-#&gt; [187] tidyr_1.2.1                   GenomicFeatures_1.51.2        cluster_2.1.4                
-#&gt; [190] pkgload_1.3.2                 Rhdf5lib_1.21.0               ArchR_1.0.2                  
-#&gt; [193] AnnotationHubData_1.29.1      dsdb.plus_1.3.2               stringdist_0.9.10            
-#&gt; [196] AzureAuth_1.3.3               DelayedArray_0.25.0           tidyselect_1.2.0             
-#&gt; [199] xml2_1.3.3                    AnnotationDbi_1.61.0          future_1.30.0                
-#&gt; [202] ShadowArray_1.7.1             AzureStor_3.7.0               munsell_0.5.0                
-#&gt; [205] KernSmooth_2.23-20            artificer.base_1.3.19         gp.cache_1.7.1               
-#&gt; [208] data.table_1.14.6             htmlwidgets_1.6.1             RColorBrewer_1.1-3           
-#&gt; [211] biomaRt_2.55.0                rlang_1.0.6                   spatstat.sparse_3.0-0        
-#&gt; [214] spatstat.explore_3.0-5        remotes_2.4.2                 RUnit_0.4.32                 
-#&gt; [217] fansi_1.0.3                   base64url_1.4                 ExperimentHubData_1.25.0     
-#&gt; [220] OrganismDbi_1.41.0            gp.version_1.2.0</code></pre>
+#&gt;   [1] DBI_1.1.3                     bitops_1.0-7                  remotes_2.4.2                
+#&gt;   [4] rlang_1.1.0                   magrittr_2.0.3                compiler_4.3.0               
+#&gt;   [7] RSQLite_2.3.0                 roxygen2_7.2.3                png_0.1-8                    
+#&gt;  [10] callr_3.7.3                   vctrs_0.6.0                   stringr_1.5.0                
+#&gt;  [13] profvis_0.3.7                 pkgconfig_2.0.3               crayon_1.5.2                 
+#&gt;  [16] fastmap_1.1.0                 backports_1.4.1               XVector_0.39.0               
+#&gt;  [19] ellipsis_0.3.2                AzureStor_3.7.0               utf8_1.2.2                   
+#&gt;  [22] promises_1.2.0.1              rmarkdown_2.20                sessioninfo_1.2.2            
+#&gt;  [25] ps_1.7.2                      purrr_1.0.1                   bit_4.0.5                    
+#&gt;  [28] xfun_0.37                     zlibbioc_1.45.0               cachem_1.0.6                 
+#&gt;  [31] jsonlite_1.8.4                blob_1.2.4                    later_1.3.0                  
+#&gt;  [34] rhdf5filters_1.11.1           DelayedArray_0.25.0           Rhdf5lib_1.21.0              
+#&gt;  [37] interactiveDisplayBase_1.37.0 prettyunits_1.1.1             R6_2.5.1                     
+#&gt;  [40] bslib_0.4.1                   stringi_1.7.8                 pkgload_1.3.2                
+#&gt;  [43] jquerylib_0.1.4               bookdown_0.33                 Rcpp_1.0.10                  
+#&gt;  [46] knitr_1.42                    usethis_2.1.6                 httpuv_1.6.9                 
+#&gt;  [49] Matrix_1.5-3                  tidyselect_1.2.0              rstudioapi_0.14              
+#&gt;  [52] yaml_2.3.6                    miniUI_0.1.1.1                curl_4.3.3                   
+#&gt;  [55] processx_3.8.0                pkgbuild_1.4.0                lattice_0.20-45              
+#&gt;  [58] tibble_3.1.8                  shiny_1.7.4                   withr_2.5.0                  
+#&gt;  [61] KEGGREST_1.39.0               evaluate_0.20                 desc_1.4.2                   
+#&gt;  [64] urlchecker_1.0.1              AzureRMR_2.4.3                xml2_1.3.3                   
+#&gt;  [67] Biostrings_2.67.0             pillar_1.8.1                  BiocManager_1.30.20          
+#&gt;  [70] filelock_1.0.2                checkmate_2.1.0               generics_0.1.3               
+#&gt;  [73] rprojroot_2.0.3               RCurl_1.98-1.10               BiocVersion_3.17.1           
+#&gt;  [76] commonmark_1.8.1              xtable_1.8-4                  glue_1.6.2                   
+#&gt;  [79] tools_4.3.0                   AzureGraph_1.3.2              fs_1.5.2                     
+#&gt;  [82] rhdf5_2.43.1                  grid_4.3.0                    devtools_2.4.5               
+#&gt;  [85] AnnotationDbi_1.61.2          GenomeInfoDbData_1.2.9        HDF5Array_1.27.0             
+#&gt;  [88] cli_3.6.0                     rappdirs_0.3.3                AzureAuth_1.3.3              
+#&gt;  [91] fansi_1.0.3                   dplyr_1.1.0                   sass_0.4.5                   
+#&gt;  [94] digest_0.6.30                 htmlwidgets_1.6.2             memoise_2.0.1                
+#&gt;  [97] htmltools_0.5.4               lifecycle_1.0.3               httr_1.4.4                   
+#&gt; [100] mime_0.12                     bit64_4.0.5</code></pre>
 <p><br><br><br></p>
 </div>
 
