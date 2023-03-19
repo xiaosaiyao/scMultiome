@@ -62,7 +62,7 @@ ChIP-seq binding sites were downloaded from \href{https://github.com/inutano/chi
 # download fileList.tab from https://dbarchive.biosciencedbc.jp/kyushu-u/metadata/fileList.tab
 
 dir <- "chipAtlas/"
-fileLIST <- read.delim(paste0(dir, "metadata/fileList.tab"), header = FALSE)
+fileLIST <- read.delim(file.path(dir, "metadata/fileList.tab"), header = FALSE)
 
 
 for (genome in c("hg38", "mm10"))\{
@@ -76,13 +76,13 @@ for (genome in c("hg38", "mm10"))\{
     download.files <- paste0("wget http://dbarchive.biosciencedbc.jp/kyushu-u/", 
                              genome,"/assembled/", TFLIST$V1, ".bed")
     write.table(x = download.files,
-                file = paste0(dir, genome, ".sh"),
+                file = file.path(dir, genome, ".sh"),
                 quote = FALSE,
                 col.names = FALSE,
                 row.names = FALSE)
     
     write.table(TFLIST,
-                file = paste0(dir, genome,".metadata.txt"),
+                file = file.path(dir, genome,".metadata.txt"),
                 quote = FALSE,
                 col.names = FALSE,
                 row.names = FALSE,
@@ -126,13 +126,13 @@ chr_order[["hg38"]] <- c(paste0("chr",1:22),"chrX","chrY","chrM")
 
 for (genome in genomes)\{
   # Get directories of all bed files and make a list of the path of all bed files
-  list_beds <- list.files(paste0(dir, genome, '_1e5'),
+  list_beds <- list.files(file.path(dir, paste0(genome, '_1e5')),
                           pattern = "*.bed")
 
   # Read the metatdata file
 
-  metadata <- read.delim(paste0(dir, genome, ".metadata.txt"), header=FALSE)
-  metadata$filename <- paste0(dir, genome, "_1e5/", metadata$V1,".bed")
+  metadata <- read.delim(file.path(dir, genome, ".metadata.txt"), header=FALSE)
+  metadata$filename <- file.path(dir, genome, "_1e5", metadata$V1,".bed")
   colnames(metadata)[4] <- "TF"
 
   ## specify sorting order for chromosomes
@@ -163,7 +163,7 @@ for (genome in genomes)\{
     gr <- reduce(gr, drop.empty.ranges = TRUE)
 
     # write new bed file to directory
-    export.bed(gr, con = paste0(outdir,"/", genome, "/", TF.list[i],".bed"))
+    export.bed(gr, con = file.path(outdir, genome, TF.list[i],".bed"))
   \}
 
 \}
@@ -184,21 +184,21 @@ outdir = 'chipatlas/data/encode/'
 for (genome in c("mm10", "hg38"))\{
 
     # Make a list of all the bed files
-    list_beds <- list.files(paste0(dir, genome, "/raw"), pattern = "*.bed.gz")
+    list_beds <- list.files(file.path(dir, genome, "raw"), pattern = "*.bed.gz")
 
     #filter each bed file to have p value score > 4
     for (i in seq_along(list_beds)) \{
 
         print(list_beds[i])
 
-        curr_bed <- read.table(paste0(dir, genome, "/raw/", list_beds[i]))
+        curr_bed <- read.table(file.path(dir, genome, "raw", list_beds[i]))
 
         post_QC_bed <- curr_bed[curr_bed$V7 >=5,] #Q values
 
         if (nrow(post_QC_bed) >100)\{
             write.table(post_QC_bed,
-                        paste0('/gstore/scratch/u/yaox19/encode/', 
-                               genome, "/filtered/", list_beds[i]),
+                        file.path('/gstore/scratch/u/yaox19/encode/', 
+                               genome, "filtered", list_beds[i]),
                         row.names = F, col.names = F, quote = F, sep="\\t")
         \}
 
@@ -224,8 +224,8 @@ replacement <- list(mm10 = "-mouse", hg38 = "-human")
 for (genome in c("hg38","mm10"))\{
 
     # read metadata
-    list_beds <- list.files(paste0(dir, genome, "/raw"), pattern = "*.bed.gz")
-    metadata <- read.delim(paste0(dir, genome, "/raw/metadata.tsv"))
+    list_beds <- list.files(file.path(dir, genome, "raw"), pattern = "*.bed.gz")
+    metadata <- read.delim(file.path(dir, genome, "raw", "metadata.tsv"))
     metadata <- metadata[, c("File.accession", "Experiment.target")]
     metadata$"Experiment.target" <-  gsub(replacement[[genome]],"", metadata$"Experiment.target")
 
@@ -235,7 +235,7 @@ for (genome in c("hg38","mm10"))\{
     \}
 
     metadata$"File.accession" <- trimws( metadata$"File.accession")
-    metadata$"File.accession" <- paste0(dir, genome, "/filtered/",
+    metadata$"File.accession" <- file.path(dir, genome, "filtered",
                                         metadata$"File.accession",".bed.gz")
     colnames(metadata) <- c("filename","TF")
 
@@ -271,7 +271,7 @@ for (genome in c("hg38","mm10"))\{
         gr <- reduce(gr, drop.empty.ranges = TRUE)
 
         # write new bed file to directory
-        export.bed(gr, con=paste0(outdir, genome, "/", TF.list[i],".bed"))
+        export.bed(gr, con=file.path(outdir, genome, TF.list[i],".bed"))
     \}
 
 
@@ -297,8 +297,8 @@ for (genome in c("mm10", "hg38"))\{
     chr_order_genome <- chr_order[[genome]]
 
     ########### merge with chipatlas bed files
-    chipatlas.files <- list.files(paste0(dir, "chipatlas/", genome),pattern = "*.bed")
-    encode.files <- list.files(paste0(dir, "encode/", genome),pattern = "*.bed")
+    chipatlas.files <- list.files(file.path(dir, "chipatlas", genome),pattern = "*.bed")
+    encode.files <- list.files(file.path(dir, "encode", genome),pattern = "*.bed")
     shared.TFs <- intersect(chipatlas.files, encode.files)
     chipatlas.TFs <- setdiff(chipatlas.files, encode.files)
     encode.TFs <- setdiff(encode.files, chipatlas.files)
@@ -308,8 +308,8 @@ for (genome in c("mm10", "hg38"))\{
 
         print(shared.TFs[i])
 
-        chipatlas <- read.table(paste0(dir, "chipatlas/", genome, "/", shared.TFs[i]), sep = "\\t")
-        encode <- read.table(paste0(dir, "encode/", genome, "/", shared.TFs[i]), sep = "\\t")
+        chipatlas <- read.table(file.path(dir, "chipatlas", genome, shared.TFs[i]), sep = "\\t")
+        encode <- read.table(file.path(dir, "encode", genome, shared.TFs[i]), sep = "\\t")
 
         merged_bed <- rbind(chipatlas[,1:3], encode[,1:3])
         merged_bed$V1 <- factor(merged_bed$V1, levels = chr_order_genome)
@@ -320,7 +320,7 @@ for (genome in c("mm10", "hg38"))\{
                                        start.field = "V2",end.field = "V3")
         gr <- reduce(gr, drop.empty.ranges = TRUE)
 
-        export.bed(gr, con=paste0(dir, "chipatlas_encode_merged/", genome, "/", shared.TFs[i]))
+        export.bed(gr, con=file.path(dir, "chipatlas_encode_merged", genome, shared.TFs[i]))
 
     \}
 
@@ -329,7 +329,7 @@ for (genome in c("mm10", "hg38"))\{
 
         print(chipatlas.TFs[i])
 
-        chipatlas <- read.table(paste0(dir, "chipatlas/", genome, "/", chipatlas.TFs[i]), sep = "\\t")
+        chipatlas <- read.table(file.path(dir, "chipatlas", genome, chipatlas.TFs[i]), sep = "\\t")
 
         merged_bed <- chipatlas[,1:3]
         merged_bed$V1 <- factor(merged_bed$V1, levels = chr_order_genome)
@@ -340,7 +340,7 @@ for (genome in c("mm10", "hg38"))\{
                                        start.field = "V2",end.field = "V3")
         gr <- reduce(gr, drop.empty.ranges = TRUE)
 
-        export.bed(gr, con=paste0(dir, "chipatlas_encode_merged/", genome, "/", chipatlas.TFs[i]))
+        export.bed(gr, con=file.path(dir, "chipatlas_encode_merged", genome, chipatlas.TFs[i]))
 
     \}
 
@@ -349,7 +349,7 @@ for (genome in c("mm10", "hg38"))\{
 
         print(encode.TFs[i])
 
-        encode <- read.table(paste0(dir, "encode/", genome, "/", encode.TFs[i]),sep = "\\t")
+        encode <- read.table(file.path(dir, "encode", genome, encode.TFs[i]),sep = "\\t")
 
         merged_bed <- encode[,1:3]
         merged_bed$V1 <- factor(merged_bed$V1, levels = chr_order_genome)
@@ -360,7 +360,7 @@ for (genome in c("mm10", "hg38"))\{
                                        start.field = "V2",end.field = "V3")
         gr <- reduce(gr, drop.empty.ranges = TRUE)
 
-        export.bed(gr, con=paste0(dir, "chipatlas_encode_merged/", genome, "/", encode.TFs[i]))
+        export.bed(gr, con=file.path(dir, "chipatlas_encode_merged", genome, encode.TFs[i]))
 
     \}
 \}
