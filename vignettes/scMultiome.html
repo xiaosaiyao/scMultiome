@@ -11,7 +11,7 @@
 
 <meta name="author" content="Aleksander Chlebowski and Xiaosai Yao" />
 
-<meta name="date" content="2023-03-19" />
+<meta name="date" content="2023-03-22" />
 
 <title>scMultiome tutorial</title>
 
@@ -697,7 +697,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">scMultiome tutorial</h1>
 <p class="author-name">Aleksander Chlebowski and Xiaosai Yao</p>
-<h4 class="date">19 March 2023</h4>
+<h4 class="date">22 March 2023</h4>
 
 </div>
 
@@ -711,33 +711,26 @@ function toggle_visibility(id1) {
 <li><a href="#available-data-sets" id="toc-available-data-sets"><span class="toc-section-number">3.1</span> Available Data Sets</a></li>
 <li><a href="#transcription-factor-binding-sites" id="toc-transcription-factor-binding-sites"><span class="toc-section-number">3.2</span> Transcription Factor Binding Sites</a></li>
 </ul></li>
-<li><a href="#processing-data" id="toc-processing-data"><span class="toc-section-number">4</span> Processing data</a>
+<li><a href="#adding-datasets" id="toc-adding-datasets"><span class="toc-section-number">4</span> Adding Datasets</a>
 <ul>
-<li><a href="#raw-data-analysis" id="toc-raw-data-analysis"><span class="toc-section-number">4.1</span> Raw Data Analysis</a></li>
-<li><a href="#archr-multiome-workflow" id="toc-archr-multiome-workflow"><span class="toc-section-number">4.2</span> ArchR Multiome Workflow</a></li>
-<li><a href="#conversion-to-mae" id="toc-conversion-to-mae"><span class="toc-section-number">4.3</span> Conversion to MAE</a></li>
-<li><a href="#contributing" id="toc-contributing"><span class="toc-section-number">4.4</span> Contributing</a></li>
+<li><a href="#developer-mode" id="toc-developer-mode"><span class="toc-section-number">4.1</span> Developer Mode</a></li>
+<li><a href="#saving-your-data-set" id="toc-saving-your-data-set"><span class="toc-section-number">4.2</span> Saving Your Data Set</a></li>
+<li><a href="#creating-metadata" id="toc-creating-metadata"><span class="toc-section-number">4.3</span> Creating Metadata</a></li>
+<li><a href="#documenting-your-data-set" id="toc-documenting-your-data-set"><span class="toc-section-number">4.4</span> Documenting Your Data Set</a></li>
+<li><a href="#creating-accessor-function" id="toc-creating-accessor-function"><span class="toc-section-number">4.5</span> Creating accessor function</a></li>
+<li><a href="#building-documentation" id="toc-building-documentation"><span class="toc-section-number">4.6</span> Building documentation</a></li>
+<li><a href="#updating-package-files" id="toc-updating-package-files"><span class="toc-section-number">4.7</span> Updating Package Files</a></li>
+<li><a href="#uploading-your-data-set" id="toc-uploading-your-data-set"><span class="toc-section-number">4.8</span> Uploading Your Data Set</a></li>
+<li><a href="#congratulations" id="toc-congratulations"><span class="toc-section-number">4.9</span> Congratulations</a></li>
 </ul></li>
-<li><a href="#adding-datasets" id="toc-adding-datasets"><span class="toc-section-number">5</span> Adding Datasets</a>
-<ul>
-<li><a href="#developer-mode" id="toc-developer-mode"><span class="toc-section-number">5.1</span> Developer Mode</a></li>
-<li><a href="#saving-your-data-set" id="toc-saving-your-data-set"><span class="toc-section-number">5.2</span> Saving Your Data Set</a></li>
-<li><a href="#creating-metadata" id="toc-creating-metadata"><span class="toc-section-number">5.3</span> Creating Metadata</a></li>
-<li><a href="#documenting-your-data-set" id="toc-documenting-your-data-set"><span class="toc-section-number">5.4</span> Documenting Your Data Set</a></li>
-<li><a href="#creating-accessor-function" id="toc-creating-accessor-function"><span class="toc-section-number">5.5</span> Creating accessor function</a></li>
-<li><a href="#building-documentation" id="toc-building-documentation"><span class="toc-section-number">5.6</span> Building documentation</a></li>
-<li><a href="#updating-package-files" id="toc-updating-package-files"><span class="toc-section-number">5.7</span> Updating Package Files</a></li>
-<li><a href="#uploading-your-data-set" id="toc-uploading-your-data-set"><span class="toc-section-number">5.8</span> Uploading Your Data Set</a></li>
-<li><a href="#congratulations" id="toc-congratulations"><span class="toc-section-number">5.9</span> Congratulations</a></li>
-</ul></li>
-<li><a href="#session-info" id="toc-session-info"><span class="toc-section-number">6</span> Session Info</a></li>
+<li><a href="#session-info" id="toc-session-info"><span class="toc-section-number">5</span> Session Info</a></li>
 </ul>
 </div>
 
 <div id="introduction" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p>Single cell data is gaining sophistication - Cells can be measured in multiple modalities including gene expression, chromatin accessibility, cell surface markers and protein expression. These orthogonal measures of the same or matched cells enable a holistic construction of the cell state. However it has been challenging to share multiomic data, especially in an integrated format that consolidates the multiple layers of measurement. The <code>MultiAssayExperiment</code> container (implemented in the <em><a href="https://bioconductor.org/packages/3.17/MultiAssayExperiment">MultiAssayExperiment</a></em> package) provides a framework to package the various modalities into a single object on a per cell basis.</p>
-<p>The <code>scMultiome</code> package is a collection of public single cell multiome data sets pre-processed and packaged into <code>MultiAssayExperiment</code> objects for downstream analysis. It also provides basic functions to save the <code>MultiAssayExperiment</code> as <code>.hdf5</code> files so that users need to only load the desired modalities into memory. <code>scMultiome</code> provides interface with the <a href="https://www.archrproject.com/"><em>ArchR</em></a> package by allowing the conversion of an ArchR project to a <code>MultiAssayExperiment</code>.</p>
+<p>The <code>scMultiome</code> package is a collection of public single cell multiome data sets pre-processed and packaged into <code>MultiAssayExperiment</code> objects for downstream analysis. It also provides basic functions to save the <code>MultiAssayExperiment</code> as <code>.hdf5</code> files so that users need to only load the desired modalities into memory.</p>
 <p>The ‘scMultiome’ package is similar to <em><a href="https://bioconductor.org/packages/3.17/SingleCellMultiModal">SingleCellMultiModal</a></em> in terms of providing multimodal data as an ExperimentHub package. One key difference is that we included additional functionalities to load only the desired modalities, and allow users to save their <code>MAE</code> objects as <code>.hdf5</code>s. The selective loading of experiments is desirable because multimodal data can be large: A typical 10x scMultiome consists of 100-200K atac-seq peaks on top of the typical 30-50K genes from rna-seq. Finally, <code>scMultiome</code> provides a list of transcription factor and chromatin co-activator binding sites compiled from ENCODE, ChIP-Atlas or Cistrome-DB ChIP-seq data as <code>GRangesList</code> objects. ChIP-seq data complements transcription factor motif information by potentially distinguishing related family members and providing occupancy information of chromatin factors that do not directly bind to DNA.</p>
 </div>
 <div id="installation" class="section level1" number="2">
@@ -895,9 +888,9 @@ listDatasets()</code></pre>
 </table></div>
 <p>Access a data set by calling its accessor function:</p>
 <pre class="r"><code>prostateENZ(metadata = TRUE)
-#&gt; snapshotDate(): 2023-03-13
+#&gt; snapshotDate(): 2023-03-21
 #&gt; ExperimentHub with 1 record
-#&gt; # snapshotDate(): 2023-03-13
+#&gt; # snapshotDate(): 2023-03-21
 #&gt; # names(): EH7792
 #&gt; # package(): scMultiome
 #&gt; # $dataprovider: Tampere University
@@ -905,14 +898,14 @@ listDatasets()</code></pre>
 #&gt; # $rdataclass: MultiAssayExperiment
 #&gt; # $rdatadateadded: 2022-12-13
 #&gt; # $title: LNCaP Cells Treated with Enzalutamide
-#&gt; # $description: Multiome data (scATAC and scRNAseq) for enzalutamide-treated LNCaP cells. Measured (unpaired) wi...
+#&gt; # $description: Multiome data (scATAC and scRNAseq) for enzalutamide-treated LNCa...
 #&gt; # $taxonomyid: 9606
 #&gt; # $genome: hg38
 #&gt; # $sourcetype: tar.gz
-#&gt; # $sourceurl: https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE168667&amp;format=file, https://www.ncbi.nlm.nih.gov...
+#&gt; # $sourceurl: https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE168667&amp;format=fil...
 #&gt; # $sourcesize: NA
-#&gt; # $tags: c(&quot;CellCulture&quot;, &quot;ExpressionData&quot;, &quot;GEO&quot;, &quot;Homo_sapiens_Data&quot;, &quot;SequencingData&quot;,
-#&gt; #   &quot;SingleCellData&quot;, &quot;Tissue&quot;) 
+#&gt; # $tags: c(&quot;CellCulture&quot;, &quot;ExpressionData&quot;, &quot;GEO&quot;, &quot;Homo_sapiens_Data&quot;,
+#&gt; #   &quot;SequencingData&quot;, &quot;SingleCellData&quot;, &quot;Tissue&quot;) 
 #&gt; # retrieve record with &#39;object[[&quot;EH7792&quot;]]&#39;</code></pre>
 <p>See the help files for accessor functions for possible extra options, e.g. <code>?prostateENZ</code>.</p>
 </div>
@@ -927,9 +920,9 @@ listDatasets()</code></pre>
 <p>If multiple ChIP-seq files are available for the same transcription factor, the peaks are merged to create a union set of peaks. Currently three genomic builds genomes are provided: hg38, hg19, and mm10.</p>
 <p>The ChIP-seq data is packaged into individual RDS files and they are accessed with a common accessor function, <code>tfBinding</code>, specifying the genome and source.</p>
 <pre class="r"><code>tfBinding(genome = &quot;hg38&quot;, source =&quot;atlas&quot;, metadata = TRUE)
-#&gt; snapshotDate(): 2023-03-13
+#&gt; snapshotDate(): 2023-03-21
 #&gt; ExperimentHub with 1 record
-#&gt; # snapshotDate(): 2023-03-13
+#&gt; # snapshotDate(): 2023-03-21
 #&gt; # names(): EH7814
 #&gt; # package(): scMultiome
 #&gt; # $dataprovider: Genentech
@@ -937,74 +930,30 @@ listDatasets()</code></pre>
 #&gt; # $rdataclass: GRangesList
 #&gt; # $rdatadateadded: 2023-01-13
 #&gt; # $title: TF Binding Info hg38 (ChIP-Atlas and ENCODE)
-#&gt; # $description: Combined transcription factor ChIP-seq data from ChIP-Atlas and ENCODE
+#&gt; # $description: Combined transcription factor ChIP-seq data from ChIP-Atlas and E...
 #&gt; # $taxonomyid: 9606
 #&gt; # $genome: hg38
 #&gt; # $sourcetype: BED
 #&gt; # $sourceurl: https://github.com/inutano/chip-atlas/
 #&gt; # $sourcesize: NA
-#&gt; # $tags: c(&quot;CellCulture&quot;, &quot;ExpressionData&quot;, &quot;GEO&quot;, &quot;Homo_sapiens_Data&quot;, &quot;SequencingData&quot;,
-#&gt; #   &quot;SingleCellData&quot;, &quot;Tissue&quot;) 
+#&gt; # $tags: c(&quot;CellCulture&quot;, &quot;ExpressionData&quot;, &quot;GEO&quot;, &quot;Homo_sapiens_Data&quot;,
+#&gt; #   &quot;SequencingData&quot;, &quot;SingleCellData&quot;, &quot;Tissue&quot;) 
 #&gt; # retrieve record with &#39;object[[&quot;EH7814&quot;]]&#39;</code></pre>
 <p><br><br><br></p>
 </div>
 </div>
-<div id="processing-data" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> Processing data</h1>
-<p>This package is a data repository for single cell multiome data within <code>ExperimentHub</code>. It also provides a framework to add more multiome data. This vignette will guide you from data analysis to data upload.</p>
-<p>In the examples below, we outline data processing and integration of single cell gene expression and chromatin accessibility data using <code>CellRanger</code> and <code>ArchR</code> but you are free to analyze and integrate your data using any methods as long as the final output is converted to a <code>MultiAssayExperiment</code>.</p>
-<div id="raw-data-analysis" class="section level2" number="4.1">
-<h2><span class="header-section-number">4.1</span> Raw Data Analysis</h2>
-<p>Raw data is first analyzed with the <a href="https://www.10xgenomics.com/support">10x Genomics Cell Ranger</a> pipelines.</p>
-<p>Following that, gene expression data is run through a <a href="https://github.com/LTLA/scran.chan">scran.chan</a> analysis pipeline. Refer to the <a href="https://bioconductor.org/books/release/OSCA/">OSCA book</a>, specifically <a href="http://bioconductor.org/books/3.15/OSCA.basic/index.html">this chapter</a> for details.</p>
-</div>
-<div id="archr-multiome-workflow" class="section level2" number="4.2">
-<h2><span class="header-section-number">4.2</span> ArchR Multiome Workflow</h2>
-<p>The general ArchR workflow is outlined below.
-Refer to the <a href="https://www.archrproject.com/bookdown/index.html">ArchR book</a> for details.</p>
-<ol style="list-style-type: decimal">
-<li>Fragment files resulting from Cell Ranger ATAC analysis are used to create arrow files. The <em>Tile Matrix</em> and <em>Gene Score Matrix</em> are created.</li>
-<li>An ArchR project is created. Project-wide Tile and Gene Score Matrices are now available.</li>
-<li>Duplex cells are filtered out. This step is omitted in cell culture based experiments.</li>
-<li>Dimensionality reduction is run on the Tile Matrix using the Iterative LSI algorithm using <code>ArchR::addIterativeLSI</code>.</li>
-<li>scRNAseq data is added to the ArchR project with <code>ArchR::addGeneExpressionMatrix</code> for paired datasets or with <code>ArchR::addGeneIntegrationMatrix</code> for unpaired ones. The <em>Gene Expression Matrix</em> or the <em>Gene Integration Matrix</em> is added.</li>
-<li>Iterative LSI is run again on the <em>Gene Expression/Integration Matrix</em>.</li>
-<li>Reduced dimension representations of scATAC and scRNAseq spaces are combined with <code>ArchR::addCombinedDims</code>. This creates a joint reduced dimensions representation that is used downstream.</li>
-<li>Clustering is done with <code>ArchR::addClusters</code> on the iLSI representation of a space of the user’s choosing: the scATAC space, the scRNAseq space, or the combined space..</li>
-<li>UMAP and/or TSNE embeddings are created with <code>ArchR::addUMAP</code> and <code>ArchR::addTSNE</code>. Likewise, the user chooses the iLSI space to create embeddings from.</li>
-<li>Pseudo-bulk replicates are computed with <code>ArchR::addGroupCoverages</code>.</li>
-<li>Peaks are called with <code>ArchR::addReproduciblePeakSet</code>. (This requires <code>MACS2</code>.)</li>
-<li><em>Peak Matrix</em> is added with <code>ArchR::addPeakMatrix</code>.</li>
-<li>Peak annotation is added with <code>ArchR::addMotifAnnotations</code>. (This requires <code>chromVARmotifs</code>.)</li>
-<li>Background peaks are obtained with <code>ArchR::addBgdPeaks</code>.</li>
-<li>ChromVAR deviations are computed with <code>ArchR::addDeviationsMatrix</code>. The <em>Motif Matrix</em> is added.</li>
-</ol>
-</div>
-<div id="conversion-to-mae" class="section level2" number="4.3">
-<h2><span class="header-section-number">4.3</span> Conversion to MAE</h2>
-<p>ArchR projects are converted to <code>MultiAssayExperiment</code> objects. <code>arch2MAE</code> is available in version &gt;1.0.3 of ArchR.</p>
-<pre class="r"><code>library(ArchR)
-mae &lt;- archr2MAE(&quot;&lt;ARCHR_PATH&gt;&quot;)
-</code></pre>
-<p>Each Matrix in the project becomes a <code>SingleCellExperiment</code>; its <code>colData</code> is derived from the project’s <code>cellColData</code> slot, and <code>rowData</code> and <code>rowRanges</code> are created as needed. Reduced dimensions and embeddings of the project are attached to the matrices they were obtained from and are stored in the <code>reducedDims</code> slot.</p>
-</div>
-<div id="contributing" class="section level2" number="4.4">
-<h2><span class="header-section-number">4.4</span> Contributing</h2>
-<p>If you want to contribute your publicly available multiome data set, please read the section <a href="#adding-datasets">Adding Datasets</a> and contact the package maintainer, Xiaosai Yao <a href="mailto:xiaosai.yao@gmail.com" class="email">xiaosai.yao@gmail.com</a>.</p>
-<p><br><br><br></p>
-</div>
-</div>
-<div id="adding-datasets" class="section level1" number="5">
-<h1><span class="header-section-number">5</span> Adding Datasets</h1>
+<div id="adding-datasets" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Adding Datasets</h1>
+<p>If you want to contribute your publicly available multiome data set, please read this section and contact the package maintainer, Xiaosai Yao <a href="mailto:xiaosai.yao@gmail.com" class="email">xiaosai.yao@gmail.com</a>.</p>
 <p>Once the data has been preprocessed and converted into <code>MultiAssayExperiment</code>, it can be saved in a hdf5 file using <code>saveMAE</code>. You also need to provide metadata, documentation, and the accessor function that will retrieve the data from <code>ExperimentHub</code>.</p>
-<div id="developer-mode" class="section level2" number="5.1">
-<h2><span class="header-section-number">5.1</span> Developer Mode</h2>
+<div id="developer-mode" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Developer Mode</h2>
 <p>Adding data involves updating the package and as such, it must be done in “developer mode”. The developer mode allows access to additional tools such as documentation templates.</p>
 <p>To work in developer mode, you must first clone the package repository with <code>git</code>. Create a branch from <code>master</code> and work on that.</p>
 <p>Start an R session in the package directory (e.g. by opening the RStudio project in RStudio) and load all the functions. This is necessary for the R engine to temporarily identify your working directory as the package installation directory, and to expose the internal functions that you will be using.</p>
 </div>
-<div id="saving-your-data-set" class="section level2" number="5.2">
-<h2><span class="header-section-number">5.2</span> Saving Your Data Set</h2>
+<div id="saving-your-data-set" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Saving Your Data Set</h2>
 <p><code>MultiAssayExperiment</code> is saved in the hdf5 format as it splits the MAEs into individual experiments so that you can choose to load selected experiments. Upon loading, selected experiments are reassembled and wrapped into an MAE object. Assays are represented by <code>DelayedMatrix</code> objects to save memory.and saved as a hdf5 file.</p>
 <p>Currently only <code>MultiAssayExperiment</code> objects are supported. Experiments must be objects that inherit from <code>SummarizedExperiment</code> and will usually be <code>SingleCellExperiment</code>, hence full support is provided for the latter and their slots (<code>reducedDims</code> and <code>altExps</code>).</p>
 <pre class="r"><code># construct a dummy data set
@@ -1105,9 +1054,9 @@ saveMAE(mae, fileName)
 #&gt; [1] TRUE</code></pre>
 <p>You can use <code>testFile</code> to validate that your data set can be reconstructed.</p>
 <pre class="r"><code>testFile(fileName)
-#&gt; TESTING loading MAE from file:   /local/tmp/Rtmp1mYOsk/file348359a6f1b1.h5
+#&gt; TESTING loading MAE from file:   /local/tmp/RtmpnntCoG/file571f5d57af8b.h5
 #&gt; LOADING ALL EXPERIMENTS: EXP1, EXP2
-#&gt; loading dataset stored in file /local/tmp/Rtmp1mYOsk/file348359a6f1b1.h5
+#&gt; loading dataset stored in file /local/tmp/RtmpnntCoG/file571f5d57af8b.h5
 #&gt; loading experiments
 #&gt; loading EXP1
 #&gt;   loading properties
@@ -1213,8 +1162,8 @@ saveMAE(mae, fileName)
 #&gt;  exportClass() - save data to flat files</code></pre>
 <p>For a detailed explanation of the process see <code>?saveMAE</code>.</p>
 </div>
-<div id="creating-metadata" class="section level2" number="5.3">
-<h2><span class="header-section-number">5.3</span> Creating Metadata</h2>
+<div id="creating-metadata" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Creating Metadata</h2>
 <p>To add metadata, we first create a R script to store your data set’s metadata. The metadata script provides key information such as data resource, species, genomic build and version number. This R script will be named <code>inst/scripts/make-metadata-&lt;DATASET_NAME&gt;.R</code>.</p>
 <pre class="r"><code>makeMakeMetadata(&quot;dataset&quot;)</code></pre>
 <p>Metadata must be a 1-row data frame with specific columns and values must be character strings (some fields allow character vectors). See <code>inst/scripts/make-metadata.R</code> for more information and <code>inst/scripts/make-metadata-prostateENZ.R</code> for an example.</p>
@@ -1227,15 +1176,15 @@ all the datasets will be captured in <code>inst/extdata/manifest.csv</code> and 
 <pre class="r"><code>ExperimentHubData::makeExperimentHubMetadata(dirname(system.file(package = &quot;scMultiome&quot;)))</code></pre>
 <p>This call must also run without errors. It will return an <code>ExperimentHub</code> object that will display your metadata in the form that the end users will see it.</p>
 </div>
-<div id="documenting-your-data-set" class="section level2" number="5.4">
-<h2><span class="header-section-number">5.4</span> Documenting Your Data Set</h2>
+<div id="documenting-your-data-set" class="section level2" number="4.4">
+<h2><span class="header-section-number">4.4</span> Documenting Your Data Set</h2>
 <p>Every data set needs an additional documentation to describe how the data was obtained. This doesn’t have to be a working script, just a report. Pseudocode is acceptable. Note that code evaluation has been disabled so that you can copy your actual code and the lengthy ArchR analysis does not run again.</p>
 <p>Create an Rmarkdown file called <code>inst/scripts/make-data-&lt;DATASET_NAME&gt;.Rmd</code>.</p>
 <pre class="r"><code>makeMakeData(&quot;dataset&quot;)
 </code></pre>
 </div>
-<div id="creating-accessor-function" class="section level2" number="5.5">
-<h2><span class="header-section-number">5.5</span> Creating accessor function</h2>
+<div id="creating-accessor-function" class="section level2" number="4.5">
+<h2><span class="header-section-number">4.5</span> Creating accessor function</h2>
 <p>Every data set is accessed by its own accessor function, which provides access and help for your data set.
 For every data set, we create a <code>R</code> file that defines the function to retrieve the data set and provide important documentation. The package framework is constructed such that accessor functions are extremely simple and you can basically copy the original one (<code>prostateENZ</code>) and most of its documentation.</p>
 <p>Create an R file called <code>&lt;DATASET_NAME&gt;.R</code></p>
@@ -1252,8 +1201,8 @@ For every data set, we create a <code>R</code> file that defines the function to
 <li>If you want to restore custom classes to your experiments, add converting functions here. They do not require documentation or exporting.</li>
 </ol>
 </div>
-<div id="building-documentation" class="section level2" number="5.6">
-<h2><span class="header-section-number">5.6</span> Building documentation</h2>
+<div id="building-documentation" class="section level2" number="4.6">
+<h2><span class="header-section-number">4.6</span> Building documentation</h2>
 <p>Once the files are ready, build the documentation, and <code>?scMultiome</code> and <code>?&lt;DATASET_NAME&gt;</code> to review it.</p>
 <pre class="r"><code># build documentation
 devtools::document()
@@ -1265,16 +1214,16 @@ devtools::document()
 help(&quot;dataset&quot;)
 </code></pre>
 </div>
-<div id="updating-package-files" class="section level2" number="5.7">
-<h2><span class="header-section-number">5.7</span> Updating Package Files</h2>
+<div id="updating-package-files" class="section level2" number="4.7">
+<h2><span class="header-section-number">4.7</span> Updating Package Files</h2>
 <p>Edit the <code>DESCRIPTION</code> file to update package metadata: add yourself as package author and package version.</p>
 <pre class="r"><code>desc::desc_add_author(&quot;&lt;GIVEN_NAME&gt;&quot;, &quot;&lt;FAMILY_NAME&gt;&quot;, &quot;&lt;EMAIL&gt;&quot;, role = &quot;aut&quot;)
 desc::desc_bump_version(&quot;minor&quot;)
 </code></pre>
 <p>Push your changes to git and create a merge request. Once the request is approved and merged to the <code>master</code> branch, the package maintainer will take over and move on to the next stage.</p>
 </div>
-<div id="uploading-your-data-set" class="section level2" number="5.8">
-<h2><span class="header-section-number">5.8</span> Uploading Your Data Set</h2>
+<div id="uploading-your-data-set" class="section level2" number="4.8">
+<h2><span class="header-section-number">4.8</span> Uploading Your Data Set</h2>
 <p>The final step of the process is to place the data set in Bioconductor’s data bucket. This can only be done with Bioconductor’s knowledge and blessing.</p>
 <p>Bioconductor will be notified that a <code>scMultiome</code> update is coming by email at <code>hubs@bioconductor.org</code>. They will issue a temporary SAS token for the Bioconductor data bucket. The data set will be placed in the Bioconductor staging directory with <code>uploadFile</code> and Bioconductor will be notified again that the upload is ready. They will receive a link to the package repository, update metadata in <code>ExperimentHub</code> and finalize the process.</p>
 <pre class="r"><code>uploadFile(file = fileName, sasToken = &quot;&lt;SAS_TOKEN&gt;&quot;)
@@ -1282,13 +1231,13 @@ desc::desc_bump_version(&quot;minor&quot;)
 <p><br></p>
 <p>Consult <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/HubPub/inst/doc/CreateAHubPackage.html#additional-resources-to-existing-hub-package">this vignette</a> for current Bioconductor requirements.</p>
 </div>
-<div id="congratulations" class="section level2" number="5.9">
-<h2><span class="header-section-number">5.9</span> Congratulations</h2>
+<div id="congratulations" class="section level2" number="4.9">
+<h2><span class="header-section-number">4.9</span> Congratulations</h2>
 <p>If you found any of this vignette or the process confusing, we would welcome feedback and gladly add more clarifications. Please email the package maintainer, Xiaosai Yao <a href="mailto:xiaosai.yao@gmail.com" class="email">xiaosai.yao@gmail.com</a>.</p>
 </div>
 </div>
-<div id="session-info" class="section level1" number="6">
-<h1><span class="header-section-number">6</span> Session Info</h1>
+<div id="session-info" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Session Info</h1>
 <pre class="r"><code>sessionInfo()
 #&gt; R Under development (unstable) (2022-11-21 r83371)
 #&gt; Platform: x86_64-pc-linux-gnu (64-bit)
@@ -1299,9 +1248,10 @@ desc::desc_bump_version(&quot;minor&quot;)
 #&gt; LAPACK: /usr/local/lib/R/lib/libRlapack.so
 #&gt; 
 #&gt; locale:
-#&gt;  [1] LC_CTYPE=en_US.UTF-8 LC_NUMERIC=C         LC_TIME=C            LC_COLLATE=C         LC_MONETARY=C       
-#&gt;  [6] LC_MESSAGES=C        LC_PAPER=C           LC_NAME=C            LC_ADDRESS=C         LC_TELEPHONE=C      
-#&gt; [11] LC_MEASUREMENT=C     LC_IDENTIFICATION=C 
+#&gt;  [1] LC_CTYPE=en_US.UTF-8 LC_NUMERIC=C         LC_TIME=C           
+#&gt;  [4] LC_COLLATE=C         LC_MONETARY=C        LC_MESSAGES=C       
+#&gt;  [7] LC_PAPER=C           LC_NAME=C            LC_ADDRESS=C        
+#&gt; [10] LC_TELEPHONE=C       LC_MEASUREMENT=C     LC_IDENTIFICATION=C 
 #&gt; 
 #&gt; time zone: Etc/UTC
 #&gt; tzcode source: system (glibc)
@@ -1310,47 +1260,56 @@ desc::desc_bump_version(&quot;minor&quot;)
 #&gt; [1] stats4    stats     graphics  grDevices utils     datasets  methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt;  [1] BiocStyle_2.27.1            scMultiome_0.99.10          SingleCellExperiment_1.21.1 MultiAssayExperiment_1.25.7
-#&gt;  [5] SummarizedExperiment_1.29.1 Biobase_2.59.0              GenomicRanges_1.51.4        GenomeInfoDb_1.35.16       
-#&gt;  [9] IRanges_2.33.0              S4Vectors_0.37.4            MatrixGenerics_1.11.0       matrixStats_0.63.0         
-#&gt; [13] ExperimentHub_2.7.1         AnnotationHub_3.7.3         BiocFileCache_2.7.2         dbplyr_2.3.1               
-#&gt; [17] BiocGenerics_0.45.2        
+#&gt;  [1] scMultiome_0.99.11          SingleCellExperiment_1.21.1
+#&gt;  [3] MultiAssayExperiment_1.25.7 SummarizedExperiment_1.29.1
+#&gt;  [5] Biobase_2.59.0              GenomicRanges_1.51.4       
+#&gt;  [7] GenomeInfoDb_1.35.16        IRanges_2.33.0             
+#&gt;  [9] S4Vectors_0.37.4            MatrixGenerics_1.11.0      
+#&gt; [11] matrixStats_0.63.0          ExperimentHub_2.7.1        
+#&gt; [13] AnnotationHub_3.7.3         BiocFileCache_2.7.2        
+#&gt; [15] dbplyr_2.3.2                BiocGenerics_0.45.2        
+#&gt; [17] BiocStyle_2.27.1           
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;   [1] DBI_1.1.3                     bitops_1.0-7                  remotes_2.4.2                
-#&gt;   [4] rlang_1.1.0                   magrittr_2.0.3                compiler_4.3.0               
-#&gt;   [7] RSQLite_2.3.0                 roxygen2_7.2.3                png_0.1-8                    
-#&gt;  [10] callr_3.7.3                   vctrs_0.6.0                   stringr_1.5.0                
-#&gt;  [13] profvis_0.3.7                 pkgconfig_2.0.3               crayon_1.5.2                 
-#&gt;  [16] fastmap_1.1.0                 backports_1.4.1               XVector_0.39.0               
-#&gt;  [19] ellipsis_0.3.2                AzureStor_3.7.0               utf8_1.2.2                   
-#&gt;  [22] promises_1.2.0.1              rmarkdown_2.20                sessioninfo_1.2.2            
-#&gt;  [25] ps_1.7.2                      purrr_1.0.1                   bit_4.0.5                    
-#&gt;  [28] xfun_0.37                     zlibbioc_1.45.0               cachem_1.0.6                 
-#&gt;  [31] jsonlite_1.8.4                blob_1.2.4                    later_1.3.0                  
-#&gt;  [34] rhdf5filters_1.11.1           DelayedArray_0.25.0           Rhdf5lib_1.21.0              
-#&gt;  [37] interactiveDisplayBase_1.37.0 prettyunits_1.1.1             R6_2.5.1                     
-#&gt;  [40] bslib_0.4.1                   stringi_1.7.8                 pkgload_1.3.2                
-#&gt;  [43] jquerylib_0.1.4               bookdown_0.33                 Rcpp_1.0.10                  
-#&gt;  [46] knitr_1.42                    usethis_2.1.6                 httpuv_1.6.9                 
-#&gt;  [49] Matrix_1.5-3                  tidyselect_1.2.0              rstudioapi_0.14              
-#&gt;  [52] yaml_2.3.6                    miniUI_0.1.1.1                curl_4.3.3                   
-#&gt;  [55] processx_3.8.0                pkgbuild_1.4.0                lattice_0.20-45              
-#&gt;  [58] tibble_3.1.8                  shiny_1.7.4                   withr_2.5.0                  
-#&gt;  [61] KEGGREST_1.39.0               evaluate_0.20                 desc_1.4.2                   
-#&gt;  [64] urlchecker_1.0.1              AzureRMR_2.4.3                xml2_1.3.3                   
-#&gt;  [67] Biostrings_2.67.0             pillar_1.8.1                  BiocManager_1.30.20          
-#&gt;  [70] filelock_1.0.2                checkmate_2.1.0               generics_0.1.3               
-#&gt;  [73] rprojroot_2.0.3               RCurl_1.98-1.10               BiocVersion_3.17.1           
-#&gt;  [76] commonmark_1.8.1              xtable_1.8-4                  glue_1.6.2                   
-#&gt;  [79] tools_4.3.0                   AzureGraph_1.3.2              fs_1.5.2                     
-#&gt;  [82] rhdf5_2.43.1                  grid_4.3.0                    devtools_2.4.5               
-#&gt;  [85] AnnotationDbi_1.61.2          GenomeInfoDbData_1.2.9        HDF5Array_1.27.0             
-#&gt;  [88] cli_3.6.0                     rappdirs_0.3.3                AzureAuth_1.3.3              
-#&gt;  [91] fansi_1.0.3                   dplyr_1.1.0                   sass_0.4.5                   
-#&gt;  [94] digest_0.6.30                 htmlwidgets_1.6.2             memoise_2.0.1                
-#&gt;  [97] htmltools_0.5.4               lifecycle_1.0.3               httr_1.4.4                   
-#&gt; [100] mime_0.12                     bit64_4.0.5</code></pre>
+#&gt;  [1] tidyselect_1.2.0              dplyr_1.1.0                  
+#&gt;  [3] blob_1.2.4                    filelock_1.0.2               
+#&gt;  [5] Biostrings_2.67.0             bitops_1.0-7                 
+#&gt;  [7] fastmap_1.1.0                 RCurl_1.98-1.10              
+#&gt;  [9] promises_1.2.0.1              digest_0.6.30                
+#&gt; [11] mime_0.12                     lifecycle_1.0.3              
+#&gt; [13] ellipsis_0.3.2                KEGGREST_1.39.0              
+#&gt; [15] interactiveDisplayBase_1.37.0 RSQLite_2.3.0                
+#&gt; [17] magrittr_2.0.3                compiler_4.3.0               
+#&gt; [19] rlang_1.1.0                   sass_0.4.5                   
+#&gt; [21] tools_4.3.0                   utf8_1.2.2                   
+#&gt; [23] yaml_2.3.6                    knitr_1.42                   
+#&gt; [25] bit_4.0.5                     curl_4.3.3                   
+#&gt; [27] DelayedArray_0.25.0           HDF5Array_1.27.0             
+#&gt; [29] withr_2.5.0                   purrr_1.0.1                  
+#&gt; [31] desc_1.4.2                    grid_4.3.0                   
+#&gt; [33] fansi_1.0.3                   xtable_1.8-4                 
+#&gt; [35] Rhdf5lib_1.21.0               cli_3.6.0                    
+#&gt; [37] rmarkdown_2.20                crayon_1.5.2                 
+#&gt; [39] generics_0.1.3                rstudioapi_0.14              
+#&gt; [41] httr_1.4.4                    rhdf5_2.43.1                 
+#&gt; [43] DBI_1.1.3                     cachem_1.0.6                 
+#&gt; [45] zlibbioc_1.45.0               AnnotationDbi_1.61.2         
+#&gt; [47] BiocManager_1.30.20           XVector_0.39.0               
+#&gt; [49] vctrs_0.6.0                   Matrix_1.5-3                 
+#&gt; [51] jsonlite_1.8.4                bookdown_0.33                
+#&gt; [53] bit64_4.0.5                   jquerylib_0.1.4              
+#&gt; [55] glue_1.6.2                    BiocVersion_3.17.1           
+#&gt; [57] later_1.3.0                   tibble_3.1.8                 
+#&gt; [59] pillar_1.8.1                  rhdf5filters_1.11.1          
+#&gt; [61] rappdirs_0.3.3                htmltools_0.5.4              
+#&gt; [63] GenomeInfoDbData_1.2.10       R6_2.5.1                     
+#&gt; [65] rprojroot_2.0.3               evaluate_0.20                
+#&gt; [67] shiny_1.7.4                   lattice_0.20-45              
+#&gt; [69] png_0.1-8                     backports_1.4.1              
+#&gt; [71] memoise_2.0.1                 httpuv_1.6.9                 
+#&gt; [73] bslib_0.4.1                   Rcpp_1.0.10                  
+#&gt; [75] checkmate_2.1.0               xfun_0.37                    
+#&gt; [77] pkgconfig_2.0.3</code></pre>
 <p><br><br><br></p>
 </div>
 

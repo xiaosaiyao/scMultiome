@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 
 Single cell data is gaining sophistication - Cells can be measured in multiple modalities including gene expression, chromatin accessibility, cell surface markers and protein expression. These orthogonal measures of the same or matched cells enable a holistic construction of the cell state. However it has been challenging to share multiomic data, especially in an integrated format that consolidates the multiple layers of measurement. The `MultiAssayExperiment` container (implemented in the `r Biocpkg("MultiAssayExperiment")` package) provides a framework to package the various modalities into a single object on a per cell basis.
 
-The `scMultiome` package is a collection of public single cell multiome data sets pre-processed and packaged into `MultiAssayExperiment` objects for downstream analysis. It also provides basic functions to save the `MultiAssayExperiment` as `.hdf5` files so that users need to only load the desired modalities into memory. `scMultiome` provides interface with the [*ArchR*](https://www.archrproject.com/) package by allowing the conversion of an ArchR project to a `MultiAssayExperiment`.
+The `scMultiome` package is a collection of public single cell multiome data sets pre-processed and packaged into `MultiAssayExperiment` objects for downstream analysis. It also provides basic functions to save the `MultiAssayExperiment` as `.hdf5` files so that users need to only load the desired modalities into memory. 
 
 The 'scMultiome' package is similar to `r Biocpkg("SingleCellMultiModal")` in terms of providing multimodal data as an ExperimentHub package. One key difference is that we included additional functionalities to load only the desired modalities, and allow users to save their `MAE` objects as `.hdf5`s. The selective loading of experiments is desirable because multimodal data can be large: A typical 10x scMultiome consists of 100-200K atac-seq peaks on top of the typical 30-50K genes from rna-seq. Finally, `scMultiome` provides a list of transcription factor and chromatin co-activator binding sites compiled from ENCODE, ChIP-Atlas or Cistrome-DB ChIP-seq data as `GRangesList` objects. ChIP-seq data complements transcription factor motif information by potentially distinguishing related family members and providing occupancy information of chromatin factors that do not directly bind to DNA.
 
@@ -89,68 +89,9 @@ tfBinding(genome = "hg38", source ="atlas", metadata = TRUE)
 
 
 
-# Processing data
-
-This package is a data repository for single cell multiome data within `ExperimentHub`. It also provides a framework to add more multiome data. This vignette will guide you from data analysis to data upload.
-
-In the examples below, we outline data processing and integration of single cell gene expression and chromatin accessibility data using `CellRanger` and `ArchR` but you are free to analyze and integrate your data using any methods as long as the final output is converted to a `MultiAssayExperiment`.
-
-
-## Raw Data Analysis
-
-Raw data is first analyzed with the [10x Genomics Cell Ranger](https://www.10xgenomics.com/support) pipelines.
-
-Following that, gene expression data is run through a [scran.chan](https://github.com/LTLA/scran.chan) analysis pipeline. Refer to the [OSCA book](https://bioconductor.org/books/release/OSCA/), specifically [this chapter](http://bioconductor.org/books/3.15/OSCA.basic/index.html) for details.
-
-
-## ArchR Multiome Workflow
-
-
-
-The general ArchR workflow is outlined below.
-Refer to the [ArchR book](https://www.archrproject.com/bookdown/index.html) for details.
-
-1. Fragment files resulting from Cell Ranger ATAC analysis are used to create arrow files. The _Tile Matrix_ and _Gene Score Matrix_ are created.
-2. An ArchR project is created. Project-wide Tile and Gene Score Matrices are now available.
-3. Duplex cells are filtered out. This step is omitted in cell culture based experiments.
-4. Dimensionality reduction is run on the Tile Matrix using the Iterative LSI algorithm using `ArchR::addIterativeLSI`.
-5. scRNAseq data is added to the ArchR project with `ArchR::addGeneExpressionMatrix` for paired datasets or with `ArchR::addGeneIntegrationMatrix` for unpaired ones. The _Gene Expression Matrix_ or the _Gene Integration Matrix_ is added.
-6. Iterative LSI is run again on the _Gene Expression/Integration Matrix_.
-7. Reduced dimension representations of scATAC and scRNAseq spaces are combined with `ArchR::addCombinedDims`. This creates a joint reduced dimensions representation that is used downstream.
-8. Clustering is done with `ArchR::addClusters` on the iLSI representation of a space of the user's choosing: the scATAC space, the scRNAseq space, or the combined space..
-9. UMAP and/or TSNE embeddings are created with `ArchR::addUMAP` and `ArchR::addTSNE`. Likewise, the user chooses the iLSI space to create embeddings from.
-10. Pseudo-bulk replicates are computed with `ArchR::addGroupCoverages`.
-11. Peaks are called with `ArchR::addReproduciblePeakSet`. (This requires `MACS2`.)
-12. _Peak Matrix_ is added with `ArchR::addPeakMatrix`.
-13. Peak annotation is added with `ArchR::addMotifAnnotations`. (This requires `chromVARmotifs`.)
-14. Background peaks are obtained with `ArchR::addBgdPeaks`.
-15. ChromVAR deviations are computed with `ArchR::addDeviationsMatrix`. The _Motif Matrix_ is added.
-
-
-## Conversion to MAE
-
-ArchR projects are converted to `MultiAssayExperiment` objects. `arch2MAE` is available in version >1.0.3 of ArchR. 
-
-
-```{r archr2MAE, eval = FALSE}
-library(ArchR)
-mae <- archr2MAE("<ARCHR_PATH>")
-
-```
-
-Each Matrix in the project becomes a `SingleCellExperiment`; its `colData` is derived from the project's `cellColData` slot, and `rowData` and `rowRanges` are created as needed. Reduced dimensions and embeddings of the project are attached to the matrices they were obtained from and are stored in the `reducedDims` slot.
-
-
-
-## Contributing
-
-If you want to contribute your publicly available multiome data set, please read the section [Adding Datasets] and contact the package maintainer, `r desc::desc_get_maintainer()`.
-
-
-
-<br><br><br>
-
 # Adding Datasets
+
+If you want to contribute your publicly available multiome data set, please read this section and contact the package maintainer, `r desc::desc_get_maintainer()`.
 
 Once the data has been preprocessed and converted into `MultiAssayExperiment`, it can be saved in a hdf5 file using `saveMAE`. You also need to provide metadata, documentation, and the accessor function that will retrieve the data from `ExperimentHub`.
 
