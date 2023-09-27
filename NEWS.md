@@ -1,5 +1,9 @@
-## version 0.99.5
+## version 1.1.1
+- renamed assay from "logcounts" to "normalizedCounts" in reprogramseq. Counts in hematopoiesis, prostate and colon datasets
+- specify version number of ExperimentHub and remove version number of R
 
+## version 0.99.15
+- submitted to Bioconductor
 ---
 
 ### NEWS.md setup
