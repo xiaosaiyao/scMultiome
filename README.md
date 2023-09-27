@@ -38,7 +38,7 @@ For a quick start, please see our [vignette](https://bioconductor.org/packages/r
 
 ## Data Format
 
-Current multiomic data sets consist of gene expression and chromatin accessibility but can be extended to include any other modalities. The data sets are either paired multiomic data sets or unpaired data sets with data integration performed by the `ArchR` [package](https://www.archrproject.com/). The `ArchR` projects were converted to `MultiAssayExperiment` objects. The function to convert an ArchR object to an `MultiAssayExperiment` object is provided in a separate package as `archr2MAE`, [Epiregulon](https://github.com/xiaosaiyao/epiregulon) [MultiAssayExperiment](https://www.bioconductor.org/packages/devel/bioc/vignettes/MultiAssayExperiment/inst/doc/MultiAssayExperiment.html) objects can be constructed easily from individual matrices pre-processed by users' favorite packages.
+Current multiomic data sets consist of gene expression and chromatin accessibility but can be extended to include any other modalities. The current data sets are either paired multiomic data sets or unpaired data sets with data integration performed by the `ArchR` [package](https://www.archrproject.com/). 
 
 
 The `MultiAssayExperiment` object is saved in hdf5 files. The nature of the hdf5 format allows the MAEs to be split into individual experiments and store them in one file, so you can choose freely which ones to load. Experiments, usually `SingleCellExperiment` objects, are disassembled into parts, which are saved in the hdf5 hierarchy. Assays are saved as sparse arrays to save storage.

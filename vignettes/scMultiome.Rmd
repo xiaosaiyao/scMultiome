@@ -26,9 +26,9 @@ knitr::opts_chunk$set(
 
 Single cell data is gaining sophistication - Cells can be measured in multiple modalities including gene expression, chromatin accessibility, cell surface markers and protein expression. These orthogonal measures of the same or matched cells enable a holistic construction of the cell state. However it has been challenging to share multiomic data, especially in an integrated format that consolidates the multiple layers of measurement. The `MultiAssayExperiment` container (implemented in the `r Biocpkg("MultiAssayExperiment")` package) provides a framework to package the various modalities into a single object on a per cell basis.
 
-The `scMultiome` package is a collection of public single cell multiome data sets pre-processed and packaged into `MultiAssayExperiment` objects for downstream analysis. It also provides basic functions to save the `MultiAssayExperiment` as `.hdf5` files so that users need to only load the desired modalities into memory. 
+The `r Biocpkg("scMultiome")` package is a collection of public single cell multiome data sets pre-processed and packaged into `MultiAssayExperiment` objects for downstream analysis. It also provides basic functions to save the `MultiAssayExperiment` as `.hdf5` files so that users need to only load the desired modalities into memory. 
 
-The 'scMultiome' package is similar to `r Biocpkg("SingleCellMultiModal")` in terms of providing multimodal data as an ExperimentHub package. One key difference is that we included additional functionalities to load only the desired modalities, and allow users to save their `MAE` objects as `.hdf5`s. The selective loading of experiments is desirable because multimodal data can be large: A typical 10x scMultiome consists of 100-200K atac-seq peaks on top of the typical 30-50K genes from rna-seq. Finally, `scMultiome` provides a list of transcription factor and chromatin co-activator binding sites compiled from ENCODE, ChIP-Atlas or Cistrome-DB ChIP-seq data as `GRangesList` objects. ChIP-seq data complements transcription factor motif information by potentially distinguishing related family members and providing occupancy information of chromatin factors that do not directly bind to DNA.
+The 'scMultiome' package is similar to `r Biocpkg("SingleCellMultiModal")` in terms of providing multimodal data as an ExperimentHub package. One key difference is that we included additional functionalities to load only the desired modalities, and allow users to save their `MAE` objects as `.hdf5`s. The selective loading of experiments is desirable because multimodal data can be large: A typical 10x scMultiome consists of 100-200K atac-seq peaks on top of the typical 30-50K genes from rna-seq. Finally, `r Biocpkg("scMultiome")` provides a list of transcription factor and chromatin co-activator binding sites compiled from ENCODE, ChIP-Atlas or Cistrome-DB ChIP-seq data as `GRangesList` objects. ChIP-seq data complements transcription factor motif information by potentially distinguishing related family members and providing occupancy information of chromatin factors that do not directly bind to DNA.
 
    
 # Installation
@@ -178,7 +178,7 @@ This call must also run without errors. It will return an `ExperimentHub` object
 
 ## Documenting Your Data Set
 
-Every data set needs an additional documentation to describe how the data was obtained. This doesn't have to be a working script, just a report. Pseudocode is acceptable. Note that code evaluation has been disabled so that you can copy your actual code and the lengthy ArchR analysis does not run again.
+Every data set needs an additional documentation to describe how the data was obtained. This doesn't have to be a working script, just a report. Pseudocode is acceptable. Note that code evaluation has been disabled so that you can copy your actual code and the lengthy analysis does not run again.
 
 Create an Rmarkdown file called `inst/scripts/make-data-<DATASET_NAME>.Rmd`. 
 
