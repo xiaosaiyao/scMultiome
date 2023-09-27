@@ -7,16 +7,15 @@ Authors@R: c(
     person(given = "Aaron", family ="Lun", email = "lun.aaron@gene.com", role = "aut"),
     person(given = "Shiqi", family ="Xie", email = "xie.shiqi@gene.com", role = "ctb"),
     person(given = "Tomasz", family = "Wlodarczyk", email = "tomasz.wlodarczyk@contractors", role = "aut"),
-    person(given = "Natalie", family = "Fox", email = "natalie.fox@roche.com", role = "aut")
   )
 Description: Single cell multiome data, containing chromatin accessibility
     (scATAC-seq) and gene expression (scRNA-seq) information analyzed with
     the ArchR package and presented as MultiAssayExperiment objects.
 License: CC BY-SA 4.0
 Depends: 
-    R (>= 4.3.0),
+    R,
     AnnotationHub,
-    ExperimentHub,
+    ExperimentHub (>= 2.8.1),
     MultiAssayExperiment,
     SingleCellExperiment,
     SummarizedExperiment
