@@ -4,7 +4,7 @@
 metadata.tfBinding.hg38 <- data.frame(
     Title = "TF Binding Info hg38 (ChIP-Atlas and ENCODE)",
     Description = "Combined transcription factor ChIP-seq data from ChIP-Atlas and ENCODE",
-    BiocVersion = "3.17 ",
+    BiocVersion = "3.17",
     Genome = "hg38",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",

@@ -1,0 +1,23 @@
+---
+title: "TF Motifs Info"
+author: "Tomasz Włodarczyk"
+date: 2024-01-31
+output:
+  BiocStyle::html_document:
+    titlecaps: false
+    toc_float: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+#### 1. Data download
+Data sets were downloaded from https://github.com/GreenleafLab/chromVARmotifs/raw/master/data/ and format was changed to rds.
+
+
+#### 2. Session information
+
+```{r}
+sessionInfo()
+```

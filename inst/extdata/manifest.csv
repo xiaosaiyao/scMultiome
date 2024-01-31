@@ -9,3 +9,4 @@
 "tfBinding(""hg38"", ""cistrome"")","CistromeDB, ENCODE","TF Binding hg38 CistromeDB+ENCODE","Homo sapiens","All","Bulk","n/a","139 MB","2022-09-20"
 "tfBinding(""mm10"", ""atlas"")","ChipAtlas, ENCODE","TF Binding mm10 ChIPAtlas+ENCODE","Mus musculus","All","Bulk","n/a","160 MB","2022-09-20"
 "tfBinding(""mm10"", ""cistrome"")","CistromeDB, ENCODE","TF Binding mm10 CistromeDB+ENCODE","Mus musculus","All","Bulk","n/a","41 MB","2022-09-20"
+"tfMotifs('mouse')","Greenleaf Lab","TF motifs human","Mus musculus","n/a","n/a","n/a","256 KB","2"
