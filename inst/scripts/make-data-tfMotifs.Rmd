@@ -15,8 +15,10 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 #### 1. Data download
 Data sets were downloaded from https://github.com/GreenleafLab/chromVARmotifs/raw/master/data/ and format was changed to rds.
 
+#### 2. Data preparation
+The motifs were curated from the cisBP database. Position frequency matrices were converted to PWMs by taking the log of the frequencies (after adding a pseudocount of 0.008) divided by 0.25.
 
-#### 2. Session information
+#### 3. Session information
 
 ```{r}
 sessionInfo()

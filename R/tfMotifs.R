@@ -3,8 +3,8 @@
 #'
 #' Transcription factor motifs sets from https://github.com/GreenleafLab/chromVARmotifs R package
 #'
-#' This is a special data set that stores transcription factor motifs for human and
-#' mouse genoms, which can be used with the package epiregulon to compute scores of
+#' This data set stores transcription factor motifs for human and
+#' mouse genome, which can be used with the package epiregulon to compute scores of
 #' transcription factor-regulatory element links.
 #'
 #' @inheritParams prostateENZ
@@ -17,8 +17,8 @@
 #' transcription factor motifs.
 #' Contains the following experiments:
 #' \itemize{
-#'   \item{\strong{human_pwms_v2}: GRangesList object of length 1558}
-#'   \item{\strong{mouse_pwms_v2}: GRangesList object of length 1558}
+#'   \item{\strong{human_pwms_v2}: PWMatrixList object of length 1558}
+#'   \item{\strong{mouse_pwms_v2}: PWMatrixList object of length 1558}
 #' }
 #'
 #' @references
