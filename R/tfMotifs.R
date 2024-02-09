@@ -1,7 +1,7 @@
 #'
 #' Transcription factor motifs
 #'
-#' Transcription factor motifs sets from https://github.com/GreenleafLab/chromVARmotifs R package
+#' Transcription factor motifs sets from the `chromVARmotifs` R package
 #'
 #' This data set stores transcription factor motifs for human and
 #' mouse genome, which can be used with the package epiregulon to compute scores of
@@ -22,11 +22,11 @@
 #' }
 #'
 #' @references
-#' ChIP-Atlas 2021 update: a data-mining suite for exploring epigenomic landscapes by
-#' fully integrating ChIP-seq, ATAC-seq and Bisulfite-seq data.
-#' Zou Z, Ohta T, Miura F, Oki S.
-#' \emph{Nucleic Acids Research. Oxford University Press (OUP);} 2022.
-#' \href{http://dx.doi.org/10.1093/nar/gkac199}{doi:10.1093/nar/gkac199}
+#' Schep, A., Wu, B., Buenrostro, J. &  Greenleaf, W. J. (2017) chromVAR:
+#' inferring transcription-factor-associated accessibility from single-cell
+#' epigenomic data.
+#' \emph{Nature Methods} 14, 975–978.
+#' \href{http://dx.doi.org/0.1038/nmeth.4401}{doi:0.1038/nmeth.4401}
 #'
 #' @section Data storage and access:
 #' The transcription factor motifs are stored separately for each species in .rds files encoding \code{PWMatrixList}.
@@ -50,8 +50,9 @@ tfMotifs <- function(species = c("human", "mouse"),
                       metadata = FALSE) {
     checkmate::assertFlag(metadata)
     species <- match.arg(species, several.ok = FALSE)
+    species <- c(human="Homo sapiens", mouse="Mus musculus")[species]
     eh <- AnnotationHub::query(ExperimentHub::ExperimentHub(),
-                               pattern = c("scMultiome", "tfBinding", species))
+                               pattern = c("scMultiome", "TF motifs", species))
     eh_ID <- eh$ah_id
     ans <-
         if (metadata) {
