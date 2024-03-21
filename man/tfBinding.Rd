@@ -150,16 +150,16 @@ for (genome in genomes)\{
 
     # merge bed files and sort by chromosome and starting coordinate
 
-    merged_bed <- read.delim(TF.files, skip = 1, header = FALSE)
-    merged_bed$V1 <- factor(merged_bed$V1, levels = chr_order_genome)
+    merged_bed <- as.data.frame(rtracklayer::import.bed(file_name))
+    merged_bed$seqnames <- factor(merged_bed$seqnames, levels = chr_order_genome)
     merged_bed <- na.omit(merged_bed)
-    merged_bed <- merged_bed[order(merged_bed$V1, merged_bed$V2),]
+    merged_bed <- merged_bed[order(merged_bed$seqnames, merged_bed$start),]
 
     ## convert to granges object and merge overlapping ranges
     gr <- makeGRangesFromDataFrame(merged_bed,
-                                   seqnames.field = "V1",
-                                   start.field = "V2",
-                                   end.field = "V3")
+                                   seqnames.field = "seqnames",
+                                   start.field = "start",
+                                   end.field = "end")
     gr <- reduce(gr, drop.empty.ranges = TRUE)
 
     # write new bed file to directory
@@ -226,6 +226,7 @@ for (genome in c("hg38","mm10"))\{
     # read metadata
     list_beds <- list.files(file.path(dir, genome, "raw"), pattern = "*.bed.gz")
     metadata <- read.delim(file.path(dir, genome, "raw", "metadata.tsv"))
+    if(genome == "hg38") metadata <- metadata[metadata$"File.assembly"=="GRCh38",]
     metadata <- metadata[, c("File.accession", "Experiment.target")]
     metadata$"Experiment.target" <-  gsub(replacement[[genome]],"", metadata$"Experiment.target")
 
@@ -256,12 +257,13 @@ for (genome in c("hg38","mm10"))\{
         TF.files <- metadata[which(metadata$TF == TF.list[i]), "filename"]
 
         # merge bed files and sort by chromosome and starting coordinate
-
-        merged_bed <- lapply(TF.files, function(file) read.delim(file, skip = 0, header = FALSE))
+          extraCols_narrowPeak <- c(singnalValue = "numeric", pValue = "numeric",
+                            qValue = "numeric", peak = "integer")
+        merged_bed <- lapply(TF.files, function(file) as.data.frame(rtracklayer::import.bed(file, extraCols = extraCols_narrowPeak)))
         merged_bed <- do.call('rbind', merged_bed)
-        merged_bed$V1 <- factor(merged_bed$V1, levels = chr_order[[genome]])
-        merged_bed <- na.omit(merged_bed)
-        merged_bed <- merged_bed[order(merged_bed$V1, merged_bed$V2),]
+        merged_bed$seqnames <- factor(merged_bed$seqnames, levels = chr_order[[genome]])
+        merged_bed <- merged_bed[!is.na(merged_bed$seqnames),]
+        merged_bed <- merged_bed[order(merged_bed$seqnames, merged_bed$start),]
 
         # convert to granges object and merge overlapping ranges
         gr <- makeGRangesFromDataFrame(merged_bed,
@@ -308,16 +310,16 @@ for (genome in c("mm10", "hg38"))\{
 
         print(shared.TFs[i])
 
-        chipatlas <- read.table(file.path(dir, "chipatlas", genome, shared.TFs[i]), sep = "\\t")
-        encode <- read.table(file.path(dir, "encode", genome, shared.TFs[i]), sep = "\\t")
+        chipatlas <- as.data.frame(import.bed(file.path(dir, "chipatlas", genome, shared.TFs[i])))
+        encode <- as.data.frame(import.bed(file.path(dir, "encode", genome, shared.TFs[i])))
 
         merged_bed <- rbind(chipatlas[,1:3], encode[,1:3])
-        merged_bed$V1 <- factor(merged_bed$V1, levels = chr_order_genome)
-        merged_bed <- na.omit(merged_bed)
-        merged_bed <- merged_bed[order(merged_bed$V1, merged_bed$V2),]
+        merged_bed$seqnames <- factor(merged_bed$seqnames, levels = chr_order_genome)
+        merged_bed <- merged_bed[!is.na(merged_bed$seqnames),]
+        merged_bed <- merged_bed[order(merged_bed$seqnames, merged_bed$start),]
 
-        gr <- makeGRangesFromDataFrame(merged_bed,seqnames.field = "V1",
-                                       start.field = "V2",end.field = "V3")
+        gr <- makeGRangesFromDataFrame(merged_bed,seqnames.field = "seqnames",
+                                   start.field = "start",end.field = "end")
         gr <- reduce(gr, drop.empty.ranges = TRUE)
 
         export.bed(gr, con=file.path(dir, "chipatlas_encode_merged", genome, shared.TFs[i]))
@@ -329,15 +331,15 @@ for (genome in c("mm10", "hg38"))\{
 
         print(chipatlas.TFs[i])
 
-        chipatlas <- read.table(file.path(dir, "chipatlas", genome, chipatlas.TFs[i]), sep = "\\t")
+        chipatlas <- as.data.frame(import.bed(file.path(dir, "chipatlas", genome, chipatlas.TFs[i])))
 
         merged_bed <- chipatlas[,1:3]
-        merged_bed$V1 <- factor(merged_bed$V1, levels = chr_order_genome)
-        merged_bed <- na.omit(merged_bed)
-        merged_bed <- merged_bed[order(merged_bed$V1, merged_bed$V2),]
-
-        gr <- makeGRangesFromDataFrame(merged_bed,seqnames.field = "V1",
-                                       start.field = "V2",end.field = "V3")
+        merged_bed$seqnames <- factor(merged_bed$seqnames, levels = chr_order_genome)
+        merged_bed <- merged_bed[!is.na(merged_bed$seqnames),]
+        merged_bed <- merged_bed[order(merged_bed$seqnames, merged_bed$start),]
+    
+        gr <- makeGRangesFromDataFrame(merged_bed,seqnames.field = "seqnames",
+                                       start.field = "start",end.field = "end")
         gr <- reduce(gr, drop.empty.ranges = TRUE)
 
         export.bed(gr, con=file.path(dir, "chipatlas_encode_merged", genome, chipatlas.TFs[i]))
@@ -349,15 +351,15 @@ for (genome in c("mm10", "hg38"))\{
 
         print(encode.TFs[i])
 
-        encode <- read.table(file.path(dir, "encode", genome, encode.TFs[i]),sep = "\\t")
+        chipatlas <- as.data.frame(import.bed(file.path(dir, "encode", genome, encode.TFs[i])))
 
-        merged_bed <- encode[,1:3]
-        merged_bed$V1 <- factor(merged_bed$V1, levels = chr_order_genome)
-        merged_bed <- na.omit(merged_bed)
-        merged_bed <- merged_bed[order(merged_bed$V1, merged_bed$V2),]
-
-        gr <- makeGRangesFromDataFrame(merged_bed,seqnames.field = "V1",
-                                       start.field = "V2",end.field = "V3")
+        merged_bed <- chipatlas[,1:3]
+        merged_bed$seqnames <- factor(merged_bed$seqnames, levels = chr_order_genome)
+        merged_bed <- merged_bed[!is.na(merged_bed$seqnames),]
+        merged_bed <- merged_bed[order(merged_bed$seqnames, merged_bed$start),]
+    
+        gr <- makeGRangesFromDataFrame(merged_bed,seqnames.field = "seqnames",
+                                       start.field = "start",end.field = "end")
         gr <- reduce(gr, drop.empty.ranges = TRUE)
 
         export.bed(gr, con=file.path(dir, "chipatlas_encode_merged", genome, encode.TFs[i]))
