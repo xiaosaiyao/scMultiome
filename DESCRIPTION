@@ -6,7 +6,7 @@ Authors@R: c(
     person(given = "Aleksander", family ="Chlebowski", email = "aleksander.chlebowski@contractors.roche.com", role = "aut"),
     person(given = "Aaron", family ="Lun", email = "lun.aaron@gene.com", role = "aut"),
     person(given = "Shiqi", family ="Xie", email = "xie.shiqi@gene.com", role = "ctb"),
-    person(given = "Tomasz", family = "Wlodarczyk", email = "tomasz.wlodarczyk@contractors", role = "aut")
+    person(given = "Tomasz", family = "Włodarczyk", email = "tomasz.wlodarczyk@contractors.roche.com", role = "aut")
   )
 Description: Single cell multiome data, containing chromatin accessibility
     (scATAC-seq) and gene expression (scRNA-seq) information analyzed with
