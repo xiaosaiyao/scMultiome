@@ -30,6 +30,8 @@ See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?pros
 \item \strong{tfBinding_hg38_cistrome}: TF Binding Info hg38 (CistromeDB and ENCODE)
 \item \strong{tfBinding_mm10_atlas}: TF Binding Info mm10 (ChIP-Atlas and ENCODE)
 \item \strong{tfBinding_mm10_cistrome}: TF Binding Info mm10 (CistromeDB and ENCODE)
+\item \strong{human_pwms_v2}: TF motifs human
+\item \strong{mouse_pwms_v2}: TF motifs mouse
 }
 }
 
@@ -40,8 +42,7 @@ Authors:
 \itemize{
   \item Aleksander Chlebowski \email{aleksander.chlebowski@contractors.roche.com}
   \item Aaron Lun \email{lun.aaron@gene.com}
-  \item Tomasz Wlodarczyk \email{tomasz.wlodarczyk@contractors}
-  \item Natalie Fox \email{natalie.fox@roche.com}
+  \item Tomasz Włodarczyk \email{tomasz.wlodarczyk@contractors} (\href{https://orcid.org/0000-0003-1554-9699}{ORCID})
 }
 
 Other contributors:
