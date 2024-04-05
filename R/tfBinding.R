@@ -74,7 +74,7 @@
 #'
 tfBinding <- function(genome = c("hg38", "hg19", "mm10"),
                       source = c("atlas", "cistrome"),
-                      specificity=c("","tissue specific","cell line specific"),
+                      specificity=c("","sample-specific","tissue-specific"),
                       metadata = FALSE) {
     checkmate::assertFlag(metadata)
     genome <- match.arg(genome, several.ok = FALSE)
