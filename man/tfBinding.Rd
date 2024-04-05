@@ -20,6 +20,7 @@ Contains the following experiments:
 tfBinding(
   genome = c("hg38", "hg19", "mm10"),
   source = c("atlas", "cistrome"),
+  specificity = c("", "tissue specific", "cell line specific"),
   metadata = FALSE
 )
 }
@@ -27,6 +28,10 @@ tfBinding(
 \item{genome}{character string specifying the genomic build}
 
 \item{source}{character string specifying the ChIP-seq data source}
+
+\item{specificity}{character string indicating whether binding sites should be
+broken down by sample or tissue/cell line. With default value all data sources
+are merged into a single GRanges object for each transcription factor.}
 
 \item{metadata}{logical flag specifying whether to return data or metadata only}
 }

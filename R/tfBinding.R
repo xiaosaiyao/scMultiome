@@ -10,6 +10,9 @@
 #' @inheritParams prostateENZ
 #' @param genome character string specifying the genomic build
 #' @param source character string specifying the ChIP-seq data source
+#' @param specificity character string indicating whether binding sites should be
+#' broken down by sample or tissue/cell line. With default value all data sources
+#' are merged into a single GRanges object for each transcription factor.
 #'
 #' @return A list of TF binding sites as a \code{GrangesList} object.
 #'
@@ -71,12 +74,18 @@
 #'
 tfBinding <- function(genome = c("hg38", "hg19", "mm10"),
                       source = c("atlas", "cistrome"),
+                      specificity=c("","tissue specific","cell line specific"),
                       metadata = FALSE) {
     checkmate::assertFlag(metadata)
     genome <- match.arg(genome, several.ok = FALSE)
     source <- match.arg(source, several.ok = FALSE)
+    specificity <- match.arg(specificity, several.ok = FALSE)
     eh <- AnnotationHub::query(ExperimentHub::ExperimentHub(),
-                               pattern = c("scMultiome", "tfBinding", source, genome))
+                               pattern = c("scMultiome", "tfBinding", source, genome, specificity))
+    if(specificity==""){
+        eh <- AnnotationHub::query(eh, pattern = c("sample-specific","tissue-specific"),
+                                   pattern.op=function(y,x) !x & !y)
+    }
     eh_ID <- eh$ah_id
     ans <-
         if (metadata) {
