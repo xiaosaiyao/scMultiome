@@ -14,13 +14,21 @@ Contains the following experiments:
 \item{\strong{hg38_cistrome}: GRangesList object of length 1269}
 \item{\strong{hg19_cistrome}: GRangesList object of length 1271}
 \item{\strong{mm10_cistrome}: GRangesList object of length 544}
+\item{\strong{hg38_encode.sample}: List object of length 171}
+\item{\strong{hg19_encode.sample}: List object of length 171}
+\item{\strong{mm10_encode.sample}: List object of length 31}
+\item{\strong{hg38_atlas.sample}: List object of length 1112}
+\item{\strong{hg19_atlas.sample}: List object of length 1112}
+\item{\strong{mm10_atlas.sample}: List object of length 517}
+\item{\strong{hg38_atlas.tissue}: List object of length 22}
+\item{\strong{hg19_atlas.tissue}: List object of length 22}
+\item{\strong{mm10_atlas.tissue}: List object of length 23}
 }
 }
 \usage{
 tfBinding(
   genome = c("hg38", "hg19", "mm10"),
-  source = c("atlas", "cistrome"),
-  specificity = c("", "tissue specific", "cell line specific"),
+  source = c("atlas", "cistrome", "encode.sample", "atlas.sample", "atlas.tissue"),
   metadata = FALSE
 )
 }
@@ -28,10 +36,6 @@ tfBinding(
 \item{genome}{character string specifying the genomic build}
 
 \item{source}{character string specifying the ChIP-seq data source}
-
-\item{specificity}{character string indicating whether binding sites should be
-broken down by sample or tissue/cell line. With default value all data sources
-are merged into a single GRanges object for each transcription factor.}
 
 \item{metadata}{logical flag specifying whether to return data or metadata only}
 }
@@ -95,6 +99,21 @@ for (genome in c("hg38", "mm10"))\{
     
 \}
 
+}\if{html}{\out{</div>}}
+
+Download bed files by sample
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{for (genome in c("mm10","hg38"))\{
+   metadata <- read.delim("experimentList.tab", header=FALSE)
+   metadata <- metadata[metadata$V2 == genome,]
+   metadata <- metadata[metadata$V3 == "TFs and others",]
+
+
+# write files for download
+fileConn <- file(paste0("data/download.tissue.", genome,".txt"))
+writeLines(paste0("wget -nc https://chip-atlas.dbcls.jp/data/", genome,"/eachData/bed05/", metadata$V1,".05.bed"), fileConn)
+close(fileConn)
+\}
 }\if{html}{\out{</div>}}
 }
 
@@ -374,6 +393,177 @@ for (genome in c("mm10", "hg38"))\{
 }\if{html}{\out{</div>}}
 }
 
+\subsection{2.4 Merge ChIP-Atlas peaks by sample}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{
+library(rtracklayer)
+#import metadata
+
+for (genome in c("hg38, mm10"))\{
+   metadata <- read.delim("experimentList.tab", header=FALSE)
+   metadata <- metadata[metadata$V2 == genome,]
+   metadata <- metadata[metadata$V3 == "TFs and others",]
+
+    # import bed
+    extraCols_narrowPeak <- c(singnalValue = "numeric", pValue = "numeric",
+                              qValue = "numeric", peak = "integer")
+
+    grl <- list()
+    gr <- list()
+
+    celllines <- unique(metadata$V6)
+    celllines <- as.vector(na.omit(celllines))
+    for (cellline in celllines)\{
+        message("cell line = ", cellline)
+        metadata.cellline <- metadata[which(metadata $V6 == cellline),]
+        unique.tf <- unique(metadata.cellline$V4)
+
+        for (tf in unique.tf)\{
+            message("tf = ", tf)
+            bed <- metadata.cellline$V1[metadata.cellline$V4 ==tf]
+
+            for (i in 1:length(bed)) \{
+                file <- paste0(bed[i],".05.bed")
+
+                if (file.exists(file)) \{
+                    gr[[i]] <- try(rtracklayer::import(file, extraCols = extraCols_narrowPeak))
+
+                \}
+
+            \}
+
+            if (length(gr) !=0)\{
+                grl[[cellline]][[tf]] <- reduce(do.call(c, gr))
+            \}
+
+        \}
+
+        grl[[cellline]] <- do.call(GRangesList, grl[[cellline]])
+
+    \}
+
+    saveRDS(grl, paste0("grl.chipatlas.sample.", genome,".rds"))
+
+\}
+
+}\if{html}{\out{</div>}}
+}
+
+\subsection{2.5 Merge ChIP-Atlas peaks by tissue}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{library(rtracklayer)
+#import metadata
+
+for (genome in c("mm10","hg38"))\{
+   metadata <- read.delim("experimentList.tab", header=FALSE)
+   metadata <- metadata[metadata$V2 == genome,]
+   metadata <- metadata[metadata$V3 == "TFs and others",]
+
+    # import bed
+    extraCols_narrowPeak <- c(singnalValue = "numeric", pValue = "numeric",
+                              qValue = "numeric", peak = "integer")
+
+    grl <- list()
+    gr <- list()
+
+    tissues <- unique(metadata$V5)
+    tissues <- as.vector(na.omit(tissues))
+    for (tissue in tissues)\{
+        message("tissue = ", tissue)
+        metadata.tissue <- metadata[which(metadata $V5 == tissue),]
+        unique.tf <- unique(metadata.tissue$V4)
+
+        for (tf in unique.tf)\{
+            message("tf = ", tf)
+            bed <- metadata.tissue$V1[metadata.tissue$V4 ==tf]
+
+            for (i in 1:length(bed)) \{
+                file <- paste0(bed[i],".05.bed")
+
+                if (file.exists(file)) \{
+                    gr[[i]] <- try(rtracklayer::import(file, extraCols = extraCols_narrowPeak))
+                \}
+
+            \}
+
+            if (length(gr) !=0)\{
+                grl[[tissue]][[tf]] <- reduce(do.call(c, gr))
+            \}
+
+        \}
+
+        grl[[tissue]] <- do.call(GRangesList, grl[[tissue]])
+
+    \}
+
+    saveRDS(grl, paste0("grl.chipatlas.tissue.", genome,".rds"))
+
+\}
+
+}\if{html}{\out{</div>}}
+}
+
+\subsection{2.6 Merge ENCODE peaks by sample}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{
+library(rtracklayer)
+#import metadata
+
+metadata.path <- c(hg38="human",
+                   mm10="mm10")
+
+for (genome in c("hg38", "mm10"))\{
+
+    metadata <- read.delim(file.path(metadata.path[genome], "raw","metadata.tsv"), header=TRUE)
+    metadata <- metadata[metadata$File.assembly == genome,]
+    metadata <- metadata[metadata$Assay == "TF ChIP-seq",]
+
+    # import bed
+    extraCols_narrowPeak <- c(singnalValue = "numeric", pValue = "numeric",
+                              qValue = "numeric", peak = "integer")
+
+    grl <- list()
+    gr <- list()
+
+    celllines <- unique(metadata$Biosample.term.name)
+    celllines <- as.vector(na.omit(celllines))
+    for (cellline in celllines)\{
+        message("cell line = ", cellline)
+        metadata.cellline <- metadata[which(metadata $Biosample.term.name == cellline),]
+        unique.tf <- unique(metadata.cellline$Experiment.target)
+
+        for (tf in unique.tf)\{
+            message("tf = ", tf)
+            tf.name <- sapply(strsplit(tf, "-"),"[",1)
+            bed <- metadata.cellline$File.accession[metadata.cellline$Experiment.target ==tf]
+
+            for (i in 1:length(bed)) \{
+                file <- file.path(metadata.path[genome], "filtered", paste0(bed[i],".bed.gz"))
+
+                if (file.exists(file)) \{
+                    gr[[i]] <- try(rtracklayer::import(file, extraCols = extraCols_narrowPeak))
+
+                \}
+
+            \}
+
+            if (length(gr) !=0)\{
+                grl[[cellline]][[tf.name]] <- reduce(do.call(c, gr))
+            \}
+
+        \}
+
+        grl[[cellline]] <- do.call(GRangesList, grl[[cellline]])
+
+    \}
+
+    saveRDS(grl, paste0("grl.encode.sample", genome,".rds"))
+
+\}
+
+}\if{html}{\out{</div>}}
+}
+
 \subsection{3. Liftover}{
 
 Perform liftover from hg38 to hg19 for the ChIP-seq binding sites
@@ -394,6 +584,7 @@ library(liftOver)
 
 grl_hg19 <- liftOver(grl, ch)
 saveRDS(grl_hg19, file = "hg19_motif_bed_granges.rds")
+
 }\if{html}{\out{</div>}}
 }
 

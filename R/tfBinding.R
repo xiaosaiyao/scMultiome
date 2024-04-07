@@ -84,7 +84,6 @@ tfBinding <- function(genome = c("hg38", "hg19", "mm10"),
     checkmate::assertFlag(metadata)
     genome <- match.arg(genome, several.ok = FALSE)
     source <- match.arg(source, several.ok = FALSE)
-    specificity <- match.arg(specificity, several.ok = FALSE)
 
     eh <- AnnotationHub::query(ExperimentHub::ExperimentHub(),
                                pattern = c("scMultiome", "tfBinding", source, genome))
