@@ -10,9 +10,6 @@
 #' @inheritParams prostateENZ
 #' @param genome character string specifying the genomic build
 #' @param source character string specifying the ChIP-seq data source
-#' @param specificity character string indicating whether binding sites should be
-#' broken down by sample or tissue/cell line. With default value all data sources
-#' are merged into a single GRanges object for each transcription factor.
 #'
 #' @return A list of TF binding sites as a \code{GrangesList} object.
 #'
@@ -27,6 +24,15 @@
 #'   \item{\strong{hg38_cistrome}: GRangesList object of length 1269}
 #'   \item{\strong{hg19_cistrome}: GRangesList object of length 1271}
 #'   \item{\strong{mm10_cistrome}: GRangesList object of length 544}
+#'   \item{\strong{hg38_encode.sample}: List object of length 171}
+#'   \item{\strong{hg19_encode.sample}: List object of length 171}
+#'   \item{\strong{mm10_encode.sample}: List object of length 31}
+#'   \item{\strong{hg38_atlas.sample}: List object of length 1112}
+#'   \item{\strong{hg19_atlas.sample}: List object of length 1112}
+#'   \item{\strong{mm10_atlas.sample}: List object of length 517}
+#'   \item{\strong{hg38_atlas.tissue}: List object of length 22}
+#'   \item{\strong{hg19_atlas.tissue}: List object of length 22}
+#'   \item{\strong{mm10_atlas.tissue}: List object of length 23}
 #' }
 #'
 #' @references
@@ -73,20 +79,23 @@
 #' @export
 #'
 tfBinding <- function(genome = c("hg38", "hg19", "mm10"),
-                      source = c("atlas", "cistrome"),
-                      specificity=c("","sample-specific","tissue-specific"),
+                      source = c("atlas", "cistrome", "encode.sample", "atlas.sample","atlas.tissue"),
                       metadata = FALSE) {
     checkmate::assertFlag(metadata)
     genome <- match.arg(genome, several.ok = FALSE)
     source <- match.arg(source, several.ok = FALSE)
     specificity <- match.arg(specificity, several.ok = FALSE)
+
     eh <- AnnotationHub::query(ExperimentHub::ExperimentHub(),
-                               pattern = c("scMultiome", "tfBinding", source, genome, specificity))
-    if(specificity==""){
-        eh <- AnnotationHub::query(eh, pattern = c("sample-specific","tissue-specific"),
-                                   pattern.op=function(y,x) !x & !y)
+                               pattern = c("scMultiome", "tfBinding", source, genome))
+
+    if (source %in% c("atlas", "cistrome")) {
+        eh_ID <- sort(eh$ah_id)[1]
+    } else {
+        eh_ID <- eh$ah_id
     }
-    eh_ID <- eh$ah_id
+
+
     ans <-
         if (metadata) {
             eh[eh_ID]
