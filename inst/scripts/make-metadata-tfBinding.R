@@ -111,7 +111,7 @@ metadata.tfBinding.mm10.cistrome <- data.frame(
 metadata.tfBinding.hg38.atlas.sample <- data.frame(
     Title = "TF Binding Info hg38 by sample (ChIP-Atlas)",
     Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by sample",
-    BiocVersion = "3.18",
+    BiocVersion = "3.19",
     Genome = "hg38",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",
@@ -129,7 +129,7 @@ metadata.tfBinding.hg38.atlas.sample <- data.frame(
 metadata.tfBinding.hg19.atlas.sample <- data.frame(
     Title = "TF Binding Info hg19 by sample (ChIP-Atlas)",
     Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by sample",
-    BiocVersion = "3.18",
+    BiocVersion = "3.19",
     Genome = "hg19",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",
@@ -147,7 +147,7 @@ metadata.tfBinding.hg19.atlas.sample <- data.frame(
 metadata.tfBinding.mm10.atlas.sample <- data.frame(
     Title = "TF Binding Info mm10 by sample (ChIP-Atlas)",
     Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by sample",
-    BiocVersion = "3.18",
+    BiocVersion = "3.19",
     Genome = "mm10",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",
@@ -166,7 +166,7 @@ metadata.tfBinding.mm10.atlas.sample <- data.frame(
 metadata.tfBinding.hg38.encode.sample <- data.frame(
     Title = "TF Binding Info hg38 by sample (ENCODE)",
     Description = "Transcription factor ChIP-seq data from ENCODE broken down by sample",
-    BiocVersion = "3.18",
+    BiocVersion = "3.19",
     Genome = "hg38",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://www.encodeproject.org/",
@@ -184,7 +184,7 @@ metadata.tfBinding.hg38.encode.sample <- data.frame(
 metadata.tfBinding.hg19.encode.sample <- data.frame(
     Title = "TF Binding Info hg19 by sample (ENCODE)",
     Description = "Transcription factor ChIP-seq data from ENCODE broken down by sample",
-    BiocVersion = "3.18",
+    BiocVersion = "3.19",
     Genome = "hg19",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://www.encodeproject.org/",
@@ -202,7 +202,7 @@ metadata.tfBinding.hg19.encode.sample <- data.frame(
 metadata.tfBinding.mm10.encode.sample <- data.frame(
     Title = "TF Binding Info mm10 by sample (ENCODE)",
     Description = "Transcription factor ChIP-seq data from ENCODE broken down by sample",
-    BiocVersion = "3.18",
+    BiocVersion = "3.19",
     Genome = "mm10",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://www.encodeproject.org/",
@@ -220,7 +220,7 @@ metadata.tfBinding.mm10.encode.sample <- data.frame(
 metadata.tfBinding.hg38.atlas.tissue <- data.frame(
     Title = "TF Binding Info hg38 by tissue (ChIP-Atlas)",
     Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by tissue",
-    BiocVersion = "3.18",
+    BiocVersion = "3.19",
     Genome = "hg38",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",
@@ -238,7 +238,7 @@ metadata.tfBinding.hg38.atlas.tissue <- data.frame(
 metadata.tfBinding.hg19.atlas.tissue <- data.frame(
     Title = "TF Binding Info hg19 by tissue (ChIP-Atlas)",
     Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by tissue",
-    BiocVersion = "3.18",
+    BiocVersion = "3.19",
     Genome = "hg19",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",
@@ -256,7 +256,7 @@ metadata.tfBinding.hg19.atlas.tissue <- data.frame(
 metadata.tfBinding.mm10.atlas.tissue <- data.frame(
     Title = "TF Binding Info mm10 by tissue (ChIP-Atlas)",
     Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by tissue",
-    BiocVersion = "3.18",
+    BiocVersion = "3.19",
     Genome = "mm10",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",
