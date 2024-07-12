@@ -28,7 +28,7 @@ Single cell data is gaining sophistication - Cells can be measured in multiple m
 
 The `r Biocpkg("scMultiome")` package is a collection of public single cell multiome data sets pre-processed and packaged into `MultiAssayExperiment` objects for downstream analysis. It also provides basic functions to save the `MultiAssayExperiment` as `.hdf5` files so that users need to only load the desired modalities into memory. 
 
-The 'scMultiome' package is similar to `r Biocpkg("SingleCellMultiModal")` in terms of providing multimodal data as an ExperimentHub package. One key difference is that we included additional functionalities to load only the desired modalities, and allow users to save their `MAE` objects as `.hdf5`s. The selective loading of experiments is desirable because multimodal data can be large: A typical 10x scMultiome consists of 100-200K atac-seq peaks on top of the typical 30-50K genes from rna-seq. Finally, `r Biocpkg("scMultiome")` provides a list of transcription factor and chromatin co-activator binding sites compiled from ENCODE, ChIP-Atlas or Cistrome-DB ChIP-seq data as `GRangesList` objects. ChIP-seq data complements transcription factor motif information by potentially distinguishing related family members and providing occupancy information of chromatin factors that do not directly bind to DNA.
+The 'scMultiome' package is similar to `r Biocpkg("SingleCellMultiModal")` in terms of providing multimodal data as an ExperimentHub package. One key difference is that we included additional functionalities to load only the desired modalities, and allow users to save their `MAE` objects as `.hdf5`s. The selective loading of experiments is desirable because multimodal data can be large: A typical 10x scMultiome consists of 100-200K atac-seq peaks on top of the typical 30-50K genes from rna-seq. Finally, `r Biocpkg("scMultiome")` provides a list of transcription factor and chromatin co-activator binding sites compiled from ENCODE and ChIP-Atlas ChIP-seq data as `GRangesList` objects. ChIP-seq data complements transcription factor motif information by potentially distinguishing related family members and providing occupancy information of chromatin factors that do not directly bind to DNA.
 
    
 # Installation
@@ -68,12 +68,7 @@ See the help files for accessor functions for possible extra options, e.g. `?pro
 
 ## Transcription Factor Binding Sites
 
-In addition to single cell multiomic data, the package also provides binding sites of transcription factors, obtained from bulk ChIP-seq studies. There are two sources: 
-
-* `atlas` - merging of ChIP-Atlas and ENCODE 
-* `cistrome` - merging of CistromeDB and ENCODE
-
-Academic institutions are free to use both sources but commercial entities should only use `atlas` due to restrictions imposed by Cistrome-DB.
+In addition to single cell multiomic data, the package also provides binding sites of transcription factors, obtained from bulk ChIP-seq studies (merging of ChIP-Atlas and ENCODE).
 
 If multiple ChIP-seq files are available for the same transcription factor, the peaks are merged to create a union set of peaks. Currently three genomic builds genomes are provided: hg38, hg19, and mm10. 
 

@@ -1,3 +1,4 @@
+data(mtcars)
 
 # create hdf5 file
 fileName1 <- tempfile(fileext = ".h5")

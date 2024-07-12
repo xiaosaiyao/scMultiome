@@ -1,3 +1,4 @@
+data(iris)
 
 # sce0 <- dummySCE("none")
 # sce1 <- dummySCE("rowData")
