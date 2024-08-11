@@ -1,6 +1,6 @@
 Package: scMultiome
 Title: Collection of Public Single-Cell Multiome (scATAC + scRNAseq) Datasets
-Version: 1.5.1
+Version: 1.5.2
 Authors@R: c(
     person(given = "Xiaosai", family ="Yao", email = "xiaosai.yao@gmail.com", role = c("cre","aut"),  comment = c(ORCID = "0000-0001-9729-0726")),
     person(given = "Aleksander", family ="Chlebowski", email = "aleksander.chlebowski@contractors.roche.com", role = "aut"),
@@ -20,13 +20,13 @@ Depends:
     SummarizedExperiment
 Imports: 
     AzureStor,
-    DelayedArray,
     GenomicRanges,
     HDF5Array,
     S4Vectors,
     checkmate,
     methods,
-    rhdf5
+    rhdf5,
+    alabaster.matrix
 Suggests: 
     BiocGenerics,
     IRanges,
