@@ -21,6 +21,7 @@ See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?pros
 
 \itemize{
 \item \strong{colonHealthy}: Single-cell analysis of samples from healthy human colon
+\item \strong{dataset}: PBMC Data Set
 \item \strong{hematopoiesis}: scATAC-seq and unpaired scRNA-seq of hematopoetic cells
 \item \strong{prostateENZ}: LNCaP Cells Treated with Enzalutamide
 \item \strong{reprogramSeq}: Reprogram-seq of LNCaP cells

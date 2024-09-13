@@ -1,5 +1,6 @@
 "Call","Author","Title","Species","Lineage","CellNumber","Multiome","DiskSize","Version"
 "colonHealthy()","Zhang","Healthy colon","Homo sapiens","Colon","59231","unpaired","6.7 GB","2022-09-21"
+"PBMC()","10X Genomics","PBMC Data Set","Homo sapiens","Blood","11898","paired","1.2 GB","2021-05-03"
 "hematopoiesis()","Granje","scATAC-seq and unpaired scRNA-seq of hematopoetic cells","Homo sapiens","blood","10250","unpaired","1.0 GB","2019-10-29"
 "prostateENZ()","Taavitsainen","LNCaP Cells Treated with Enzalutamide","Homo sapiens","Prostate","15522","unpaired","2.9 GB","2022-09-06"
 "reprogramSeq()","Xie","Reprogram-seq of LNCaP cells","Homo sapiens","Prostate","3903","paired","430 MB","2022-10-04"
