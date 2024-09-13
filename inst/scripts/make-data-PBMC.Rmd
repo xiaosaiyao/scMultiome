@@ -1,0 +1,220 @@
+---
+title: "10k PBMC data"
+author: "Tomasz Włodarczyk"
+date: 2024-09-10
+output:
+  BiocStyle::html_document:
+    titlecaps: false
+    toc_float: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+#### 1. Download data
+```{r}
+# specify output directory
+outDir <- <OUTPUT_DIRECTORY>
+
+# dowbnload data from 10XGenomics server    
+download.file(c("https://cf.10xgenomics.com/samples/cell-arc/1.0.0/pbmc_granulocyte_sorted_10k/pbmc_granulocyte_sorted_10k_filtered_feature_bc_matrix.h5", "https://cf.10xgenomics.com/samples/cell-arc/1.0.0/pbmc_granulocyte_sorted_10k/pbmc_granulocyte_sorted_10k_atac_fragments.tsv.gz", 
+                "https://cf.10xgenomics.com/samples/cell-arc/1.0.0/pbmc_granulocyte_sorted_10k/pbmc_granulocyte_sorted_10k_atac_fragments.tsv.gz.tbi"), c(file.path(outDir,"pbmc_granulocyte_sorted_10k_filtered_feature_bc_matrix.h5"), file.path(outDir,"pbmc_granulocyte_sorted_10k_atac_fragments.tsv.gz"), file.path(outDir,"pbmc_granulocyte_sorted_10k_atac_fragments.tsv.gz.tbi")),
+              method="libcurl")
+                                                                                                                
+```
+
+#### 2. Initiate `ArchR` project
+```{r}
+library(ArchR)
+
+# configure ArchR
+addArchRGenome("hg38")
+
+# create arrow file from fragment files
+## list fragment files
+fragments <- <FRAGMENT_FILES>
+## assign sample names
+names(fragments) <- <SAMPLE_IDs>
+## create arrows
+createArrowFiles(inputFiles = fragments, sampleNames = names(fragments))
+
+# locate arrow files
+arrows <- <ARROW_FILES>
+
+# create ArchR project
+project <- ArchRProject(arrows, outDir)
+
+```
+
+#### 3. Add gene expression data
+```{r}
+seRNA <- import10xFeatureMatrix(
+  input = c("/gstore/project/epigen/PBMC/raw_data/pbmc_granulocyte_sorted_10k_filtered_feature_bc_matrix.h5"),
+  names = c("PBMC_10k")
+)
+
+# filter out genes which are expressed in less than 3 cells
+seRNA <- seRNA[colSums(assay(seRNA))>2,]
+
+proj <- addGeneExpressionMatrix(input = proj, seRNA = seRNA, force = TRUE)
+```
+
+
+#### 4. Quality control
+```{r}
+#Filter Cells
+proj <- proj[proj$TSSEnrichment > 6 & proj$nFrags > 2500 & !is.na(proj$Gex_nUMI)]
+
+#Doublet Filtration
+proj <- addDoubletScores(proj)
+proj <- filterDoublets(proj)
+```
+
+
+#### 5. Clustering and dimensionality reduction
+```{r}
+#LSI-ATAC
+proj <- addIterativeLSI(
+  ArchRProj = proj,
+  clusterParams = list(
+    resolution = 0.2,
+    sampleCells = 10000,
+    n.start = 10
+  ),
+  saveIterations = FALSE,
+  useMatrix = "TileMatrix",
+  depthCol = "nFrags",
+  name = "LSI_ATAC"
+)
+
+#LSI-RNA
+proj <- addIterativeLSI(
+  ArchRProj = proj,
+  clusterParams = list(
+    resolution = 0.2,
+    sampleCells = 10000,
+    n.start = 10
+  ),
+  saveIterations = FALSE,
+  useMatrix = "GeneExpressionMatrix",
+  depthCol = "Gex_nUMI",
+  varFeatures = 2500,
+  firstSelection = "variable",
+  binarize = FALSE,
+  name = "LSI_RNA"
+)
+
+#Combined Dims
+proj <- addCombinedDims(proj, reducedDims = c("LSI_ATAC", "LSI_RNA"), name =  "LSI_Combined")
+
+#UMAPs
+proj <- addUMAP(proj, reducedDims = "LSI_ATAC", name = "UMAP_ATAC", minDist = 0.8, force = TRUE)
+
+proj <- addUMAP(proj, reducedDims = "LSI_RNA", name = "UMAP_RNA", minDist = 0.8, force = TRUE)
+
+proj <- addUMAP(proj, reducedDims = "LSI_Combined", name = "UMAP_Combined", minDist = 0.8, force = TRUE)
+
+#Add Clusters
+proj <- addClusters(proj, reducedDims = "LSI_Combined", name = "Clusters", resolution = 0.4, force = TRUE)
+#proj <- addClusters(proj, reducedDims = "LSI_RNA", name = "Clusters_genes", resolution = 0.4, force = TRUE)
+```
+
+
+#### 6. Peak calling
+```{r}
+library(BSgenome.Hsapiens.UCSC.hg38)
+
+proj<- addGroupCoverages(ArchRProj = proj, groupBy = "Clusters")
+
+proj <- addReproduciblePeakSet(
+  ArchRProj = proj,
+  groupBy = "Clusters",
+  pathToMacs2 = pathToMacs2,
+  force = TRUE,
+  threads = 10
+)
+
+# add information about sequence motifs recognized by known transcriptions factors
+proj <- addMotifAnnotations(ArchRProj = proj,
+                               motifSet = "cisbp", name = "Motif")
+
+proj <- addPeakMatrix(proj)
+
+# add background peaks to be compared against during peak variation assessement
+proj <- addBgdPeaks(proj)
+
+# calculate per-cell devations of motif annotations
+proj <- addDeviationsMatrix(proj, peakAnnotation = "Motif", force = TRUE)
+```
+
+
+#### 7. Cell type annotation
+```{r}
+GeneExpressionMatrix <- getMatrixFromProject(proj, useMatrix = "GeneExpressionMatrix")
+
+# Loading reference data with Ensembl annotations.
+library(celldex)
+#ref.data <- HumanPrimaryCellAtlasData(ensembl=FALSE)
+bpe_data <- BlueprintEncodeData()
+
+
+expr_assay <- assays(GeneExpressionMatrix)[[1]]
+rownames(expr_assay) <- rowData(GeneExpressionMatrix)$name
+
+# Performing predictions.
+library(SingleR)
+predictions <- SingleR(test=expr_assay, assay.type.test=1,
+                       ref=bpe_data, labels=bpe_data$label.fine) # could be switched to label.main
+
+proj$cell_type_SingleR <- predictions$labels
+
+
+
+library(ArchR)
+library(scater)
+library(SingleCellExperiment)
+library(epiregulon.archr)
+
+GeneExpressionMatrix <- getMatrixFromProject(proj, "GeneExpressionMatrix")
+GeneExpressionMatrix <- ArchRMatrix2SCE(GeneExpressionMatrix, rename="normalizedCounts")
+reducedDim(GeneExpressionMatrix, "UMAP_Combined") <- getEmbedding(proj, embedding = "UMAP_Combined")
+GeneExpressionMatrix$cell_type[is.na(GeneExpressionMatrix$cell_type)] <- "unknown"
+plotReducedDim(GeneExpressionMatrix, dimred="UMAP_Combined", colour_by = "Clusters", text_by = "Clusters")
+plotReducedDim(GeneExpressionMatrix, dimred="UMAP_Combined", colour_by = "cell_type_SingleR", text_by = "cell_type_SingleR")
+
+
+# identify cell types in cluster 10
+GeneExpressionMatrix$C10 <- GeneExpressionMatrix$cell_type_SingleR
+GeneExpressionMatrix$C10[GeneExpressionMatrix$Clusters!="C10"] <- NA
+plotReducedDim(GeneExpressionMatrix, dimred="UMAP_Combined", colour_by = "C10", text_by = "C10")
+
+# identify cell types in cluster 11
+GeneExpressionMatrix$C11 <- GeneExpressionMatrix$cell_type_SingleR
+GeneExpressionMatrix$C11[GeneExpressionMatrix$Clusters!="C11"] <- NA
+plotReducedDim(GeneExpressionMatrix, dimred="UMAP_Combined", colour_by = "C11", text_by = "C11")
+table(GeneExpressionMatrix$C11)
+
+# identify cell types in cluster 1
+GeneExpressionMatrix$C1 <- GeneExpressionMatrix$cell_type_SingleR
+GeneExpressionMatrix$C1[GeneExpressionMatrix$Clusters!="C1"] <- NA
+table(GeneExpressionMatrix$C1)
+
+clusters <- proj$Clusters
+manual_annotation <- rep(NA, length(clusters))
+manual_annotation[clusters %in% "C6"] <- "Naive CD4+ T"
+manual_annotation[clusters %in% c("C13")] <- "CD14+ Mono"
+manual_annotation[clusters %in% "C12"] <- "Monocytes"
+manual_annotation[clusters %in% c("C2", "C3")] <- "B"
+manual_annotation[clusters %in% "C4"] <- "Memory CD8+ T"
+manual_annotation[clusters %in% "C14"] <- "FCGR3A+ Mono"
+manual_annotation[clusters %in% "C5"] <- "NK"
+manual_annotation[clusters %in% c("C9", "C10")] <- "Memory CD4+ T"
+manual_annotation[clusters %in% c("C7", "C8")] <- "Naive CD8+ T"
+manual_annotation[clusters %in% c("C1")] <- "DC"
+proj$cell_type <- manual_annotation
+
+plotReducedDim(GeneExpressionMatrix, dimred="UMAP_Combined", colour_by = "cell_type_SingleR", text_by = "cell_type_SingleR")
+
+```
+
