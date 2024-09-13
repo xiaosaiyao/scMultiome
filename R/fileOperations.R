@@ -229,7 +229,7 @@ methods::setMethod(
         rhdf5::h5createGroup(file, sprintf("%s/assays", expName))
         for (ass in names(assays)) {
             if (verbose) message("\t ... ", ass)
-            writeSparseMatrix(
+            alabaster.matrix::writeSparseMatrix(
                 x = methods::as(assays[[ass]],"dgCMatrix"),
                 file = file,
                 name = sprintf("%s/assays/%s", expName, ass))
