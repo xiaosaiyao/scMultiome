@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 + **hematopoiesis**: scATAC-seq and unpaired scRNA-seq of hematopoetic cells
 + **prostateENZ**: LNCaP Cells Treated with Enzalutamide
 + **reprogramSeq**: Reprogram-seq of LNCaP cells
++ **TEADi_resistance**: Resistance of TEAD inhibitor to drug
 + **tfBinding_hg19_atlas**: TF Binding Info hg19 (ChIP-Atlas and ENCODE)
 + **tfBinding_hg19_atlas.sample**: TF Binding Info hg19 by sample (ChIP-Atlas)
 + **tfBinding_hg19_atlas.tissue**: TF Binding Info hg19 by tissue (ChIP-Atlas)

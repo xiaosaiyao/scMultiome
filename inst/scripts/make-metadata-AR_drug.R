@@ -5,7 +5,7 @@ metadata.dataset <-
   data.frame(
     Title = "Response of prostate cancer cells to drug treatment",
     Description = "Gene expression and ATACseq data from 6 cell lines (LNCaP, VCaP, MDA, 22Rv1, DU145, H660) after treatment with AR-targeting drugs",
-    BiocVersion = "3.21",
+    BiocVersion = "3.20",
     Genome = "hg38",
     SourceType = "HDF5",
     SourceUrl = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE251977",
@@ -25,7 +25,7 @@ metadata.dataset <-
 manifest.dataset <-
   data.frame(
     Call = "AR_drug()",
-    Author = "Yao",
+    Author = "Xiaosai Yao",
     Title = "Response of prostate cancer cells to drug treatment",
     Species = "Homo sapiens",
     Lineage = "Prostate",

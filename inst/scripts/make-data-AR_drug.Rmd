@@ -28,17 +28,25 @@ addArchRGenome("hg38")
 
 # create arrow file from fragment files
 ## list fragment files
-fragments <- <FRAGMENT_FILES>
+fragments <- <FRAGMENT_FILES> # available in Gene Expression Omnibus (GSE251977)
 ## assign sample names
 names(fragments) <- <SAMPLE_IDs>
 ## create arrows
-createArrowFiles(inputFiles = fragments, sampleNames = names(fragments))
+createArrowFiles(inputFiles = fragments, sampleNames = names(fragments),
+                     minTSS = 4, minFrags = 1000)
 
 # specify output directory
 outDir <- <OUTPUT_DIRECTORY>
 
 # locate arrow files
 arrows <- <ARROW_FILES>
+    
+doublet.score <- addDoubletScores(
+    input = arrows,
+    k = 10, #Refers to how many cells near a 'pseudo-doublet' to count.
+    knnMethod = 'UMAP', #Refers to the embedding to use for nearest neighbor search.
+    LSIMethod = 1
+)
 
 # create ArchR project
 project <- ArchRProject(arrows, outDir)
@@ -391,7 +399,7 @@ getGroupBW(
 )
 
 #add extra  cell information
-sample_info <- read.csv(<HTO_SAMID.csv>)
+sample_info <- read.csv("HTO_SAMID.csv") # to be dowloaded from Gene Expression Omnibus, GSE251977
 sample_info$SAMID_HTO <- paste0(sample_info$SAMID, sample_info$HTO)
 
 archr.proj$TREATMENT <- sample_info$TREATMENT[match(archr.proj$hash_assignment2, sample_info$SAMID_HTO)]

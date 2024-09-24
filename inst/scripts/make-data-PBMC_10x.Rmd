@@ -50,7 +50,7 @@ project <- ArchRProject(arrows, outDir)
 #### 3. Add gene expression data
 ```{r}
 seRNA <- import10xFeatureMatrix(
-  input = c("/gstore/project/epigen/PBMC/raw_data/pbmc_granulocyte_sorted_10k_filtered_feature_bc_matrix.h5"),
+  input = c(file.path(outDir, "pbmc_granulocyte_sorted_10k_filtered_feature_bc_matrix.h5")),
   names = c("PBMC_10k")
 )
 
@@ -213,8 +213,6 @@ manual_annotation[clusters %in% c("C9", "C10")] <- "Memory CD4+ T"
 manual_annotation[clusters %in% c("C7", "C8")] <- "Naive CD8+ T"
 manual_annotation[clusters %in% c("C1")] <- "DC"
 proj$cell_type <- manual_annotation
-
-plotReducedDim(GeneExpressionMatrix, dimred="UMAP_Combined", colour_by = "cell_type_SingleR", text_by = "cell_type_SingleR")
-
+proj <- proj[!is.na(proj$cell_type)]
 ```
 

@@ -1,0 +1,352 @@
+---
+title: "Resistance of TEAD inhibitor to drug"
+author: "Tomasz Włodarczyk"
+date: 2024-09-16
+output:
+  BiocStyle::html_document:
+    titlecaps: false
+    toc_float: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+The following workflow was created based on the original code written by Julien Tremblay (julien.tremblay@contractors.roche.com).
+
+#### 1. Initiate `ArchR` project
+```{r}
+# attach ArchR package
+library(ArchR)
+
+# configure ArchR
+addArchRGenome("hg38")
+
+# create arrow file from fragment files
+## list fragment files
+fragments <- <FRAGMENT_FILES>
+## assign sample names
+names(fragments) <- <SAMPLE_IDs>
+## create arrows
+createArrowFiles(inputFiles = fragments, sampleNames = names(fragments),
+                     minTSS = 4, minFrags = 1000)
+
+# specify output directory
+outDir <- <OUTPUT_DIRECTORY>
+
+# locate arrow files
+arrows <- <ARROW_FILES>
+    
+doublet.score <- addDoubletScores(
+    input = arrows,
+    k = 10, #Refers to how many cells near a 'pseudo-doublet' to count.
+    knnMethod = 'UMAP', #Refers to the embedding to use for nearest neighbor search.
+    LSIMethod = 1
+)
+
+# create ArchR project
+project <- ArchRProject(arrows, outDir)
+```
+
+#### 2. Add further standard analysis to the ArchR Project
+
+This part of code is wrapped by one of the internal libraries.
+
+```{r}
+
+# .h5 files to be downloaded from GEO (GSE247442)
+se.rna <- import.archr.10x.se(h5.files = rna.files, sample.names = names(rna.files))
+
+# filter RNA so that only cells which also have ATAC-seq are included
+se.rna <- se.rna[,which(colnames(se.rna) %in% rownames(ArchR::getCellColData(archr.proj)))]
+  
+# Filter out scaffolds that don't have at least 3 genes
+filtered.chr.names <- names(which(table(seqnames(se.rna)) >= 3));
+se.rna <- se.rna[as.character(seqnames(se.rna)) %in% filtered.chr.names,];
+rowRanges(se.rna) <- keepSeqlevels(rowRanges(se.rna), filtered.chr.names, pruning.mode = 'coarse');
+
+archr.proj <- addGeneExpressionMatrix(
+    input = project,
+    seRNA = se.rna,
+    threads = num.threads
+);
+
+# LSI dimensionality reduction
+archr.proj <- addIterativeLSI(
+    ArchRProj = project,
+    useMatrix = 'TileMatrix',
+    name = paste0('IterativeLSI_ATAC'),
+    seed = 2,
+    threads = num.threads
+)
+
+# Add clusters to colData
+archr.proj <- addClusters(
+    input = project,
+    reducedDims = paste0('IterativeLSI_ATAC'),
+    name = paste0('Clusters',atac.name.suffix),
+    seed = 2
+)
+  
+ 
+```
+
+
+#### 3. Demultiplex HTO counts
+
+```{r}
+
+# HTO counts were generated using internal cumulus cellranger workflow and the results are
+# available on Gene Expression Omnibus, GSE247442
+# This was equivalent to run in the command line:
+#generate_count_matrix_ADTs \
+#    /gstore/apps/CellRanger/7.1.0/lib/python/cellranger/barcodes/737K-arc-v1.txt.gz \
+#    ../data/hashing_index.csv \
+#    ../data/hto/raw_reads_LIB5457060_SAM24417357 \
+#    LIB5457060_SAM24417357 \
+#    -p 4 --max-mismatch-feature 2 --feature antibody --max-mismatch-cell 1 --umi-length 12
+#
+#generate_count_matrix_ADTs \
+#    /gstore/apps/CellRanger/7.1.0/lib/python/cellranger/barcodes/737K-arc-v1.txt.gz \
+#    ../data/hashing_index.csv \
+#    ../data/hto/raw_reads_LIB5457058_SAM24417355 \
+#    LIB5457058_SAM24417355 \
+#    -p 4 --max-mismatch-feature 2 --feature antibody --max-mismatch-cell 1 --umi-length 12
+
+library(zellkonverter)
+library(ArchR)
+library(DropletUtils)
+library(SingleCellExperiment)
+library(Matrix)
+library(BiocParallel)
+library(data.table)
+library(dplyr)
+
+hto_files = list.files(hto_path, pattern="*.hashing.csv", recursive=TRUE, full.names=TRUE)
+hto_info2 = data.frame(hto_files)
+hto_info2$sample = gsub(".*_(SAM\\d+).*", "\\1", hto_info2$hto_files)
+
+
+arcseq_files = list.files(paste0(arcseq_info$uri, "/"), pattern="*raw_feature_bc_matrix", recursive=TRUE, full.names=TRUE)
+if(!is.null(skip_sample)){
+    arcseq_files = arcseq_files[!grepl("SAM24417356", arcseq_files)]
+}
+arcseq_info2 = data.frame(arcseq_files)
+arcseq_info2$sample = gsub(".*(SAM\\d+).*", "\\1", arcseq_info2$arcseq_files)
+
+samples = gsub(".*_(SAM\\d+).*", "\\1", hto_files)
+summary_df_final = NULL
+seRNA_objects = list()
+#figures = list()
+tables = list()
+empty_drops = list()
+hashed_drops = list()
+for(i in 1:length(samples)){
+        summary_df = NULL
+      
+        curr_sample = samples[i]
+        message("Processing ", curr_sample)
+        dir.create(paste0(outdir, "/", curr_sample, "/rds"), recursive=TRUE)
+      
+        curr_arcseq_file = arcseq_info2[arcseq_info2$sample == curr_sample,]$arcseq_files
+        curr_hto_file    = hto_info2[hto_info2$sample == curr_sample,]$hto_files
+        ###########################
+        # import gex              #
+        ###########################
+        message("...Importing arcseq matrix")
+        seRNA <- ArchR::import10xFeatureMatrix(
+            input = file.path(curr_arcseq_file),
+            names = curr_sample
+        )
+        names(assays(seRNA)) = "counts"
+        # coerce seRNA obs to a SingleCellExperiment because it is a RangedSingleCellExperiment at this point.
+        seRNA = as(seRNA, "SingleCellExperiment")
+        # Here if you look at the seRNA obj, there are approx 725k single-cells: at this point, they are NOT single cells, but droplets and the
+        # vast majority of them are empty (processed below)
+      
+        ###########################################
+        # import HTO and convert to sce object.   #
+        ###########################################
+        hto = data.frame(fread(curr_hto_file, header=T), check.names=FALSE)
+        rownames_hto = hto$Antibody
+        hto = hto[,-1]
+        # Here remember that each hto also contains a cell barcode sequence. in the next line,
+        # we are formatting each cell barcode the way as it is formatted in the seRNA object
+        # will be used later to only keep cell barcodes for which we have an assigned hto.
+        colnames(hto) = paste0(curr_sample, "#", colnames(hto), "-1")
+        hto = as(as.matrix(hto), "dgCMatrix")
+        rownames(hto) = rownames_hto
+        hto = SingleCellExperiment(assays = list(counts=hto))
+      
+        # merge GEX and HTO into a SCE
+        # Only keep seRNA cells that are found in hto data.
+        common_cells = intersect(colnames(hto), colnames(seRNA))
+
+        # Then, narrow selection to common cells.
+        hto = hto[, common_cells] # row=features, col=cells
+        # Same selection with seRNA obj (remember both SingleCellExperiment and SummarizedExperiment classes have the same structure)
+        seRNA = seRNA[, common_cells]
+        # coerce seRNA obs to a SingleCellExperiment because it is a RangedSingleCellExperiment at this point.
+        seRNA = as(seRNA, "SingleCellExperiment")
+        # Add HTO data as altExp attribute, see doc for more details.
+        altExp(seRNA, "HTO") = hto
+      
+        ###################################################
+        # Distinguish single cells from empty droplets.   #
+        ###################################################
+        # Remove all zeros
+        # We can't remove rows at this point, only col (i.e. single cells) at this point. because downstream, we'll have to merge various objects. We'll have to do that later downstream.
+        seRNA = seRNA[, Matrix::colSums(assays(seRNA)$counts) > 0]
+        # Have a look at barcode ranks:
+        empty_thresh = 100 # remove more invalid cells.
+        bc_ranks = barcodeRanks(counts(seRNA), lower=empty_thresh)
+      
+        # Add colData to seRNA obj (i.e. bc_ranks hold barcodes in the same order as it was in the seRNA obj)
+        colData(seRNA)$BarcodeRank   = bc_ranks$rank
+        colData(seRNA)$BarcodeTotal  = bc_ranks$total
+        colData(seRNA)$BarcodeFitted = bc_ranks$fitted
+      
+      
+        # Barcodes that contain more than retain total counts are always retained. This ensures that large cells with profiles that 
+        # are very similar to the ambient pool are not inadvertently discarded. If retain is not specified, it is set to the total 
+        # count at the knee point detected by barcodeRanks. Manual specification of retain may be useful if the knee point was not correctly 
+        # identified in complex log-rank curves. Users can also set retain=Inf to disable automatic retention of barcodes with large totals.
+      
+        curr_rank = 30000
+        emp_drops = emptyDrops(counts(seRNA), lower=NULL, niters=100000,
+                             test.ambient = TRUE, BPPARAM=SerialParam(), by.rank=curr_rank)
+        emp_fdr = 0.01
+        is_cell = emp_drops$FDR <= emp_fdr
+        is_cell[is.na(is_cell)] = FALSE # NA means its not a cell, so force NAs to FALSE
+        empty_drops[[curr_sample]] = emp_drops
+      
+        seRNA_filt = runUMAP(seRNA_filt, altexp = "HTO", name="UMAP_HTO", exprs_values = "clr")
+
+        seRNA_filt = seRNA[, which(is_cell)]
+        
+        # Estimate HTO ambient proportions using empty droplets
+        hto_mat = assay(altExp(seRNA),"counts")[, which(is_cell)]
+        # confirm that by ambient, we mean non-cells... or just really low abundant stuff.
+        # Ok, from the documentation, I believe ambient = non-cells HTOs.
+        # Get % of each HTO
+        ambient_hto_mat = assay(altExp(seRNA), "counts")[,!is_cell]
+        ambient_hto_prop = proportions(rowSums(assay(altExp(seRNA), "counts")[,!is_cell]))
+        hash_stats = hashedDrops(hto_mat, ambient=ambient_hto_prop, 
+                               doublet.nmads=3,
+                               doublet.min=2,
+                               confident.nmads=1,
+                               confident.min=1
+        )
+
+    
+    colData(seRNA_filt) = cbind(colData(seRNA_filt), hash_stats)
+    colData(seRNA_filt)$library = sapply(strsplit(colnames(seRNA_filt), split = "#"), "[",1)
+  
+    assay(altExp(seRNA_filt), "logcounts") = log10(assay(altExp(seRNA_filt), "counts")+1)
+    # Here see the doc on sweep. But basically for each row the logcount is subtracted from mean log count, which basically is a clr.
+    assay(altExp(seRNA_filt), "clr") = sweep(
+                                        assay(altExp(seRNA_filt), "logcounts"), 
+                                        2,
+                                        colMeans(assay(altExp(seRNA_filt), "logcounts")),
+                                        "-"
+                                      )
+    seRNA_filt = runUMAP(seRNA_filt, altexp = "HTO", name="UMAP_HTO", exprs_values = "clr")
+    seRNA_filt$hash_assignment = rownames_hto[seRNA_filt$Best]
+    # save output
+    saveRDS(seRNA_filt, paste0(outdir, "/", curr_sample, "/rds/", curr_sample, "_demultiplex_hto_and_scRNA.rds"))
+}
+
+```
+
+#### 3. Merge HTO data into the ArchR project
+
+```{r}
+library(ArchR)
+library(SingleCellExperiment)
+library(data.table)
+
+
+seRNA_objs = list()
+for(sample in samples){
+    curr_seRNA_obj = readRDS(paste0("./output/", sample, "/rds/", sample, "_demultiplex_hto_and_scRNA.rds"))
+    seRNA_objs[[sample]] = curr_seRNA_obj
+}
+
+# Here load the multiple seRNA objects from last step and combine them.
+seRNA_final = do.call(cbind, seRNA_objs)
+
+seRNA_final$hash_assignment2 = paste0(seRNA_final$library, "_", seRNA_final$hash_assignment)
+
+common = intersect(project$cellNames, colnames(seRNA_final))
+project = project[common,]
+
+# Here at this point, we have the archr object and seRNA obj with the same cells.
+# add HTO information
+for(curr_cell_attribute in colnames(colData(seRNA_final))){
+    proj = addCellColData(
+        ArchRProj = project,
+        data = colData(seRNA_final)[common, curr_cell_attribute],
+        cells = common,
+        name = curr_cell_attribute,
+        force = TRUE
+    )
+}
+
+#filter out doublets and non-confident calls
+project = project[which(project$Confident == TRUE & proj$Doublet == FALSE), ]
+
+```
+
+#### 4. Generate ordinations
+
+```{r}
+# add reduced dims TileMatrix
+project = addIterativeLSI(project, useMatrix='TileMatrix', name='IterativeLSI_TileMatrix', seed=2, force=TRUE, threads=num_threads)
+project = addClusters(project, reducedDims='IterativeLSI_TileMatrix', name='Clusters_TileMatrix', seed=2, prefix='C_TileMatrix', force=TRUE, threads=num_threads)
+project = addUMAP(project, reducedDims='IterativeLSI_TileMatrix', name='UMAP_TileMatrix', seed=2, force=TRUE, threads=num_threads)
+
+# add reduced dims GeneExpressionMatrix
+project = addIterativeLSI(project, useMatrix='GeneExpressionMatrix', name='IterativeLSI_GeneExpressionMatrix', seed=2, force=TRUE, threads=num_threads)
+project = addClusters(project, reducedDims='IterativeLSI_GeneExpressionMatrix', name='Clusters_GeneExpressionMatrix', seed=2, force=TRUE, prefix='C_GeneExpressionMatrix', threads=num_threads)
+project = addUMAP(project, reducedDims='IterativeLSI_GeneExpressionMatrix', name='UMAP_GeneExpressionMatrix', seed=2, force=TRUE, threads=num_threads)
+
+# Combine both dimensionalities, add cluster to resulting combined dim and add umap
+project = addCombinedDims(project, reducedDims=c('IterativeLSI_TileMatrix', 'IterativeLSI_GeneExpressionMatrix'), name='IterativeLSI_Combined')
+project = addClusters(project, reducedDims='IterativeLSI_Combined', name='Clusters_Combined', seed=2, force=TRUE, prefix='C_Combined', threads=num_threads)
+project = addUMAP(project, reducedDims='IterativeLSI_Combined', name='UMAP_Combined', seed=2, force=TRUE, threads=num_threads)
+
+# Add tSNE embeddings
+project = addTSNE(project, reducedDims='IterativeLSI_TileMatrix', name='TSNE_TileMatrix', perplexity=30, seed=2, force=TRUE, threads=num_threads)
+project = addTSNE(project, reducedDims='IterativeLSI_GeneExpressionMatrix', name='TSNE_GeneExpressionMatrix', perplexity=30, seed=2, force=TRUE, threads=num_threads)
+project = addTSNE(project, reducedDims='IterativeLSI_Combined', name='TSNE_Combined', perplexity=30, seed=2, force=TRUE, threads=num_threads)
+project = addTSNE(project, reducedDims='IterativeLSI_ATAC', name='TSNE_ATAC', perplexity=30, seed=2, force=TRUE, threads=num_threads)
+```
+
+#### 5. Peak calling
+
+```{r}
+library(MASS)
+library(chromVARmotifs)
+
+project = addGroupCoverages(project, groupBy='Clusters_TileMatrix', threads=num_threads)
+
+project = addReproduciblePeakSet(project, groupBy="Clusters_TileMatrix", method="q", cutOff=0.05,
+                                    pathToMacs2="/gstore/home/tremblj2/software/macs2/macs2_venv/bin/macs2", 
+                                    excludeChr=c('chrMT','chrY'), genomeSize=2.7e9, threads=num_threads)
+
+project = addPeakMatrix(project, binarize=FALSE, threads=num_threads, force=TRUE)
+
+# TF annotation
+peaks_anno = genomitory::getFeatures('GMTY162:hg38_motif_bed_granges@REVISION-3')
+project = addPeakAnnotations(project, regions=peaks_anno, name='ENCODE_and_cistromeDB_TF_peaks', force=TRUE)
+project = addDeviationsMatrix(project, peakAnnotation='ENCODE_and_cistromeDB_TF_peaks', 
+                                 matrixName='TFPeaksDeviationsMatrix', threads=num_threads, force=TRUE)
+
+# motif annotation
+project = addMotifAnnotations(project, motifSet='cisbp', annoName='Motif', species='Homo sapiens', force=TRUE)
+project = addDeviationsMatrix(project, peakAnnotation='Motif', threads=num_threads, force=TRUE)
+
+# TF binding matrix 
+project = addPeakAnnotations(project, regions=epiregulon::getTFMotifInfo(genome="hg38"), name="TF_binding", force=T, logFile="addPeakAnnotations")
+project = addDeviationsMatrix(project, peakAnnotation="TF_binding", threads=num_threads)
+```
