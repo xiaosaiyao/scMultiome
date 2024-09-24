@@ -25,6 +25,7 @@ See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?pros
 \item \strong{hematopoiesis}: scATAC-seq and unpaired scRNA-seq of hematopoetic cells
 \item \strong{prostateENZ}: LNCaP Cells Treated with Enzalutamide
 \item \strong{reprogramSeq}: Reprogram-seq of LNCaP cells
+\item \strong{TEADi_resistance}: Resistance of TEAD inhibitor to drug
 \item \strong{tfBinding_hg19_atlas}: TF Binding Info hg19 (ChIP-Atlas and ENCODE)
 \item \strong{tfBinding_hg19_atlas.sample}: TF Binding Info hg19 by sample (ChIP-Atlas)
 \item \strong{tfBinding_hg19_atlas.tissue}: TF Binding Info hg19 by tissue (ChIP-Atlas)
