@@ -144,7 +144,7 @@ For a detailed explanation of the process see `?saveMAE`.
 To add metadata, we first create a R script to store your data set's metadata. The metadata script provides key information such as data resource, species, genomic build and version number. This R script will be named `inst/scripts/make-metadata-<DATASET_NAME>.R`. 
 
 ```{r making metadata, eval = FALSE}
-makeMakeMetadata("dataset")
+makeMakeMetadata(<DATASET_NAME>)
 ```
 
 
@@ -178,7 +178,7 @@ Every data set needs an additional documentation to describe how the data was ob
 Create an Rmarkdown file called `inst/scripts/make-data-<DATASET_NAME>.Rmd`. 
 
 ```{r making, eval = FALSE}
-makeMakeData("dataset")
+makeMakeData(<DATASET_NAME>)
 
 ```
 
