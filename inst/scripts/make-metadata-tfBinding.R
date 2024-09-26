@@ -272,7 +272,7 @@ manifest.tfBinding.hg38.atlas.sample <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "20 GB",
+    DiskSize = "660.2 MB",
     Version = "2024-04-06"
 )
 
@@ -284,7 +284,7 @@ manifest.tfBinding.hg19.atlas.sample <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "20 GB",
+    DiskSize = "637.4 MB",
     Version = "2024-04-06"
 )
 
@@ -296,7 +296,7 @@ manifest.tfBinding.mm10.atlas.sample <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "12 GB",
+    DiskSize = "311.4 MB",
     Version = "2024-04-06"
 )
 
@@ -310,7 +310,7 @@ manifest.tfBinding.hg38.encode.sample <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "1007 MB",
+    DiskSize = "167.2 MB",
     Version = "2024-04-06"
 )
 
@@ -322,7 +322,7 @@ manifest.tfBinding.hg19.encode.sample <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "1013 MB",
+    DiskSize = "168 MB",
     Version = "2024-04-06"
 )
 
@@ -334,7 +334,7 @@ manifest.tfBinding.mm10.encode.sample <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "47 MB",
+    DiskSize = "14.7 MB",
     Version = "2024-04-06"
 )
 
@@ -348,7 +348,7 @@ manifest.tfBinding.hg38.atlas.tissue <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "13 GB",
+    DiskSize = "466 MB",
     Version = "2024-04-06"
 )
 
@@ -360,7 +360,7 @@ manifest.tfBinding.hg19.atlas.tissue <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "13 GB",
+    DiskSize = "448.8 MB",
     Version = "2024-04-06"
 )
 
@@ -372,6 +372,6 @@ manifest.tfBinding.mm10.atlas.tissue <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "7.5 GB",
+    DiskSize = "231.6 MB",
     Version = "2024-04-06"
 )

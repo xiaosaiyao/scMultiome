@@ -30,8 +30,8 @@ manifest.TEADi_resistance <-
     Title = "Resistance of TEAD inhibitor to drug",
     Species = "Homo sapiens", # e.g. "Homo sapiens"
     Lineage = "H226 cell line",
-    CellNumber = "<NUMBER OF CELLS>",
+    CellNumber = "4952",
     Multiome = "paired",
-    DiskSize = "403.9 MB",
+    DiskSize = "825.4 MB",
     Version = "2024-09-17"
 )
