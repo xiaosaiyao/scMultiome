@@ -18,7 +18,7 @@ metadata.TEADi_resistance <-
     RDataClass = "MultiAssayExperiment", # class that is returned from hub
     DispatchClass = "FilePath", # format saved on disk; FilePath only returns file location
     # Location_Prefix = "", # SKIP if data stored in the Bioconductor AWS S3
-    RDataPath = "scMultiome/TEADi_resistance"
+    RDataPath = "scMultiome/TEADi_resistance.h5"
 )
 
 # dataset manifest metadata

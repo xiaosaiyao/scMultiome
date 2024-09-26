@@ -1,7 +1,7 @@
 
 # ExperimentHub metadata
 # see ?ExperimentHubData::makeExperimentHubMetadata for details
-metadata.dataset <-
+metadata.AR_drug <-
   data.frame(
     Title = "Response of prostate cancer cells to drug treatment",
     Description = "Gene expression and ATACseq data from 6 cell lines (LNCaP, VCaP, MDA, 22Rv1, DU145, H660) after treatment with AR-targeting drugs",
@@ -17,12 +17,12 @@ metadata.dataset <-
     Maintainer = desc::desc_get_maintainer(),
     RDataClass = "MultiAssayExperiment",
     DispatchClass = "FilePath",
-    RDataPath = "scMultiome/AR.h5"
+    RDataPath = "scMultiome/AR_drug.h5"
 )
 
 # dataset manifest metadata
 # see ?listDatasets for details
-manifest.dataset <-
+manifest.AR_drug <-
   data.frame(
     Call = "AR_drug()",
     Author = "Xiaosai Yao",

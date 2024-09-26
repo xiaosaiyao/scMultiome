@@ -20,9 +20,10 @@ See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?pros
 \section{Datasets}{
 
 \itemize{
+\item \strong{AR_drug}: Response of prostate cancer cells to drug treatment
 \item \strong{colonHealthy}: Single-cell analysis of samples from healthy human colon
-\item \strong{dataset}: PBMC Data Set
 \item \strong{hematopoiesis}: scATAC-seq and unpaired scRNA-seq of hematopoetic cells
+\item \strong{PBMC_10x}: PBMC Data Set
 \item \strong{prostateENZ}: LNCaP Cells Treated with Enzalutamide
 \item \strong{reprogramSeq}: Reprogram-seq of LNCaP cells
 \item \strong{TEADi_resistance}: Resistance of TEAD inhibitor to drug

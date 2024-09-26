@@ -1,7 +1,7 @@
 
 # ExperimentHub metadata
 # see ?ExperimentHubData::makeExperimentHubMetadata for details
-metadata.dataset <-
+metadata.PBMC_10x <-
   data.frame(
     Title = "PBMC Data Set",
     Description = "PBMC from a Healthy Donor - Granulocytes Removed Through Cell Sorting (10k)",
@@ -17,12 +17,12 @@ metadata.dataset <-
     Maintainer = desc::desc_get_maintainer(),
     RDataClass = "MultiAssayExperiment",
     DispatchClass = "FilePath",
-    RDataPath = "scMultiome/dataset"
+    RDataPath = "scMultiome/PBMC_10x.h5"
 )
 
 # dataset manifest metadata
 # see ?listDatasets for details
-manifest.dataset <-
+manifest.PBMC_10x <-
   data.frame(
     Call = "PBMC_10x()",
     Author = "10X Genomics",

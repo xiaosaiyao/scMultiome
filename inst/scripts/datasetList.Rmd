@@ -10,9 +10,10 @@ output:
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
++ **AR_drug**: Response of prostate cancer cells to drug treatment
 + **colonHealthy**: Single-cell analysis of samples from healthy human colon
-+ **dataset**: PBMC Data Set
 + **hematopoiesis**: scATAC-seq and unpaired scRNA-seq of hematopoetic cells
++ **PBMC_10x**: PBMC Data Set
 + **prostateENZ**: LNCaP Cells Treated with Enzalutamide
 + **reprogramSeq**: Reprogram-seq of LNCaP cells
 + **TEADi_resistance**: Resistance of TEAD inhibitor to drug
