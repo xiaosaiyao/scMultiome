@@ -35,7 +35,7 @@ If \code{metadata = TRUE}, an \code{ExperimentHub} object listing this data set'
 }
 \description{
 Single cell gene expression and ATACseq from prostate cancer cell lines (LNCaP, VCaP, DU145, MDA-PCA-2B, 22Rv1 and NCI-H660).
-after 24h of drug treatment or DMSO control.
+after 24h of drug treatment (enzalutamide, ARV110 (AR degrader) or SMARCA2_4.1 (SMARCA2/4 degrader) or DMSO control.
 }
 \section{Data preparation}{
 

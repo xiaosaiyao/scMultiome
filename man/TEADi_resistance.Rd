@@ -35,7 +35,7 @@ with assays stored as \code{DelayedMatrix} objects.
 If \code{metadata = TRUE}, an \code{ExperimentHub} object listing this data set's metadata.
 }
 \description{
-Single cell multiomics on cell lines resistant to TEAD inhibitor
+Single cell multiomics on mesothelioma cell line H226 sensitive and resistant to the TEAD inhibitor GNE-7883
 }
 \section{Data preparation}{
 
