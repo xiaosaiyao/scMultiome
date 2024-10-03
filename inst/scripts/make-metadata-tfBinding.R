@@ -1,4 +1,3 @@
-
 # ExperimentHub metadata
 # see ?ExperimentHubData::makeExperimentHubMetadata for details
 # merged ChIP-seq
@@ -66,7 +65,7 @@ metadata.tfBinding.hg38.atlas.sample <- data.frame(
     Genome = "hg38",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",
-    SourceVersion = "2021-09-21", # no commas!
+    SourceVersion = "3.0", # no commas!
     Species = "Homo sapiens",
     TaxonomyId = "9606",
     Coordinate_1_based = TRUE,
@@ -84,7 +83,7 @@ metadata.tfBinding.hg19.atlas.sample <- data.frame(
     Genome = "hg19",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",
-    SourceVersion = "2021-09-21", # no commas!
+    SourceVersion = "3.0", # no commas!
     Species = "Homo sapiens",
     TaxonomyId = "9606",
     Coordinate_1_based = TRUE,
@@ -102,7 +101,7 @@ metadata.tfBinding.mm10.atlas.sample <- data.frame(
     Genome = "mm10",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",
-    SourceVersion = "2021-09-21", # no commas!
+    SourceVersion = "3.0", # no commas!
     Species = "Mus musculus",
     TaxonomyId = "10090",
     Coordinate_1_based = TRUE,
@@ -175,7 +174,7 @@ metadata.tfBinding.hg38.atlas.tissue <- data.frame(
     Genome = "hg38",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",
-    SourceVersion = "2021-09-21", # no commas!
+    SourceVersion = "3.0", # no commas!
     Species = "Homo sapiens",
     TaxonomyId = "9606",
     Coordinate_1_based = TRUE,
@@ -193,7 +192,7 @@ metadata.tfBinding.hg19.atlas.tissue <- data.frame(
     Genome = "hg19",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",
-    SourceVersion = "2021-09-21", # no commas!
+    SourceVersion = "3.0", # no commas!
     Species = "Homo sapiens",
     TaxonomyId = "9606",
     Coordinate_1_based = TRUE,
@@ -211,7 +210,7 @@ metadata.tfBinding.mm10.atlas.tissue <- data.frame(
     Genome = "mm10",
     SourceType = "BED", # refers to raw data
     SourceUrl = "https://github.com/inutano/chip-atlas/",
-    SourceVersion = "2021-09-21", # no commas!
+    SourceVersion = "3.0", # no commas!
     Species = "Mus musculus",
     TaxonomyId = "10090",
     Coordinate_1_based = TRUE,
@@ -272,8 +271,8 @@ manifest.tfBinding.hg38.atlas.sample <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "20 GB",
-    Version = "2024-04-06"
+    DiskSize = "660.2 MB",
+    Version = "2024-09-26"
 )
 
 manifest.tfBinding.hg19.atlas.sample <- data.frame(
@@ -284,8 +283,8 @@ manifest.tfBinding.hg19.atlas.sample <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "20 GB",
-    Version = "2024-04-06"
+    DiskSize = "637.4 MB",
+    Version = "2024-09-26"
 )
 
 manifest.tfBinding.mm10.atlas.sample <- data.frame(
@@ -296,8 +295,8 @@ manifest.tfBinding.mm10.atlas.sample <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "12 GB",
-    Version = "2024-04-06"
+    DiskSize = "311.4 MB",
+    Version = "2024-09-26"
 )
 
 
@@ -310,8 +309,8 @@ manifest.tfBinding.hg38.encode.sample <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "1007 MB",
-    Version = "2024-04-06"
+    DiskSize = "167.2 MB",
+    Version = "2024-09-26"
 )
 
 manifest.tfBinding.hg19.encode.sample <- data.frame(
@@ -322,8 +321,8 @@ manifest.tfBinding.hg19.encode.sample <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "1013 MB",
-    Version = "2024-04-06"
+    DiskSize = "168 MB",
+    Version = "2024-09-26"
 )
 
 manifest.tfBinding.mm10.encode.sample <- data.frame(
@@ -334,8 +333,8 @@ manifest.tfBinding.mm10.encode.sample <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "47 MB",
-    Version = "2024-04-06"
+    DiskSize = "14.7 MB",
+    Version = "2024-09-26"
 )
 
 # tissue specific ChIP-Atlas
@@ -348,8 +347,8 @@ manifest.tfBinding.hg38.atlas.tissue <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "13 GB",
-    Version = "2024-04-06"
+    DiskSize = "466 MB",
+    Version = "2024-09-26"
 )
 
 manifest.tfBinding.hg19.atlas.tissue <- data.frame(
@@ -360,8 +359,8 @@ manifest.tfBinding.hg19.atlas.tissue <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "13 GB",
-    Version = "2024-04-06"
+    DiskSize = "448.8 MB",
+    Version = "2024-09-26"
 )
 
 manifest.tfBinding.mm10.atlas.tissue <- data.frame(
@@ -372,6 +371,6 @@ manifest.tfBinding.mm10.atlas.tissue <- data.frame(
     Lineage = "All",
     CellNumber = "Bulk",
     Multiome = "n/a",
-    DiskSize = "7.5 GB",
-    Version = "2024-04-06"
+    DiskSize = "231.6 MB",
+    Version = "2024-09-26"
 )
