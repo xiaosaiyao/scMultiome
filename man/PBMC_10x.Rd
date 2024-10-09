@@ -18,7 +18,7 @@ Contains the following experiments:
 \usage{
 PBMC_10x(
   metadata = FALSE,
-  experiments = c("TileMatrix", "GeneScoreMatrix", "GeneIntegrationMatrix", "PeakMatrix",
+  experiments = c("TileMatrix", "GeneScoreMatrix", "GeneExpressionMatrix", "PeakMatrix",
     "MotifMatrix")
 )
 }
@@ -257,6 +257,11 @@ elements of the requested experiment(s), reassembles them, and builds an MAE.
 }
 
 \examples{
+# check metada of dataset
+PBMC_10x(metadata = TRUE)
+# download data
+ \dontrun{
 PBMC_10x()
+}
 
 }

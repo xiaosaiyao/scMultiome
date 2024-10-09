@@ -31,7 +31,13 @@
 #' ```
 #'
 #' @examples
+#' # check metada of dataset
+#' TEADi_resistance(metadata = TRUE)
+#'
+#' # download data
+#'  \dontrun{
 #' TEADi_resistance()
+#' }
 #'
 #' @export
 #'
@@ -39,7 +45,7 @@ TEADi_resistance <-
     function(metadata = FALSE,
              experiments = c("TileMatrix",
                              "GeneScoreMatrix",
-                             "GeneIntegrationMatrix",
+                             "GeneExpressionMatrix",
                              "PeakMatrix",
                              "MotifMatrix",
                              "TFPeaksDeviationsMatrix",

@@ -3,7 +3,7 @@
 #'
 #' PBMC from a Healthy Donor downloaded from 10x Genomics. Granulocytes were removed by cell sorting.
 #' Paired ATAC and Gene Expression libraries were generated from the isolated nuclei.
-#' Targeted nuclei recovery was 10,000. 
+#' Targeted nuclei recovery was 10,000.
 #' Data source: https://www.10xgenomics.com/datasets/pbmc-from-a-healthy-donor-granulocytes-removed-through-cell-sorting-10-k-1-standard-2-0-0
 #'
 #' @inheritParams prostateENZ
@@ -29,7 +29,12 @@
 #' ```
 #'
 #' @examples
+#' # check metada of dataset
+#' PBMC_10x(metadata = TRUE)
+#' # download data
+#'  \dontrun{
 #' PBMC_10x()
+#' }
 #'
 #' @export
 #'
@@ -37,7 +42,7 @@ PBMC_10x <-
     function(metadata = FALSE,
              experiments = c("TileMatrix",
                              "GeneScoreMatrix",
-                             "GeneIntegrationMatrix",
+                             "GeneExpressionMatrix",
                              "PeakMatrix",
                              "MotifMatrix")) {
         checkmate::assertFlag(metadata)

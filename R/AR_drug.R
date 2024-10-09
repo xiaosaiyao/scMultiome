@@ -35,7 +35,13 @@
 #' ```
 #'
 #' @examples
+#' # check metada of dataset
+#' AR_drug(metadata = TRUE)
+#'
+#' # download data
+#'  \dontrun{
 #' AR_drug()
+#' }
 #'
 #' @export
 #'
@@ -43,7 +49,7 @@ AR_drug <-
     function(metadata = FALSE,
              experiments = c("TileMatrix",
                              "GeneScoreMatrix",
-                             "GeneIntegrationMatrix",
+                             "GeneExpressionMatrix",
                              "PeakMatrix",
                              "MotifMatrix",
                              "TFPeaksDeviationsMatrix")) {
