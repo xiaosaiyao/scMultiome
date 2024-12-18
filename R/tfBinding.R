@@ -9,6 +9,15 @@
 #' @inheritParams prostateENZ
 #' @param genome character string specifying the genomic build
 #' @param source character string specifying the ChIP-seq data source
+#' @param version numeric indicating data version number (see Details)
+#' @param peak_number numeric indicating threshold to be applied number of peaks
+#' per transcription factor in the combined version of GenomicRanges
+#' (from all samples and tissues).
+#'
+#' @details
+#' In version 2 chipatlas sample and tissue GenomicRanges were build using experiments
+#' with at least 2E7 unique reads and 1E3 peaks. In sample specific encode
+#' chip-seq data a quality metrics was number of peaks only.
 #'
 #' @return A list of TF binding sites as a \code{GrangesList} object.
 #'
@@ -65,23 +74,46 @@
 #'
 tfBinding <- function(genome = c("hg38", "hg19", "mm10"),
                       source = c("atlas", "encode.sample", "atlas.sample","atlas.tissue"),
-                      metadata = FALSE) {
+                      version=2,
+                      metadata = FALSE,
+                      peak_number = 1000) {
     checkmate::assertFlag(metadata)
     genome <- match.arg(genome, several.ok = FALSE)
     source <- match.arg(source, several.ok = FALSE)
+    checkmate::assert_choice(version, c(1,2))
     key <- paste0(c(genome, source), collapse=".")
-    to_file_dict <- c(hg38.atlas="tfBinding_hg38_atlas.rds",
-                      hg19.atlas = "tfBinding_hg19_atlas.rds",
-                      mm10.atlas = "tfBinding_mm10_atlas.rds",
-                      hg38.atlas.sample="tfBinding_hg38_atlas.sample.rds",
-                      hg19.atlas.sample = "tfBinding_hg19_atlas.sample.rds",
-                      mm10.atlas.sample = "tfBinding_mm10_atlas.sample.rds",
-                      hg38.encode.sample = "tfBinding_hg38_encode.sample.rds",
-                      hg19.encode.sample = "tfBinding_hg19_encode.sample.rds",
-                      mm10.encode.sample = "tfBinding_mm10_encode.sample.rds",
-                      hg38.atlas.tissue = "tfBinding_hg38_atlas.tissue.rds",
-                      hg19.atlas.tissue = "tfBinding_hg19_atlas.tissue.rds",
-                      mm10.atlas.tissue = "tfBinding_mm10_atlas.tissue.rds")
+    if(version==1){
+        message("Retrieving chip-seq data, version 1")
+        to_file_dict <- c(hg38.atlas="tfBinding_hg38_atlas.rds",
+                          hg19.atlas = "tfBinding_hg19_atlas.rds",
+                          mm10.atlas = "tfBinding_mm10_atlas.rds",
+                          hg38.atlas.sample="tfBinding_hg38_atlas.sample.rds",
+                          hg19.atlas.sample = "tfBinding_hg19_atlas.sample.rds",
+                          mm10.atlas.sample = "tfBinding_mm10_atlas.sample.rds",
+                          hg38.encode.sample = "tfBinding_hg38_encode.sample.rds",
+                          hg19.encode.sample = "tfBinding_hg19_encode.sample.rds",
+                          mm10.encode.sample = "tfBinding_mm10_encode.sample.rds",
+                          hg38.atlas.tissue = "tfBinding_hg38_atlas.tissue.rds",
+                          hg19.atlas.tissue = "tfBinding_hg19_atlas.tissue.rds",
+                          mm10.atlas.tissue = "tfBinding_mm10_atlas.tissue.rds")
+    }
+    else{
+        message("Version 2 of the chip-seq data is being retrieved. For reproducibility with the scMultiome version < 1.7.1 please set version = 1.")
+        to_file_dict <- c(hg38.atlas="tfBinding_hg38_atlas.rds",
+                          hg19.atlas = "tfBinding_hg19_atlas.rds",
+                          mm10.atlas = "tfBinding_mm10_atlas.rds",
+                          hg38.atlas.sample="tfBinding_hg38_atlas.sample_v2.rds",
+                          hg19.atlas.sample = "tfBinding_hg19_atlas.sample_v2.rds",
+                          mm10.atlas.sample = "tfBinding_mm10_atlas.sample_v2.rds",
+                          hg38.encode.sample = "tfBinding_hg38_encode.sample_v2.rds",
+                          hg19.encode.sample = "tfBinding_hg19_encode.sample_v2.rds",
+                          mm10.encode.sample = "tfBinding_mm10_encode.sample_v2.rds",
+                          hg38.atlas.tissue = "tfBinding_hg38_atlas.tissue_v2.rds",
+                          hg19.atlas.tissue = "tfBinding_hg19_atlas.tissue_v2.rds",
+                          mm10.atlas.tissue = "tfBinding_mm10_atlas.tissue_v2.rds")
+
+    }
+
     eh <- AnnotationHub::query(ExperimentHub::ExperimentHub(),
                                pattern = c("scMultiome", "tfBinding", to_file_dict[key]))
 
@@ -98,6 +130,10 @@ tfBinding <- function(genome = c("hg38", "hg19", "mm10"),
         } else {
             readRDS(eh[[eh_ID]])
         }
+
+    if(version==2 && !grepl("(sample|tissue)", to_file_dict[key])){
+        ans <- ans[unlist(lapply(ans,length)) >= peak_number]
+    }
 
     return(ans)
 }

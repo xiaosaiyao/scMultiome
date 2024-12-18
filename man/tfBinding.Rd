@@ -26,7 +26,9 @@ Contains the following experiments:
 tfBinding(
   genome = c("hg38", "hg19", "mm10"),
   source = c("atlas", "encode.sample", "atlas.sample", "atlas.tissue"),
-  metadata = FALSE
+  version = 2,
+  metadata = FALSE,
+  peak_number = 1000
 )
 }
 \arguments{
@@ -34,7 +36,13 @@ tfBinding(
 
 \item{source}{character string specifying the ChIP-seq data source}
 
+\item{version}{numeric indicating data version number (see Details)}
+
 \item{metadata}{logical flag specifying whether to return data or metadata only}
+
+\item{peak_number}{numeric indicating threshold to be applied number of peaks
+per transcription factor in the combined version of GenomicRanges
+(from all samples and tissues).}
 }
 \value{
 A list of TF binding sites as a \code{GrangesList} object.
@@ -45,6 +53,10 @@ Combined transcription factor ChIP-seq data from ChIP-Atlas and ENCODE
 \details{
 This is a special data set that stores transcription factor binding sites for human and
 mouse genomic builds, which can be used with the package epiregulon to compute regulons.
+
+In version 2 chipatlas sample and tissue GenomicRanges were build using experiments
+with at least 2E7 unique reads and 1E3 peaks. In sample specific encode
+chip-seq data a quality metrics was number of peaks only.
 }
 \section{Data storage and access}{
 
@@ -324,7 +336,7 @@ for (genome in c("mm10", "hg38"))\{
     shared.TFs <- intersect(chipatlas.files, encode.files)
     chipatlas.TFs <- setdiff(chipatlas.files, encode.files)
     encode.TFs <- setdiff(encode.files, chipatlas.files)
-
+    combined_grl <- GRangesList()
     #### shared.TFs
     for (i in seq_along(shared.TFs)) \{
 
@@ -340,8 +352,8 @@ for (genome in c("mm10", "hg38"))\{
 
         gr <- makeGRangesFromDataFrame(merged_bed,seqnames.field = "seqnames",
                                    start.field = "start",end.field = "end")
-        gr <- reduce(gr, drop.empty.ranges = TRUE)
-
+        gr <- reduce(gr_merged, drop.empty.ranges = TRUE)
+        combined_grl <- c(combined_grl, GRangesList(gr))
         export.bed(gr, con=file.path(dir, "chipatlas_encode_merged", genome, shared.TFs[i]))
 
     \}
@@ -361,7 +373,7 @@ for (genome in c("mm10", "hg38"))\{
         gr <- makeGRangesFromDataFrame(merged_bed,seqnames.field = "seqnames",
                                        start.field = "start",end.field = "end")
         gr <- reduce(gr, drop.empty.ranges = TRUE)
-
+        combined_grl <- c(combined_grl, GRangesList(gr))
         export.bed(gr, con=file.path(dir, "chipatlas_encode_merged", genome, chipatlas.TFs[i]))
 
     \}
@@ -381,9 +393,9 @@ for (genome in c("mm10", "hg38"))\{
         gr <- makeGRangesFromDataFrame(merged_bed,seqnames.field = "seqnames",
                                        start.field = "start",end.field = "end")
         gr <- reduce(gr, drop.empty.ranges = TRUE)
-
+        combined_grl <- c(combined_grl, GRangesList(gr))
         export.bed(gr, con=file.path(dir, "chipatlas_encode_merged", genome, encode.TFs[i]))
-
+        saveRDS(grl, paste0(output_dir, "tfBinding_", genome,"_atlas.rds"))
     \}
 \}
 }\if{html}{\out{</div>}}
@@ -395,51 +407,67 @@ for (genome in c("mm10", "hg38"))\{
 library(rtracklayer)
 #import metadata
 
-for (genome in c("hg38, mm10"))\{
-   metadata <- read.delim("experimentList.tab", header=FALSE)
-   metadata <- metadata[metadata$V2 == genome,]
-   metadata <- metadata[metadata$V3 == "TFs and others",]
+for (genome in c("hg38","mm10"))\{
+    metadata <- read.delim(paste0(data_dir, "chipAtlas/experimentList.tab"), header=FALSE)
+    metadata <- metadata[metadata$V2 == genome,]
+    metadata <- metadata[metadata$V3 == "TFs and others",]
+
+    # add QC metrics - new in version 2
+    metadata_qc <- do.call(rbind, strsplit(metadata$V8, split = ","))
+    metadata_qc <- data.frame(apply(metadata_qc, 2, as.numeric))
+    colnames(metadata_qc) <- c("Number.of.reads", "Percentage.mapped", "Percentage.duplicates", "Number.of.peaks")
+
+    metadata <- cbind(metadata, metadata_qc)
+    metadata$unique.reads <- round(metadata[,"Number.of.reads"]*
+                                       metadata[,"Percentage.mapped"]*
+                                       (100-metadata[,"Percentage.duplicates"])/10000)
+
+    metadata <- metadata[which(metadata$unique.reads >= 20000000 &
+                                   #metadata_qc$Percentage.mapped >= 70 &
+                                   metadata$Number.of.peaks >= 1000), ]
 
     # import bed
     extraCols_narrowPeak <- c(singnalValue = "numeric", pValue = "numeric",
                               qValue = "numeric", peak = "integer")
 
     grl <- list()
-    gr <- list()
 
     celllines <- unique(metadata$V6)
     celllines <- as.vector(na.omit(celllines))
     for (cellline in celllines)\{
-        message("cell line = ", cellline)
-        metadata.cellline <- metadata[which(metadata $V6 == cellline),]
+        metadata.cellline <- metadata[which(metadata$V6 == cellline),]
         unique.tf <- unique(metadata.cellline$V4)
 
         for (tf in unique.tf)\{
-            message("tf = ", tf)
-            bed <- metadata.cellline$V1[metadata.cellline$V4 ==tf]
 
-            for (i in 1:length(bed)) \{
-                file <- paste0(bed[i],".05.bed")
+            message("cell line = ", cellline, " ", "tf = ", tf)
+            gr <- list()
+            beds <- metadata.cellline$V1[metadata.cellline$V4 ==tf]
 
-                if (file.exists(file)) \{
-                    gr[[i]] <- try(rtracklayer::import(file, extraCols = extraCols_narrowPeak))
+            if (length(beds) >0) \{
+                counter <- 1
+                for (bed in beds) \{
+                    file <- paste0(data_dir, "chipAtlas/", genome, "_1e5_individual/", bed,".05.bed")
 
+                    if (file.exists(file)) \{
+                        # each gr list is per TF per tissue
+                        gr[[counter]] <- try(rtracklayer::import(file, extraCols = extraCols_narrowPeak))
+                        counter <- counter + 1
+                    \}
                 \}
 
+                if (length(gr) > 0) \{
+                    grl[[cellline]][[tf]] <- reduce(do.call(c, gr))
+                \}
             \}
-
-            if (length(gr) !=0)\{
-                grl[[cellline]][[tf]] <- reduce(do.call(c, gr))
-            \}
-
         \}
 
-        grl[[cellline]] <- do.call(GRangesList, grl[[cellline]])
+        if (length(grl[[cellline]])>0)\{
+            grl[[cellline]] <- GRangesList(grl[[cellline]])
 
+        \}
     \}
-
-    saveRDS(grl, paste0("grl.chipatlas.sample.", genome,".rds"))
-
+    saveRDS(grl, paste0(output_dir, "tfBinding_", genome,"_atlas.sample_v2.rds"))
 \}
 
 }\if{html}{\out{</div>}}
@@ -450,50 +478,68 @@ for (genome in c("hg38, mm10"))\{
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{library(rtracklayer)
 #import metadata
 
-for (genome in c("mm10","hg38"))\{
-   metadata <- read.delim("experimentList.tab", header=FALSE)
-   metadata <- metadata[metadata$V2 == genome,]
-   metadata <- metadata[metadata$V3 == "TFs and others",]
+for (genome in c("hg38","mm10"))\{
+    metadata <- read.delim(data_dir, "chipAtlas/experimentList.tab", header=FALSE)
+    metadata <- metadata[metadata$V2 == genome,]
+    metadata <- metadata[metadata$V3 == "TFs and others",]
 
+    # add QC metrics - new in version 2
+    metadata_qc <- do.call(rbind, strsplit(metadata$V8, split = ","))
+    metadata_qc <- data.frame(apply(metadata_qc, 2, as.numeric))
+    colnames(metadata_qc) <- c("Number.of.reads", "Percentage.mapped", "Percentage.duplicates", "Number.of.peaks")
+
+    metadata <- cbind(metadata, metadata_qc)
+    metadata$unique.reads <- round(metadata[,"Number.of.reads"]*
+                                       metadata[,"Percentage.mapped"]*
+                                       (100-metadata[,"Percentage.duplicates"])/10000)
+
+    metadata <- metadata[which(metadata$unique.reads >= 20000000 &
+                                   metadata$Number.of.peaks >= 1000), ]
     # import bed
     extraCols_narrowPeak <- c(singnalValue = "numeric", pValue = "numeric",
                               qValue = "numeric", peak = "integer")
 
     grl <- list()
-    gr <- list()
-
+=
     tissues <- unique(metadata$V5)
     tissues <- as.vector(na.omit(tissues))
+
     for (tissue in tissues)\{
-        message("tissue = ", tissue)
         metadata.tissue <- metadata[which(metadata $V5 == tissue),]
         unique.tf <- unique(metadata.tissue$V4)
-
+        #
         for (tf in unique.tf)\{
-            message("tf = ", tf)
-            bed <- metadata.tissue$V1[metadata.tissue$V4 ==tf]
 
-            for (i in 1:length(bed)) \{
-                file <- paste0(bed[i],".05.bed")
+            message("tissue = ", tissue," ", "tf = ", tf)
+            gr <- list()
+            beds <- metadata.tissue$V1[metadata.tissue$V4 ==tf]
 
-                if (file.exists(file)) \{
-                    gr[[i]] <- try(rtracklayer::import(file, extraCols = extraCols_narrowPeak))
+            if (length(beds) >0) \{
+                counter <- 1
+                for (bed in beds) \{
+                    file <- paste0(data_dir, "chip_peaks/", genome, "_1e5_individual/", bed,".05.bed")
+
+                    if (file.exists(file)) \{
+                    # each gr list is per TF per tissue
+                        gr[[counter]] <- try(rtracklayer::import(file, extraCols = extraCols_narrowPeak))
+                        counter <- counter + 1
+                    \}
+
+                \}
+
+                if (length(gr) > 0) \{
+                    grl[[tissue]][[tf]] <- GenomicRanges::reduce(do.call(c, gr))
                 \}
 
             \}
-
-            if (length(gr) !=0)\{
-                grl[[tissue]][[tf]] <- reduce(do.call(c, gr))
-            \}
-
         \}
 
-        grl[[tissue]] <- do.call(GRangesList, grl[[tissue]])
-
+        if (length(grl[[tissue]]) > 0) \{
+            grl[[tissue]] <- GRangesList(grl[[tissue]])
+        \}
     \}
 
-    saveRDS(grl, paste0("grl.chipatlas.tissue.", genome,".rds"))
-
+    saveRDS(grl, paste0(output_dir, "tfBinding_", genome,"_atlas.tissue_v2.rds"))
 \}
 
 }\if{html}{\out{</div>}}
@@ -501,60 +547,69 @@ for (genome in c("mm10","hg38"))\{
 
 \subsection{2.6 Merge ENCODE peaks by sample}{
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{
-library(rtracklayer)
-#import metadata
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{library(rtracklayer)
 
-metadata.path <- c(hg38="human",
-                   mm10="mm10")
+metadata.path <- c(GRCh38=paste0(data_dir,"encode/human"),
+                   mm10=paste0(data_dir, "encode/mm10/encode"))
 
-for (genome in c("hg38", "mm10"))\{
+for (genome in c("GRCh38", "mm10"))\{
 
     metadata <- read.delim(file.path(metadata.path[genome], "raw","metadata.tsv"), header=TRUE)
     metadata <- metadata[metadata$File.assembly == genome,]
     metadata <- metadata[metadata$Assay == "TF ChIP-seq",]
+    metadata <- metadata[metadata$Audit.NOT_COMPLIANT == "",]
+    metadata <- metadata[metadata$Audit.ERROR == "",]
+    metadata$Peaks <- NA
+    rownames(metadata) <- metadata$File.accession
 
     # import bed
     extraCols_narrowPeak <- c(singnalValue = "numeric", pValue = "numeric",
                               qValue = "numeric", peak = "integer")
 
     grl <- list()
-    gr <- list()
 
     celllines <- unique(metadata$Biosample.term.name)
     celllines <- as.vector(na.omit(celllines))
     for (cellline in celllines)\{
-        message("cell line = ", cellline)
         metadata.cellline <- metadata[which(metadata $Biosample.term.name == cellline),]
         unique.tf <- unique(metadata.cellline$Experiment.target)
 
         for (tf in unique.tf)\{
-            message("tf = ", tf)
+            message("tf = ", tf, " ", "cell line = ", cellline)
             tf.name <- sapply(strsplit(tf, "-"),"[",1)
-            bed <- metadata.cellline$File.accession[metadata.cellline$Experiment.target ==tf]
+            beds <- metadata.cellline$File.accession[metadata.cellline$Experiment.target ==tf]
 
-            for (i in 1:length(bed)) \{
-                file <- file.path(metadata.path[genome], "filtered", paste0(bed[i],".bed.gz"))
+            gr <- list()
 
-                if (file.exists(file)) \{
-                    gr[[i]] <- try(rtracklayer::import(file, extraCols = extraCols_narrowPeak))
+            if (length(beds) >0) \{
 
+                for (bed in beds) \{
+                    file <- file.path(metadata.path[genome], "raw", paste0(bed,".bed.gz"))
+
+                    if (file.exists(file)) \{
+                        temp_bed <- try(rtracklayer::import(file, extraCols = extraCols_narrowPeak))
+                        peak_no <- length(temp_bed)
+                        metadata[bed, "Peaks"] <- peak_no
+                        if (peak_no > 1000) \{              # new in version 2
+                            gr[[bed]] <- temp_bed
+                        \}
+                        rm(temp_bed)
+                    \}
                 \}
-
             \}
 
-            if (length(gr) !=0)\{
-                grl[[cellline]][[tf.name]] <- reduce(do.call(c, gr))
+            if (length(gr) > 0)\{
+                grl[[cellline]][[tf.name]] <- GenomicRanges::reduce(do.call(c, unname(gr)))
             \}
-
         \}
 
-        grl[[cellline]] <- do.call(GRangesList, grl[[cellline]])
+        if (length(grl[[cellline]])>0)\{
+            grl[[cellline]] <- GRangesList(grl[[cellline]])
 
+        \}
     \}
-
-    saveRDS(grl, paste0("grl.encode.sample", genome,".rds"))
-
+    saveRDS(grl, paste0(output_dir,"tfBinding_", genome,"_encode.sample_v2.rds"))
+    write.table(metadata, paste0(output_dir, "encode.metadata.", genome, ".txt"), quote = FALSE, row.names = FALSE, sep = "\\t")
 \}
 
 }\if{html}{\out{</div>}}
@@ -568,25 +623,31 @@ Perform liftover from hg38 to hg19 for the ChIP-seq binding sites
 # need to reformat chain file from space to tab
 # sed -r 's/^([0-9]+) ([0-9]+) ([0-9]+)$/\\1\\t\\2\\t\\3/' hg38ToHg19.over.chain > hg38_to_hg19_tabs.chain
 
-ch <- rtracklayer::import.chain(
-    con = "chipatlas/data/hg38_to_hg19_tabs.chain")
+ch <- rtracklayer::import.chain(con = "/chipatlas/data/hg38_to_hg19_tabs.chain")
 
-# install liftover
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-BiocManager::install("liftOver")
 library(liftOver)
 
-grl_hg19 <- liftOver(grl, ch)
-saveRDS(grl_hg19, file = "hg19_motif_bed_granges.rds")
+# convert binding sites from ENCODE
+grl_hg38 <- readRDS(paste0(output_dir,"tfBinding_", genome,"_encode.sample_v2.rds"))
+grl_hg19 <- lapply(grl_hg38, liftOver, ch)
+saveRDS(grl_hg19, file = paste0(output_dir,"tfBinding_hg19_encode.sample_v2.rds"))
 
-}\if{html}{\out{</div>}}
-}
+# convert binding sites from ChIP Atlas
 
-\subsection{4. Session information}{
+# convert grl by cell line
+grl_hg38 <- readRDS(paste0(output_dir, "tfBinding_hg38_atlas.sample_v2.rds"))
+grl_hg19 <- lapply(grl_hg38, liftOver, ch)
+saveRDS(grl_hg19, file = paste0(output_dir, "tfBinding_hg19_atlas.sample_v2.rds")))
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{sessionInfo()
+#convert grl by tissue
+grl_hg38 <- readRDS(paste0(output_dir, "tfBinding_hg38_atlas.tissue_v2.rds"))
+grl_hg19 <- lapply(grl_hg38, liftOver, ch)
+saveRDS(grl_hg19, file = paste0(output_dir, "tfBinding_hg19_atlas.tissue_v2.rds"))
+
+#convert combined grl
+grl_hg38 <- readRDS(paste0(output_dir, "tfBinding_hg38_atlas.rds")
+grl_hg19 <- lapply(grl_hg38, liftOver, ch)
+saveRDS(grl_hg19, file = paste0(output_dir, "tfBinding_hg19_atlas.rds"))
 }\if{html}{\out{</div>}}
 }
 }

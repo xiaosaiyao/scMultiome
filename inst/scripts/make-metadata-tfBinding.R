@@ -77,6 +77,24 @@ metadata.tfBinding.hg38.atlas.sample <- data.frame(
     RDataPath = "scMultiome/tfBinding_hg38_atlas.sample.rds"
 )
 
+metadata.tfBinding.hg38.atlas.sample.v2 <- data.frame(
+    Title = "TF Binding Info hg38 by sample (ChIP-Atlas)",
+    Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by sample v2",
+    BiocVersion = "3.21",
+    Genome = "hg38",
+    SourceType = "BED", # refers to raw data
+    SourceUrl = "https://github.com/inutano/chip-atlas/",
+    SourceVersion = "3.0", # no commas!
+    Species = "Homo sapiens",
+    TaxonomyId = "9606",
+    Coordinate_1_based = TRUE,
+    DataProvider = "Genentech", # refers to raw data
+    Maintainer = desc::desc_get_maintainer(),
+    RDataClass = "List",
+    DispatchClass = "FilePath",
+    RDataPath = "scMultiome/tfBinding_hg38_atlas.sample_v2.rds"
+)
+
 metadata.tfBinding.hg19.atlas.sample <- data.frame(
     Title = "TF Binding Info hg19 by sample (ChIP-Atlas)",
     Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by sample",
@@ -95,6 +113,25 @@ metadata.tfBinding.hg19.atlas.sample <- data.frame(
     RDataPath = "scMultiome/tfBinding_hg19_atlas.sample.rds"
 )
 
+metadata.tfBinding.hg19.atlas.sample.v2 <- data.frame(
+    Title = "TF Binding Info hg19 by sample (ChIP-Atlas)",
+    Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by sample v2",
+    BiocVersion = "3.21",
+    Genome = "hg19",
+    SourceType = "BED", # refers to raw data
+    SourceUrl = "https://github.com/inutano/chip-atlas/",
+    SourceVersion = "3.0", # no commas!
+    Species = "Homo sapiens",
+    TaxonomyId = "9606",
+    Coordinate_1_based = TRUE,
+    DataProvider = "Genentech", # refers to raw data
+    Maintainer = desc::desc_get_maintainer(),
+    RDataClass = "List",
+    DispatchClass = "FilePath",
+    RDataPath = "scMultiome/tfBinding_hg19_atlas.sample_v2.rds"
+)
+
+
 metadata.tfBinding.mm10.atlas.sample <- data.frame(
     Title = "TF Binding Info mm10 by sample (ChIP-Atlas)",
     Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by sample",
@@ -111,6 +148,24 @@ metadata.tfBinding.mm10.atlas.sample <- data.frame(
     RDataClass = "List",
     DispatchClass = "FilePath",
     RDataPath = "scMultiome/tfBinding_mm10_atlas.sample.rds"
+)
+
+metadata.tfBinding.mm10.atlas.sample.v2 <- data.frame(
+    Title = "TF Binding Info mm10 by sample (ChIP-Atlas)",
+    Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by sample v2",
+    BiocVersion = "3.21",
+    Genome = "mm10",
+    SourceType = "BED", # refers to raw data
+    SourceUrl = "https://github.com/inutano/chip-atlas/",
+    SourceVersion = "3.0", # no commas!
+    Species = "Mus musculus",
+    TaxonomyId = "10090",
+    Coordinate_1_based = TRUE,
+    DataProvider = "Genentech", # refers to raw data
+    Maintainer = desc::desc_get_maintainer(),
+    RDataClass = "List",
+    DispatchClass = "FilePath",
+    RDataPath = "scMultiome/tfBinding_mm10_atlas.sample_v2.rds"
 )
 
 # sample  specific ENCODE
@@ -132,6 +187,24 @@ metadata.tfBinding.hg38.encode.sample <- data.frame(
     RDataPath = "scMultiome/tfBinding_hg38_encode.sample.rds"
 )
 
+metadata.tfBinding.hg38.encode.sample.v2 <- data.frame(
+    Title = "TF Binding Info hg38 by sample (ENCODE)",
+    Description = "Transcription factor ChIP-seq data from ENCODE broken down by sample v2",
+    BiocVersion = "3.21",
+    Genome = "hg38",
+    SourceType = "BED", # refers to raw data
+    SourceUrl = "https://www.encodeproject.org/",
+    SourceVersion = "2021-09-21", # no commas!
+    Species = "Homo sapiens",
+    TaxonomyId = "9606",
+    Coordinate_1_based = TRUE,
+    DataProvider = "Genentech", # refers to raw data
+    Maintainer = desc::desc_get_maintainer(),
+    RDataClass = "List",
+    DispatchClass = "FilePath",
+    RDataPath = "scMultiome/tfBinding_hg38_encode.sample_v2.rds"
+)
+
 metadata.tfBinding.hg19.encode.sample <- data.frame(
     Title = "TF Binding Info hg19 by sample (ENCODE)",
     Description = "Transcription factor ChIP-seq data from ENCODE broken down by sample",
@@ -150,6 +223,25 @@ metadata.tfBinding.hg19.encode.sample <- data.frame(
     RDataPath = "scMultiome/tfBinding_hg19_encode.sample.rds"
 )
 
+metadata.tfBinding.hg19.encode.sample.v2 <- data.frame(
+    Title = "TF Binding Info hg19 by sample (ENCODE)",
+    Description = "Transcription factor ChIP-seq data from ENCODE broken down by sample v2",
+    BiocVersion = "3.21",
+    Genome = "hg19",
+    SourceType = "BED", # refers to raw data
+    SourceUrl = "https://www.encodeproject.org/",
+    SourceVersion = "2021-09-21", # no commas!
+    Species = "Homo sapiens",
+    TaxonomyId = "9606",
+    Coordinate_1_based = TRUE,
+    DataProvider = "Genentech", # refers to raw data
+    Maintainer = desc::desc_get_maintainer(),
+    RDataClass = "List",
+    DispatchClass = "FilePath",
+    RDataPath = "scMultiome/tfBinding_hg19_encode.sample_v2.rds"
+)
+
+
 metadata.tfBinding.mm10.encode.sample <- data.frame(
     Title = "TF Binding Info mm10 by sample (ENCODE)",
     Description = "Transcription factor ChIP-seq data from ENCODE broken down by sample",
@@ -167,6 +259,25 @@ metadata.tfBinding.mm10.encode.sample <- data.frame(
     DispatchClass = "FilePath",
     RDataPath = "scMultiome/tfBinding_mm10_encode.sample.rds"
 )
+
+metadata.tfBinding.mm10.encode.sample.v2 <- data.frame(
+    Title = "TF Binding Info mm10 by sample (ENCODE)",
+    Description = "Transcription factor ChIP-seq data from ENCODE broken down by sample v2",
+    BiocVersion = "3.21",
+    Genome = "mm10",
+    SourceType = "BED", # refers to raw data
+    SourceUrl = "https://www.encodeproject.org/",
+    SourceVersion = "2021-09-21", # no commas!
+    Species = "Mus musculus",
+    TaxonomyId = "10090",
+    Coordinate_1_based = TRUE,
+    DataProvider = "Genentech", # refers to raw data
+    Maintainer = desc::desc_get_maintainer(),
+    RDataClass = "List",
+    DispatchClass = "FilePath",
+    RDataPath = "scMultiome/tfBinding_mm10_encode.sample_v2.rds"
+)
+
 # tissue specific ChIP-Atlas
 metadata.tfBinding.hg38.atlas.tissue <- data.frame(
     Title = "TF Binding Info hg38 by tissue (ChIP-Atlas)",
@@ -186,6 +297,25 @@ metadata.tfBinding.hg38.atlas.tissue <- data.frame(
     RDataPath = "scMultiome/tfBinding_hg38_atlas.tissue.rds"
 )
 
+metadata.tfBinding.hg38.atlas.tissue.v2 <- data.frame(
+    Title = "TF Binding Info hg38 by tissue (ChIP-Atlas)",
+    Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by tissue v2",
+    BiocVersion = "3.21",
+    Genome = "hg38",
+    SourceType = "BED", # refers to raw data
+    SourceUrl = "https://github.com/inutano/chip-atlas/",
+    SourceVersion = "3.0", # no commas!
+    Species = "Homo sapiens",
+    TaxonomyId = "9606",
+    Coordinate_1_based = TRUE,
+    DataProvider = "Genentech", # refers to raw data
+    Maintainer = desc::desc_get_maintainer(),
+    RDataClass = "List",
+    DispatchClass = "FilePath",
+    RDataPath = "scMultiome/tfBinding_hg38_atlas.tissue_v2.rds"
+)
+
+
 metadata.tfBinding.hg19.atlas.tissue <- data.frame(
     Title = "TF Binding Info hg19 by tissue (ChIP-Atlas)",
     Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by tissue",
@@ -204,6 +334,24 @@ metadata.tfBinding.hg19.atlas.tissue <- data.frame(
     RDataPath = "scMultiome/tfBinding_hg19_atlas.tissue.rds"
 )
 
+metadata.tfBinding.hg19.atlas.tissue.v2 <- data.frame(
+    Title = "TF Binding Info hg19 by tissue (ChIP-Atlas)",
+    Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by tissue v2",
+    BiocVersion = "3.21",
+    Genome = "hg19",
+    SourceType = "BED", # refers to raw data
+    SourceUrl = "https://github.com/inutano/chip-atlas/",
+    SourceVersion = "3.0", # no commas!
+    Species = "Homo sapiens",
+    TaxonomyId = "9606",
+    Coordinate_1_based = TRUE,
+    DataProvider = "Genentech", # refers to raw data
+    Maintainer = desc::desc_get_maintainer(),
+    RDataClass = "List",
+    DispatchClass = "FilePath",
+    RDataPath = "scMultiome/tfBinding_hg19_atlas.tissue_v2.rds"
+)
+
 metadata.tfBinding.mm10.atlas.tissue <- data.frame(
     Title = "TF Binding Info mm10 by tissue (ChIP-Atlas)",
     Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by tissue",
@@ -220,6 +368,24 @@ metadata.tfBinding.mm10.atlas.tissue <- data.frame(
     RDataClass = "List",
     DispatchClass = "FilePath",
     RDataPath = "scMultiome/tfBinding_mm10_atlas.tissue.rds"
+)
+
+metadata.tfBinding.mm10.atlas.tissue.v2 <- data.frame(
+    Title = "TF Binding Info mm10 by tissue (ChIP-Atlas)",
+    Description = "Transcription factor ChIP-seq data from ChIP-Atlas broken down by tissue v2",
+    BiocVersion = "3.21",
+    Genome = "mm10",
+    SourceType = "BED", # refers to raw data
+    SourceUrl = "https://github.com/inutano/chip-atlas/",
+    SourceVersion = "3.0", # no commas!
+    Species = "Mus musculus",
+    TaxonomyId = "10090",
+    Coordinate_1_based = TRUE,
+    DataProvider = "Genentech", # refers to raw data
+    Maintainer = desc::desc_get_maintainer(),
+    RDataClass = "List",
+    DispatchClass = "FilePath",
+    RDataPath = "scMultiome/tfBinding_mm10_atlas.tissue_v2.rds"
 )
 
 # dataset manifest metadata
@@ -265,7 +431,7 @@ manifest.tfBinding.mm10 <- data.frame(
 # sample specific ChIP-Atlas
 
 manifest.tfBinding.hg38.atlas.sample <- data.frame(
-    Call = "tfBinding(\"hg38\", \"atlas.sample\")",
+    Call = "tfBinding(\"hg38\", \"atlas.sample\", 1)",
     Author = "ChipAtlas",
     Title = "TF Binding hg38 ChIPAtlas by sample",
     Species = "Homo sapiens",
@@ -276,8 +442,20 @@ manifest.tfBinding.hg38.atlas.sample <- data.frame(
     Version = "2024-09-26"
 )
 
+manifest.tfBinding.hg38.atlas.sample.v2 <- data.frame(
+    Call = "tfBinding(\"hg38\", \"atlas.sample\", 2)",
+    Author = "ChipAtlas",
+    Title = "TF Binding hg38 ChIPAtlas by sample",
+    Species = "Homo sapiens",
+    Lineage = "All",
+    CellNumber = "Bulk",
+    Multiome = "n/a",
+    DiskSize = "585.2 MB",
+    Version = "2024-12-08"
+)
+
 manifest.tfBinding.hg19.atlas.sample <- data.frame(
-    Call = "tfBinding(\"hg19\", \"atlas.sample\")",
+    Call = "tfBinding(\"hg19\", \"atlas.sample\", 1)",
     Author = "ChipAtlas",
     Title = "TF Binding hg19 ChIPAtlas by sample",
     Species = "Homo sapiens",
@@ -288,8 +466,20 @@ manifest.tfBinding.hg19.atlas.sample <- data.frame(
     Version = "2024-09-26"
 )
 
+manifest.tfBinding.hg19.atlas.sample.v2 <- data.frame(
+    Call = "tfBinding(\"hg19\", \"atlas.sample\", 2)",
+    Author = "ChipAtlas",
+    Title = "TF Binding hg19 ChIPAtlas by sample",
+    Species = "Homo sapiens",
+    Lineage = "All",
+    CellNumber = "Bulk",
+    Multiome = "n/a",
+    DiskSize = "565.3 MB",
+    Version = "2024-12-09"
+)
+
 manifest.tfBinding.mm10.atlas.sample <- data.frame(
-    Call = "tfBinding(\"mm10\", \"atlas.sample\")",
+    Call = "tfBinding(\"mm10\", \"atlas.sample\", 1)",
     Author = "ChipAtlas",
     Title = "TF Binding mm10 ChIPAtlas by sample",
     Species = "Mus musculus",
@@ -300,10 +490,23 @@ manifest.tfBinding.mm10.atlas.sample <- data.frame(
     Version = "2024-09-26"
 )
 
+manifest.tfBinding.mm10.atlas.sample.v2 <- data.frame(
+    Call = "tfBinding(\"mm10\", \"atlas.sample\", 2)",
+    Author = "ChipAtlas",
+    Title = "TF Binding mm10 ChIPAtlas by sample",
+    Species = "Mus musculus",
+    Lineage = "All",
+    CellNumber = "Bulk",
+    Multiome = "n/a",
+    DiskSize = "253.4 MB",
+    Version = "2024-12-08"
+)
+
+
 
 # sample specific ENCODE
 manifest.tfBinding.hg38.encode.sample <- data.frame(
-    Call = "tfBinding(\"hg38\", \"encode.tissue\")",
+    Call = "tfBinding(\"hg38\", \"encode.tissue\", 1)",
     Author = "ENCODE",
     Title = "TF Binding hg38 ENCODE by sample",
     Species = "Homo sapiens",
@@ -314,8 +517,20 @@ manifest.tfBinding.hg38.encode.sample <- data.frame(
     Version = "2024-09-26"
 )
 
+manifest.tfBinding.hg38.encode.sample.v2 <- data.frame(
+    Call = "tfBinding(\"hg38\", \"encode.tissue\", 2)",
+    Author = "ENCODE",
+    Title = "TF Binding hg38 ENCODE by sample",
+    Species = "Homo sapiens",
+    Lineage = "All",
+    CellNumber = "Bulk",
+    Multiome = "n/a",
+    DiskSize = "140.2 MB",
+    Version = "2024-12-08"
+)
+
 manifest.tfBinding.hg19.encode.sample <- data.frame(
-    Call = "tfBinding(\"hg19\", \"encode.sample\")",
+    Call = "tfBinding(\"hg19\", \"encode.sample\", 1)",
     Author = "ENCODE",
     Title = "TF Binding hg19 ENCODE by sample",
     Species = "Homo sapiens",
@@ -326,8 +541,20 @@ manifest.tfBinding.hg19.encode.sample <- data.frame(
     Version = "2024-09-26"
 )
 
+manifest.tfBinding.hg19.encode.sample.v2 <- data.frame(
+    Call = "tfBinding(\"hg19\", \"encode.sample\", 2)",
+    Author = "ENCODE",
+    Title = "TF Binding hg19 ENCODE by sample",
+    Species = "Homo sapiens",
+    Lineage = "All",
+    CellNumber = "Bulk",
+    Multiome = "n/a",
+    DiskSize = "140.9 MB",
+    Version = "2024-12-12"
+)
+
 manifest.tfBinding.mm10.encode.sample <- data.frame(
-    Call = "tfBinding(\"mm10\", \"encode.sample\")",
+    Call = "tfBinding(\"mm10\", \"encode.sample\", 1)",
     Author = "ENCODE",
     Title = "TF Binding mm10 ENCODE by sample",
     Species = "Mus musculus",
@@ -338,10 +565,22 @@ manifest.tfBinding.mm10.encode.sample <- data.frame(
     Version = "2024-09-26"
 )
 
+manifest.tfBinding.mm10.encode.sample.v2 <- data.frame(
+    Call = "tfBinding(\"mm10\", \"encode.sample\", 2)",
+    Author = "ENCODE",
+    Title = "TF Binding mm10 ENCODE by sample",
+    Species = "Mus musculus",
+    Lineage = "All",
+    CellNumber = "Bulk",
+    Multiome = "n/a",
+    DiskSize = "11.1 MB",
+    Version = "2024-12-08"
+)
+
 # tissue specific ChIP-Atlas
 
 manifest.tfBinding.hg38.atlas.tissue <- data.frame(
-    Call = "tfBinding(\"hg38\", \"atlas.tissue\")",
+    Call = "tfBinding(\"hg38\", \"atlas.tissue\", 1)",
     Author = "ChipAtlas",
     Title = "TF Binding hg38 ChIPAtlas by tissue",
     Species = "Homo sapiens",
@@ -352,8 +591,20 @@ manifest.tfBinding.hg38.atlas.tissue <- data.frame(
     Version = "2024-09-26"
 )
 
+manifest.tfBinding.hg38.atlas.tissue.v2 <- data.frame(
+    Call = "tfBinding(\"hg38\", \"atlas.tissue\", 2)",
+    Author = "ChipAtlas",
+    Title = "TF Binding hg38 ChIPAtlas by tissue",
+    Species = "Homo sapiens",
+    Lineage = "All",
+    CellNumber = "Bulk",
+    Multiome = "n/a",
+    DiskSize = "426.9 MB",
+    Version = "2024-12-08"
+)
+
 manifest.tfBinding.hg19.atlas.tissue <- data.frame(
-    Call = "tfBinding(\"hg19\", \"atlas.tissue\")",
+    Call = "tfBinding(\"hg19\", \"atlas.tissue\", 1)",
     Author = "ChipAtlas",
     Title = "TF Binding hg19 ChIPAtlas by tissue",
     Species = "Homo sapiens",
@@ -364,8 +615,21 @@ manifest.tfBinding.hg19.atlas.tissue <- data.frame(
     Version = "2024-09-26"
 )
 
+manifest.tfBinding.hg19.atlas.tissue.v2 <- data.frame(
+    Call = "tfBinding(\"hg19\", \"atlas.tissue\", 2)",
+    Author = "ChipAtlas",
+    Title = "TF Binding hg19 ChIPAtlas by tissue",
+    Species = "Homo sapiens",
+    Lineage = "All",
+    CellNumber = "Bulk",
+    Multiome = "n/a",
+    DiskSize = "411.3 MB",
+    Version = "2024-12-09"
+)
+
+
 manifest.tfBinding.mm10.atlas.tissue <- data.frame(
-    Call = "tfBinding(\"mm10\", \"atlas.tissue\")",
+    Call = "tfBinding(\"mm10\", \"atlas.tissue\", 1)",
     Author = "ChipAtlas",
     Title = "TF Binding mm10 ChIPAtlas by tissue",
     Species = "Mus musculus",
@@ -374,4 +638,16 @@ manifest.tfBinding.mm10.atlas.tissue <- data.frame(
     Multiome = "n/a",
     DiskSize = "231.6 MB",
     Version = "2024-09-26"
+)
+
+manifest.tfBinding.mm10.atlas.tissue <- data.frame(
+    Call = "tfBinding(\"mm10\", \"atlas.tissue\", 2)",
+    Author = "ChipAtlas",
+    Title = "TF Binding mm10 ChIPAtlas by tissue",
+    Species = "Mus musculus",
+    Lineage = "All",
+    CellNumber = "Bulk",
+    Multiome = "n/a",
+    DiskSize = "193 MB",
+    Version = "2024-12-08"
 )
