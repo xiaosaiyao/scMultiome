@@ -74,8 +74,8 @@
 #'
 tfBinding <- function(genome = c("hg38", "hg19", "mm10"),
                       source = c("atlas", "encode.sample", "atlas.sample","atlas.tissue"),
-                      version=1,
                       metadata = FALSE,
+                      version=1,
                       peak_number = 1000) {
     checkmate::assertFlag(metadata)
     genome <- match.arg(genome, several.ok = FALSE)

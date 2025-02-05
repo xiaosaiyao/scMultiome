@@ -26,8 +26,8 @@ Contains the following experiments:
 tfBinding(
   genome = c("hg38", "hg19", "mm10"),
   source = c("atlas", "encode.sample", "atlas.sample", "atlas.tissue"),
-  version = 2,
   metadata = FALSE,
+  version = 1,
   peak_number = 1000
 )
 }
@@ -36,9 +36,9 @@ tfBinding(
 
 \item{source}{character string specifying the ChIP-seq data source}
 
-\item{version}{numeric indicating data version number (see Details)}
-
 \item{metadata}{logical flag specifying whether to return data or metadata only}
+
+\item{version}{numeric indicating data version number (see Details)}
 
 \item{peak_number}{numeric indicating threshold to be applied number of peaks
 per transcription factor in the combined version of GenomicRanges
