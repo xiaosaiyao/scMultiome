@@ -246,6 +246,35 @@ proj$cell_type <- manual_annotation
 proj <- proj[!is.na(proj$cell_type)]
 }\if{html}{\out{</div>}}
 }
+
+\subsection{8. Create MulitAssayExperiment}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{saveArchRProject(proj, tempdir())
+
+# read ArchR project as MultiAssayExperiment
+MAE <- epiregulon.archr::archr2MAE(tempdir())
+}\if{html}{\out{</div>}}
+}
+
+\subsection{9. Add raw counts assay}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{GEX <- MAE[["GeneExpressionMatrix"]]
+
+# import expression data from 10x files
+se <- initiate.archr::import.archr.10x.se(file.path(outDir,"pbmc_granulocyte_sorted_10k_filtered_feature_bc_matrix.h5"), "PBMC_10k")
+
+se <- se[rowData(GEX)$name, colnames(GEX)]
+
+# add assay with raw counts
+assay(MAE[["GeneExpressionMatrix"]], "counts", withDimnames = TRUE) <- assay(se, "counts")
+}\if{html}{\out{</div>}}
+}
+
+\subsection{10. Save the result}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{scMultiome::saveMAE(MAE, "PBMC_10x.h5")
+}\if{html}{\out{</div>}}
+}
 }
 
 \section{Data storage and access}{

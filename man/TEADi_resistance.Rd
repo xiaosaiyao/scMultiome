@@ -465,6 +465,36 @@ project = addPeakAnnotations(project, regions=epiregulon::getTFMotifInfo(genome=
 project = addDeviationsMatrix(project, peakAnnotation="TF_binding", threads=num_threads)
 }\if{html}{\out{</div>}}
 }
+
+\subsection{8. Create MulitAssayExperiment}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{saveArchRProject(project, tempdir())
+
+# read ArchR project as MultiAssayExperiment
+MAE <- epiregulon.archr::archr2MAE(tempdir())
+}\if{html}{\out{</div>}}
+}
+
+\subsection{9. Add raw counts assay}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{GEX <- MAE[["GeneExpressionMatrix"]]
+
+# import expression data from 10x output files
+se <- initiate.archr::import.archr.10x.se(cell_ranger_10x_files, sample_names)
+# remove duplictaed genes in the same manner as ArchR's addGeneExpressionMatrix does
+se <- arbalist::filterDuplicateFeatures(se)
+se <- se[rowData(GEX)$name, colnames(GEX)]
+
+# add assay with raw counts
+assay(MAE[["GeneExpressionMatrix"]], "counts", withDimnames = TRUE) <- assay(se, "counts")
+}\if{html}{\out{</div>}}
+}
+
+\subsection{10. Save the result}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{scMultiome::saveMAE(MAE, "TEADi_resistance.h5")
+}\if{html}{\out{</div>}}
+}
 }
 
 \section{Data storage and access}{
