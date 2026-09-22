@@ -5,7 +5,7 @@
 
 gr0 <- GenomicRanges::GRanges(
     "seqnames" = S4Vectors::Rle(c("chr1", "chr1", "chr2", "chr3"), c(1, 3, 2, 4)),
-    "ranges" = IRanges::IRanges(1:10, width = 10:1, names = head(letters, 10)),
+    "ranges" = IRanges::IRanges(1:10, width = 10:1),
     "strand" = S4Vectors::Rle(BiocGenerics::strand(c("-", "+", "*", "+", "-")), c(1, 2, 2, 3, 2)),
     "score" = 1:10,
     "GC" = seq(1, 0, length = 10))
