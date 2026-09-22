@@ -31,6 +31,6 @@ manifest.AR_drug <-
     Lineage = "Prostate",
     CellNumber = "23118",
     Multiome = "paired",
-    DiskSize = "3.3 GB",
-    Version = "2024-09-09"
+    DiskSize = "3.8 GB",
+    Version = "2025-02-24"
 )

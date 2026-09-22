@@ -1,7 +1,7 @@
 ---
 title: "10k PBMC data"
 author: "Tomasz Włodarczyk"
-date: 2024-09-10
+date: 2025-02-28
 output:
   BiocStyle::html_document:
     titlecaps: false
@@ -216,3 +216,28 @@ proj$cell_type <- manual_annotation
 proj <- proj[!is.na(proj$cell_type)]
 ```
 
+#### 8. Create MulitAssayExperiment
+```{r}
+saveArchRProject(proj, tempdir())
+
+# read ArchR project as MultiAssayExperiment
+MAE <- epiregulon.archr::archr2MAE(tempdir())
+```
+
+#### 9. Add raw counts assay
+```{r}
+GEX <- MAE[["GeneExpressionMatrix"]]
+
+# import expression data from 10x files
+se <- initiate.archr::import.archr.10x.se(file.path(outDir,"pbmc_granulocyte_sorted_10k_filtered_feature_bc_matrix.h5"), "PBMC_10k")
+
+se <- se[rowData(GEX)$name, colnames(GEX)]
+
+# add assay with raw counts
+assay(MAE[["GeneExpressionMatrix"]], "counts", withDimnames = TRUE) <- assay(se, "counts")
+```
+
+#### 10. Save the result
+```{r}
+scMultiome::saveMAE(MAE, "PBMC_10x.h5")
+```

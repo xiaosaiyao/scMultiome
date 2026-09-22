@@ -9,7 +9,7 @@ metadata.TEADi_resistance <-
     Genome = "hg38",
     SourceType = "HDF5", # refers to raw data
     SourceUrl = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE247442", # refers to raw data
-    SourceVersion = "2022-05-19", # no commas!
+    SourceVersion = "2022-05-19",
     Species = "Homo sapiens", # e.g. "Homo sapiens"
     TaxonomyId = "9606", # e.g. "9606"
     Coordinate_1_based = TRUE, # can stay NA, defaults to TRUE
@@ -32,6 +32,6 @@ manifest.TEADi_resistance <-
     Lineage = "H226 cell line",
     CellNumber = "4952",
     Multiome = "paired",
-    DiskSize = "825.4 MB",
-    Version = "2024-09-17"
+    DiskSize = "840.2 MB",
+    Version = "2025-02-24"
 )

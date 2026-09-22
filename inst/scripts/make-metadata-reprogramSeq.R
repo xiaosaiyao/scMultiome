@@ -32,7 +32,7 @@ manifest.reprogramSeq <-
         Lineage = "Prostate",
         CellNumber = "3903",
         Multiome = "paired",
-        DiskSize = "430 MB",
-        Version = "2022-10-04"
+        DiskSize = "429.7 MB",
+        Version = "2025-02-25"
 )
 

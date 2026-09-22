@@ -12,7 +12,7 @@
 #' Annotated with the hg38 genome build.
 #' Contains the following experiments:
 #' \itemize{
-#'   \item{\strong{TileMatrix500}: SingleCellAccessibilityExperiment with 6062095 rows and 3903 columns}
+#'   \item{\strong{TileMatrix500}: SingleCellExperiment with 6062095 rows and 3903 columns}
 #'   \item{\strong{GeneExpressionMatrix}: SingleCellExperiment with 36438 rows and 3903 columns}
 #'   \item{\strong{GeneScoreMatrix}: SingleCellExperiment with 24919 rows and 3903 columns}
 #'   \item{\strong{NEPCMatrix}: SingleCellExperiment with 2 rows and 3903 columns}

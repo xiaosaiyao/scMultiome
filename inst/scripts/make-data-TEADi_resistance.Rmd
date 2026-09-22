@@ -1,7 +1,7 @@
 ---
 title: "Resistance of TEAD inhibitor to drug"
 author: "Tomasz Włodarczyk"
-date: 2024-09-16
+date: 2025-02-28
 output:
   BiocStyle::html_document:
     titlecaps: false
@@ -437,4 +437,32 @@ project = addDeviationsMatrix(project, peakAnnotation='Motif', threads=num_threa
 # TF binding matrix 
 project = addPeakAnnotations(project, regions=epiregulon::getTFMotifInfo(genome="hg38"), name="TF_binding", force=T, logFile="addPeakAnnotations")
 project = addDeviationsMatrix(project, peakAnnotation="TF_binding", threads=num_threads)
+```
+
+
+#### 8. Create MulitAssayExperiment
+```{r}
+saveArchRProject(project, tempdir())
+
+# read ArchR project as MultiAssayExperiment
+MAE <- epiregulon.archr::archr2MAE(tempdir())
+```
+
+#### 9. Add raw counts assay
+```{r}
+GEX <- MAE[["GeneExpressionMatrix"]]
+
+# import expression data from 10x output files
+se <- initiate.archr::import.archr.10x.se(cell_ranger_10x_files, sample_names)
+# remove duplictaed genes in the same manner as ArchR's addGeneExpressionMatrix does
+se <- arbalist::filterDuplicateFeatures(se)
+se <- se[rowData(GEX)$name, colnames(GEX)]
+
+# add assay with raw counts
+assay(MAE[["GeneExpressionMatrix"]], "counts", withDimnames = TRUE) <- assay(se, "counts")
+```
+
+#### 10. Save the result
+```{r}
+scMultiome::saveMAE(MAE, "TEADi_resistance.h5")
 ```

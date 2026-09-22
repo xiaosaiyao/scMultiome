@@ -1,7 +1,7 @@
 ---
 title: "Reprogram-seq of LNCaP cells"
-author: "Xiaosai"
-date: 2022-10-06
+author: "Xiaosai Yao, Tomasz Włodarczyk"
+date: 2025-02-28
 output:
   BiocStyle::html_document:
     titlecaps: false
@@ -13,3 +13,270 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
 scMultiome data was processed by ArchR.
+
+#### 1. Initialize project
+```{r}
+# attach ArchR package
+library(ArchR)
+
+# configure ArchR
+addArchRGenome("hg38")
+
+# create arrow file from fragment files
+## list fragment files
+inputFiles <- <path to input files> # atac_fragments.tsv.gz available in Gene Expression Omnibus (GSE251978)
+
+## assign sample names
+names(inputFiles) = "reprogram"
+
+## create arrows
+ArrowFiles<- createArrowFiles(
+    inputFiles = inputFiles,
+    sampleNames = names(inputFiles),
+    outputNames = names(inputFiles),
+    minTSS = 1,
+    minFrags = 500,
+    maxFrags = 100000,
+    excludeChr = c("chrM", "chrY"), 
+    addTileMat = TRUE,
+    addGeneScoreMat = TRUE,
+)
+
+# Create ArchR project
+proj<- ArchRProject(
+    ArrowFiles = ArrowFiles,
+)
+
+```
+
+#### 2. Add gene expression data
+```{r}
+seRNA <- import10xFeatureMatrix(
+    input = file.path(data_dir ,"filtered_feature_bc_matrix.h5"),
+    names = "reprogram"
+)
+
+#Add scRNA
+proj <- addGeneExpressionMatrix(input = proj, seRNA = seRNA, force = TRUE)
+
+#Filter Cells
+proj <- proj[proj$TSSEnrichment > 6 & proj$nFrags > 2500 & !is.na(proj$Gex_nUMI)]
+
+#Doublet Filtration. Currently disabled just for tutorial. If you want to filter doublets uncomment below.
+proj <- addDoubletScores(proj, force = TRUE)
+proj <- filterDoublets(proj)
+```
+
+
+#### 3. Reduced dimensionality
+```{r}
+#LSI-ATAC
+proj <- addIterativeLSI(
+    ArchRProj = proj,
+    clusterParams = list(
+        resolution = 0.2,
+        sampleCells = 10000,
+        n.start = 10
+    ),
+    saveIterations = FALSE,
+    useMatrix = "TileMatrix",
+    depthCol = "nFrags",
+    name = "LSI_ATAC"
+)
+
+#LSI-RNA
+proj <- addIterativeLSI(
+    ArchRProj = proj,
+    clusterParams = list(
+        resolution = 0.2,
+        sampleCells = 10000,
+        n.start = 10
+    ),
+    saveIterations = FALSE,
+    useMatrix = "GeneExpressionMatrix",
+    depthCol = "Gex_nUMI",
+    varFeatures = 2500,
+    firstSelection = "variable",
+    binarize = FALSE,
+    name = "LSI_RNA"
+)
+
+
+#Combined Dims
+proj <- addCombinedDims(proj, reducedDims = c("LSI_ATAC", "LSI_RNA"), name =  "LSI_Combined")
+
+#UMAPs
+proj <- addUMAP(proj, reducedDims = "LSI_ATAC", name = "UMAP_ATAC", minDist = 0.8, force = TRUE)
+proj <- addUMAP(proj, reducedDims = "LSI_RNA", name = "UMAP_RNA", minDist = 0.8, force = TRUE)
+proj <- addUMAP(proj, reducedDims = "LSI_Combined", name = "UMAP_Combined", minDist = 0.8, force = TRUE, threads = 1)
+
+#
+#Add Clusters
+proj <- addClusters(proj, reducedDims = "LSI_ATAC", name = "ATAC_Clusters", resolution = 0.4, force = TRUE)
+proj <- addClusters(proj, reducedDims = "LSI_RNA", name = "RNA_Clusters", resolution = 0.4, force = TRUE)
+proj <- addClusters(proj, reducedDims = "LSI_Combined", name = "Combined_Clusters", resolution = 0.4, force = TRUE)
+
+saveArchRProject(
+    ArchRProj = proj,
+    overwrite = TRUE,
+    logFile = createLogFile("saveArchRProject"),
+    threads = getArchRThreads()
+)
+```
+
+
+#### 4. HTO
+```{r}
+library(zellkonverter)
+library(scater)
+
+# load HTO matrix
+HTO <- readH5AD("/gne/data/lab-shares/xie-lab/Sequencing_Data/2022/mapping/20220124_ReprogramSeq_Multiome/HTO/JT69/counts_unfiltered/adata.h5ad")
+colnames(HTO) <- paste0("reprogram#", colnames(HTO),"-1")
+
+HTO <- HTO[,proj$cellNames]
+
+# load RNA matrix
+seRNA <- import10xFeatureMatrix(
+    input = file.path(data_dir ,"filtered_feature_bc_matrix.h5"),
+    names = "reprogram"
+)
+
+seRNA_select <- seRNA[,proj$cellNames]
+
+#demuxEM
+library(RdemuxEM)
+demux_results <- demuxEM(x=assay(seRNA_select), hto=assay(HTO))
+saveRDS(demux_results, "reprogram.demux.rds")
+demux_results <- readRDS("reprogram.demux.rds")
+
+demux_results$hash_assignment <- demux_results$hto_type
+demux_results$hash_assignment[demux_results$demux_type == "doublet"] <- "doublet"
+demux_results$hash_assignment[demux_results$demux_type == "singlet"] <- paste0("HTO", as.numeric(as.character(demux_results$assignment[demux_results$demux_type == "singlet"]))+1)
+
+#normalization
+assays(HTO)$logcounts <- log10(assays(HTO)$X+1)
+assays(HTO)$clr <- sweep(log10(assays(HTO)$X+1), 2, colMeans(log10(assays(HTO)$X+1)), "-")
+
+colData(HTO) <- cbind(colData(HTO), demux_results)
+HTO <- runUMAP(HTO, exprs_values="clr", name="HTO_UMAP")
+saveRDS(HTO,"HTO.rds")
+
+HTO <- readRDS("HTO.rds")
+
+#match HTO with cell info
+HTO$hash_assignment2 <- HTO$hash_assignment
+HTO$hash_assignment2 <-  plyr::mapvalues(HTO$hash_assignment2,
+                                       c("HTO1", "HTO2", "HTO3", "HTO4", "HTO5", "HTO6", "HTO8", "HTO10"),
+                                       c("HTO1_FOXA2_v2", "HTO2_GATA6_v2", "HTO3_NKX2.1_v2", "HTO4_mFOXA1_v2", "HTO5_NeonG_v2",
+                                         "HTO6_hFOXA1_UTR", "HTO8_NKX2.1_UTR", "HTO10_GATA6_UTR"))
+
+#add HTO
+proj <- addCellColData(
+    ArchRProj = proj,
+    data = HTO$hash_assignment2,
+    cells = colnames(HTO),
+    name = "hash_assignment",
+    force = FALSE
+)
+
+getCellColData(proj)
+
+
+saveArchRProject(
+    ArchRProj = proj,
+    #outputDirectory = 'OUTPUT',
+    overwrite = TRUE,
+    logFile = createLogFile("saveArchRProject"),
+    threads = getArchRThreads()
+)
+
+# remove doublets called by HTO
+
+proj_clean <- subsetArchRProject(
+    ArchRProj = proj,
+    cells = colnames(HTO)[HTO$hash_assignment != "doublet"],
+    #outputDirectory = "OUTPUT/doubletremoved",
+    outputDirectory = "/gstore/scratch/u/yaox19/doubletremoved",
+    dropCells = TRUE,
+    logFile = NULL,
+    threads = getArchRThreads(),
+    force = FALSE
+)
+
+
+proj_clean <- addUMAP(proj_clean, reducedDims = "LSI_ATAC", name = "UMAP_ATAC", minDist = 0.8, force = TRUE)
+proj_clean <- addUMAP(proj_clean, reducedDims = "LSI_RNA", name = "UMAP_RNA", minDist = 0.8, force = TRUE)
+proj_clean <- addUMAP(proj_clean, reducedDims = "LSI_Combined", name = "UMAP_Combined", minDist = 0.8, force = TRUE)
+
+
+saveArchRProject(
+    ArchRProj = proj_clean,
+    #outputDirectory = 'OUTPUT',
+    overwrite = TRUE,
+    logFile = createLogFile("saveArchRProject"),
+    threads = getArchRThreads()
+)
+```
+
+#### 5. Peak calling
+```{r}
+proj_clean <- loadArchRProject(path = outdir, showLogo = TRUE)
+
+
+# add coverage
+proj_clean=addGroupCoverages(
+    ArchRProj = proj_clean,
+    groupBy = "Clusters",
+    threads=10
+)
+
+# call peaks
+#system('pip install -U MACS2') # Will download macs2
+#system('which macs2')
+
+proj_clean <- addReproduciblePeakSet(
+  ArchRProj = proj_clean,
+  groupBy = "Clusters",
+  pathToMacs2 = pathToMacs2,
+  force = TRUE,
+  threads = 10
+)
+
+
+peak_set_GRanges <- getPeakSet(proj_clean) #Granges Object of Peak Set
+
+# Add a Peak Matrix
+proj_clean <- addPeakMatrix(proj_clean, force=TRUE)
+
+
+saveArchRProject(
+  ArchRProj = proj_clean,
+  outputDirectory = outdir,
+  overwrite = TRUE,
+  logFile = createLogFile("saveArchRProject"),
+  threads = getArchRThreads()
+)
+
+
+# ::::::::::::::::::: Add coverage :::::::::::::::::: #
+
+
+proj_clean <- addGroupCoverages(
+    ArchRProj = proj_clean,
+    groupBy = "Clusters",
+    threads = 10
+)
+
+getGroupBW(
+    ArchRProj = proj_clean,
+    groupBy = "Clusters",
+    normMethod = "ReadsInTSS",
+    tileSize = 100,
+    maxCells = 1000,
+    ceiling = 4,
+    verbose = TRUE,
+    threads = getArchRThreads(),
+    logFile = createLogFile("getGroupBW")
+)
+```

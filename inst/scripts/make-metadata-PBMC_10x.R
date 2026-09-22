@@ -29,8 +29,8 @@ manifest.PBMC_10x <-
     Title = "PBMC Data Set",
     Species = "Homo sapiens",
     Lineage = "Blood",
-    CellNumber = "11898",
+    CellNumber = "9702",
     Multiome = "paired",
     DiskSize = "1.2 GB",
-    Version = "2024-09-17"
+    Version = "2025-02-24"
 )
