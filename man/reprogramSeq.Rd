@@ -158,7 +158,7 @@ saveArchRProject(
 library(scater)
 
 # load HTO matrix
-HTO <- readH5AD("/gne/data/lab-shares/xie-lab/Sequencing_Data/2022/mapping/20220124_ReprogramSeq_Multiome/HTO/JT69/counts_unfiltered/adata.h5ad")
+HTO <- readH5AD("<data dir>/adata.h5ad")
 colnames(HTO) <- paste0("reprogram#", colnames(HTO),"-1")
 
 HTO <- HTO[,proj$cellNames]

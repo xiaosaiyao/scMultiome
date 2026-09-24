@@ -3,7 +3,7 @@
 # see ?ExperimentHubData::makeExperimentHubMetadata for details
 metadata.TEADi_resistance <-
   data.frame(
-    Title = "Resistance of TEAD inhibitor to drug",
+    Title = "Response of mesothelioma cell lines to TEAD inhibitors",
     Description = "Cooperation between the Hippo and MAPK pathway activation drives acquired resistance to TEAD inhibition",
     BiocVersion = "3.20",
     Genome = "hg38",
