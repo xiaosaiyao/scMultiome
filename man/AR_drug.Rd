@@ -439,13 +439,43 @@ archr.proj$Cell[archr.proj$Cell == "22RV1"] <- "22Rv1"
 }\if{html}{\out{</div>}}
 }
 
-\subsection{5. Save results}{
+\subsection{5. Create MulitAssayExperiment}{
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{# convert project to MultiAssayExperiment object
-MAE <- maw.archr::create.mae.with.multiple.sces.from.archr(outDir)
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{saveArchRProject(archr.proj, tempdir())
 
-# save object
-saveMAE("inst/extdata/prostateENZ.h5")
+# read ArchR project as MultiAssayExperiment
+MAE <- epiregulon.archr::archr2MAE(tempdir())
+}\if{html}{\out{</div>}}
+}
+
+\subsection{6. Add raw counts assay}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{GEX <- MAE[["GeneExpressionMatrix"]]
+
+cell_ranger_10x_files <- c(file.path(cell_ranger_output_path_1,"/SAM24427130/croo_output/filtered_feature_bc_matrix.h5"),
+                          file.path(cell_ranger_output_path_2, "SAM24425416/croo_output/filtered_feature_bc_matrix.h5"),
+                          file.path(cell_ranger_output_path_3,"SAM24418230/croo_output/filtered_feature_bc_matrix.h5"),
+                          file.path(cell_ranger_output_path_3, "SAM24418231/croo_output/filtered_feature_bc_matrix.h5"),
+)
+
+
+samples <- c(H660_22Rv1 = "SAM24427130", DU145_MDA = "SAM24425416",
+             LNCaP_VCaP="SAM24418230", LNCaP_VCaP ="SAM24418231")
+
+# import expression data from 10x files
+se <- initiate.archr::import.archr.10x.se(cell_ranger_10x_files, samples)
+# remove duplictaed genes in the same manner as ArchR's addGeneExpressionMatrix does
+se <- arbalist::filterDuplicateFeatures(se)
+se <- se[rowData(GEX)$name, colnames(GEX)]
+
+# add assay with raw counts
+assay(MAE[["GeneExpressionMatrix"]], "counts", withDimnames = TRUE) <- assay(se, "counts")
+}\if{html}{\out{</div>}}
+}
+
+\subsection{7. Save the result}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{scMultiome::saveMAE(MAE, "AR_drug.h5")
 }\if{html}{\out{</div>}}
 }
 }
