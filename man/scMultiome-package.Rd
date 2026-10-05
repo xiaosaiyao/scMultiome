@@ -21,12 +21,12 @@ See \code{?<DATASET_NAME>} for details on particular data sets, e.g. \code{?pros
 
 \itemize{
 \item \strong{AR_drug}: Response of prostate cancer cells to drug treatment
-\item \strong{PBMC_10x}: PBMC Data Set
-\item \strong{TEADi_resistance}: Resistance of TEAD inhibitor to drug
 \item \strong{colonHealthy}: Single-cell analysis of samples from healthy human colon
 \item \strong{hematopoiesis}: scATAC-seq and unpaired scRNA-seq of hematopoetic cells
+\item \strong{PBMC_10x}: PBMC Data Set
 \item \strong{prostateENZ}: LNCaP Cells Treated with Enzalutamide
 \item \strong{reprogramSeq}: Reprogram-seq of LNCaP cells
+\item \strong{TEADi_resistance}: Response of mesothelioma cell lines to TEAD inhibitors
 \item \strong{tfBinding_hg19_atlas}: TF Binding Info hg19 (ChIP-Atlas and ENCODE)
 \item \strong{tfBinding_hg19_atlas.sample}: TF Binding Info hg19 by sample (ChIP-Atlas)
 \item \strong{tfBinding_hg19_atlas.sample_v2}: TF Binding Info hg19 by sample (ChIP-Atlas)
